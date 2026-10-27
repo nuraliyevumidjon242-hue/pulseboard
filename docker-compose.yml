@@ -1,0 +1,99 @@
+name: pulseboard
+
+x-api-environment: &api-environment
+  NODE_ENV: production
+  PORT: 4000
+  APP_URL: ${APP_URL:-http://localhost:8080}
+  CORS_ORIGIN: ${APP_URL:-http://localhost:8080}
+  DATABASE_URL: postgresql://pulseboard:${POSTGRES_PASSWORD:?Run "npm run docker:env" first}@db:5432/pulseboard
+  JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?Run "npm run docker:env" first}
+  JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?Run "npm run docker:env" first}
+  COOKIE_SECURE: ${COOKIE_SECURE:-false}
+  TRUST_PROXY: 'true'
+  LOG_LEVEL: ${LOG_LEVEL:-info}
+  MAIL_FROM: ${MAIL_FROM:-PulseBoard <no-reply@pulseboard.app>}
+  SMTP_HOST: ${SMTP_HOST:-}
+  SMTP_PORT: ${SMTP_PORT:-587}
+  SMTP_USER: ${SMTP_USER:-}
+  SMTP_PASS: ${SMTP_PASS:-}
+  SMTP_SECURE: ${SMTP_SECURE:-false}
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pulseboard
+      POSTGRES_USER: pulseboard
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run "npm run docker:env" first}
+      TZ: UTC
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U pulseboard -d pulseboard']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks:
+      - pulseboard
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment: *api-environment
+    expose:
+      - '4000'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:4000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - pulseboard
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - '${WEB_PORT:-8080}:80'
+    networks:
+      - pulseboard
+
+  # One-off demo data loader. Enable with: docker compose run --rm seed
+  seed:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    profiles: ['tools']
+    depends_on:
+      db:
+        condition: service_healthy
+    environment: *api-environment
+    command: ['node', 'apps/api/dist/db/seed-cli.js']
+    networks:
+      - pulseboard
+
+volumes:
+  postgres-data:
+
+networks:
+  pulseboard:
+    driver: bridge

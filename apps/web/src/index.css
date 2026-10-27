@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-ink-200 dark:border-ink-800;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-ink-50 font-sans text-ink-900 antialiased dark:bg-ink-950 dark:text-ink-100;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+  }
+
+  ::selection {
+    @apply bg-brand-600/20 text-brand-900 dark:text-brand-100;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500/70 ring-offset-2 ring-offset-white dark:ring-offset-ink-950;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full border-[3px] border-solid border-transparent bg-ink-300 bg-clip-padding dark:bg-ink-700;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-400 dark:bg-ink-600;
+  }
+}
+
+@layer components {
+  .surface {
+    @apply rounded-2xl border border-ink-200/80 bg-white shadow-card dark:border-ink-800 dark:bg-ink-900;
+  }
+
+  .surface-muted {
+    @apply rounded-2xl border border-ink-200/70 bg-ink-50/60 dark:border-ink-800 dark:bg-ink-900/50;
+  }
+
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-500 dark:text-ink-400;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 shadow-sm transition placeholder:text-ink-400 hover:border-ink-300 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/10 disabled:cursor-not-allowed disabled:bg-ink-50 disabled:text-ink-500 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-100 dark:placeholder:text-ink-500 dark:hover:border-ink-600 dark:disabled:bg-ink-800;
+  }
+
+  .field-error {
+    @apply border-rose-400 focus:border-rose-500 focus:ring-rose-500/10 dark:border-rose-500/60;
+  }
+
+  .field-hint {
+    @apply mt-1.5 text-xs text-ink-500 dark:text-ink-400;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-ink-300 transition hover:bg-white/[0.06] hover:text-white;
+  }
+
+  .nav-item-active {
+    @apply bg-white/10 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)];
+  }
+
+  .table-head {
+    @apply border-b border-ink-200 bg-ink-50/80 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-ink-500 dark:border-ink-800 dark:bg-ink-900/80 dark:text-ink-400;
+  }
+
+  .table-cell {
+    @apply border-b border-ink-100 px-4 py-3.5 text-sm text-ink-700 dark:border-ink-800/80 dark:text-ink-200;
+  }
+
+  .table-row {
+    @apply transition-colors hover:bg-ink-50/70 dark:hover:bg-ink-800/40;
+  }
+
+  .kbd {
+    @apply rounded-md border border-ink-200 bg-white px-1.5 py-0.5 font-mono text-[10px] font-semibold text-ink-500 shadow-sm dark:border-ink-700 dark:bg-ink-800 dark:text-ink-300;
+  }
+
+  .gradient-brand {
+    background-image: linear-gradient(135deg, #4f46e5 0%, #6366f1 48%, #22d3ee 130%);
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-600 via-brand-500 to-cyan-500 bg-clip-text text-transparent dark:from-brand-300 dark:via-brand-400 dark:to-cyan-300;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden rounded-lg bg-ink-200/70 dark:bg-ink-800;
+  }
+
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/50 to-transparent dark:via-white/10;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+}
+
+/* Recharts polish */
+.recharts-cartesian-axis-tick text {
+  font-size: 11px;
+  fill: #64748b;
+}
+
+.dark .recharts-cartesian-axis-tick text {
+  fill: #94a3b8;
+}
+
+.recharts-cartesian-grid line {
+  stroke: #e2e8f0;
+  stroke-dasharray: 3 4;
+}
+
+.dark .recharts-cartesian-grid line {
+  stroke: #1e293b;
+}
+
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+.recharts-sector:focus,
+.recharts-rectangle:focus,
+.recharts-surface:focus {
+  outline: none;
+}

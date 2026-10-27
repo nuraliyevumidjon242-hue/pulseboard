@@ -1,0 +1,42 @@
+{
+  "name": "pulseboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PulseBoard — real-time sales analytics dashboard for small businesses",
+  "license": "MIT",
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c cyan,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev -w @pulseboard/api",
+    "dev:web": "npm run dev -w @pulseboard/web",
+    "build": "npm run build -w @pulseboard/api && npm run build -w @pulseboard/web",
+    "start": "npm run start -w @pulseboard/api",
+    "preview": "npm run preview -w @pulseboard/web",
+    "seed": "npm run seed -w @pulseboard/api",
+    "db:generate": "npm run db:generate -w @pulseboard/api",
+    "db:migrate": "npm run db:migrate -w @pulseboard/api",
+    "typecheck": "npm run typecheck -w @pulseboard/api && npm run typecheck -w @pulseboard/web",
+    "test": "npm run test -w @pulseboard/api && npm run test -w @pulseboard/web",
+    "test:coverage": "npm run test:coverage -w @pulseboard/api",
+    "lint": "npm run lint -w @pulseboard/api && npm run lint -w @pulseboard/web",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,css,md,yml,yaml}\" --ignore-path .prettierignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,css,md,yml,yaml}\" --ignore-path .prettierignore",
+    "docker:env": "node scripts/prepare-env.mjs",
+    "docker:up": "node scripts/prepare-env.mjs && docker compose up --build -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f api",
+    "docker:seed": "docker compose run --rm seed",
+    "verify": "npm run format:check && npm run typecheck && npm run lint && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.12",
+    "concurrently": "^9.1.2",
+    "prettier": "^3.4.2"
+  }
+}
