@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability
-    url: https://github.com/nuraliyevumidjon242-hue/pulseboard-/security/policy
+    url: https://github.com/nuraliyevumidjon242-hue/pulseboard/security/policy
     about: Please report security issues privately — see SECURITY.md.
   - name: Question or idea
-    url: https://github.com/nuraliyevumidjon242-hue/pulseboard-/issues
+    url: https://github.com/nuraliyevumidjon242-hue/pulseboard/issues
     about: Open an issue for usage questions and early ideas.

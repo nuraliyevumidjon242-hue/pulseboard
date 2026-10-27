@@ -50,4 +50,4 @@ independent retailers and small café chains.
   service runs.
 - Production startup refuses placeholder or development JWT secrets.
 
-[1.0.0]: https://github.com/nuraliyevumidjon242-hue/pulseboard-/releases/tag/v1.0.0
+[1.0.0]: https://github.com/nuraliyevumidjon242-hue/pulseboard/releases/tag/v1.0.0

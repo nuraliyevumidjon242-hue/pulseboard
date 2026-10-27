@@ -7,7 +7,7 @@ chain's point-of-sale data into live revenue, product and staffing insight. It s
 real API, a real database, role-based access control and WebSocket updates — no mock data
 layer and no UI-only demos.
 
-[![CI](https://github.com/nuraliyevumidjon242-hue/pulseboard-/actions/workflows/ci.yml/badge.svg)](.github/workflows/ci.yml)
+[![CI](https://github.com/nuraliyevumidjon242-hue/pulseboard/actions/workflows/ci.yml/badge.svg)](.github/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node.js 22](https://img.shields.io/badge/node-%3E%3D22-339933?logo=node.js&logoColor=white)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](apps/api/tsconfig.json)
