@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PulseBoard · Product presentation</title>
+  <meta name="description" content="PulseBoard — real-time sales, inventory and customer analytics for independent retailers." />
+  <link rel="stylesheet" href="../assets/deck.css" />
+</head>
+<body>
+  <div class="deck">
+    <header class="topbar">
+      <a class="brand" href="../index.html"><span class="brand-mark">▲</span> PulseBoard</a>
+      <span class="spacer"></span>
+      <nav class="deck-langs" aria-label="Presentation language">
+        <a href="index.html" aria-current="true">EN</a>
+        <a href="../de/index.html">DE</a>
+        <a href="../uz/index.html">UZ</a>
+      </nav>
+      <span class="counter" data-counter></span>
+    </header>
+
+    <main class="stage">
+      <!-- 1 -->
+      <section class="slide title active" id="intro" data-title="Product presentation">
+        <span class="kicker">Case study · Full-stack product</span>
+        <h1 class="display">PulseBoard</h1>
+        <p class="tagline">Turn the till into a live control room.</p>
+        <p class="sub">Real-time sales, inventory and customer analytics for independent retailers — a real API, a real database, and an interface that genuinely works in English, German and Uzbek.</p>
+        <div class="meta-row">
+          <span class="pill cyan">React 18</span>
+          <span class="pill">Node.js + Express</span>
+          <span class="pill">PostgreSQL</span>
+          <span class="pill emerald">Socket.io</span>
+          <span class="pill amber">Docker</span>
+        </div>
+        <span class="hint">← → to navigate · F for fullscreen</span>
+      </section>
+
+      <!-- 2 -->
+      <section class="slide" id="problem" data-title="The problem">
+        <span class="kicker">The problem</span>
+        <h2 class="title">Yesterday's numbers can't run <em>today's shop.</em></h2>
+        <div class="grid-3">
+          <div class="card rose">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></span>
+            <h3>Sales land in a spreadsheet</h3>
+            <p>The day is over before the report exists. Owners decide on numbers that are already stale.</p>
+          </div>
+          <div class="card amber">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 12l9 4 9-4"/><path d="M3 17l9 4 9-4"/></svg></span>
+            <h3>Stockouts surface too late</h3>
+            <p>Shelves empty out before anyone notices. Best sellers miss their best hours.</p>
+          </div>
+          <div class="card">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"/></svg></span>
+            <h3>Every store speaks differently</h3>
+            <p>Separate exports, separate currencies, no shared picture of the business.</p>
+          </div>
+        </div>
+        <div class="row">
+          <span class="pill rose">Reports arrive tomorrow</span>
+          <span class="pill amber">Stock is counted monthly</span>
+          <span class="pill">Owners guess, managers firefight</span>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="slide" id="solution" data-title="One live pulse">
+        <div class="split">
+          <div class="stack">
+            <span class="kicker">The product</span>
+            <h2 class="title">Every sale. Every shelf. <em>One live pulse.</em></h2>
+            <p class="lede">PulseBoard connects the point of sale to a shared operational picture. A transaction lands, the dashboard moves — no refresh, no nightly batch, no spreadsheet.</p>
+            <div class="grid-2">
+              <div class="card cyan">
+                <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
+                <h3>Live dashboard</h3>
+                <p>Revenue, basket and traffic update the moment a sale is completed.</p>
+              </div>
+              <div class="card emerald">
+                <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
+                <h3>Deep analytics</h3>
+                <p>Margins, peak hours, retention and store comparison — exportable as PDF or CSV.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding: 18px">
+            <div class="between" style="margin-bottom: 14px">
+              <div>
+                <div class="tiny" style="letter-spacing:.12em;text-transform:uppercase">Nordwind Café · Berlin</div>
+                <div style="font-size:1.6em;font-weight:750;letter-spacing:-.04em;margin-top:4px">€4,286.50</div>
+              </div>
+              <span class="pill emerald">▲ 18.4% vs yesterday</span>
+            </div>
+            <div class="bars" aria-hidden="true">
+              <b style="height:34%"></b><b style="height:46%"></b><b style="height:38%"></b><b style="height:56%"></b>
+              <b style="height:49%"></b><b style="height:64%"></b><b style="height:57%"></b><b style="height:72%"></b>
+              <b style="height:63%"></b><b style="height:82%"></b><b style="height:70%"></b><b style="height:94%"></b>
+            </div>
+            <div class="mock-list" style="margin-top: 12px">
+              <div class="mock-row"><span class="avatar">A</span><span class="grow">Anna Weber</span><span class="money">€14.80</span></div>
+              <div class="mock-row"><span class="avatar">L</span><span class="grow">Lukas Brandt</span><span class="money">€9.40</span></div>
+              <div class="mock-row"><span class="avatar">S</span><span class="grow">Selin Aydin</span><span class="money">€23.10</span></div>
+            </div>
+            <p class="tiny" style="margin-top: 12px">Streamed over Socket.io · updated 2 seconds ago</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="slide" id="dashboard" data-title="Dashboard">
+        <div class="between">
+          <div>
+            <span class="kicker">Product tour · 01</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px);margin-top:8px">The dashboard at a glance</h2>
+          </div>
+          <span class="pill">Owner view · all stores</span>
+        </div>
+        <div class="mock">
+          <div class="mock-bar"><i></i><i></i><i></i><span class="url">localhost:8080/dashboard</span></div>
+          <div class="mock-body">
+            <div class="mock-head">
+              <div><h4>Good morning, Mara</h4><p>Nordwind Café · Berlin · Europe/Berlin</p></div>
+              <div class="row" style="gap:6px"><span class="pill emerald"><span class="dot"></span>Live</span><span class="pill">Last 7 days</span></div>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><span>Revenue today</span><b>€4,286.50</b><i>▲ 18.4%</i></div>
+              <div class="kpi"><span>Transactions</span><b>182</b><i>▲ 6.1%</i></div>
+              <div class="kpi"><span>Average basket</span><b>€23.55</b><i>▲ 11.6%</i></div>
+              <div class="kpi"><span>Items sold</span><b>512</b><i>▲ 9.2%</i></div>
+            </div>
+            <div class="split" style="gap:10px;align-items:stretch">
+              <div class="mock-tile">
+                <h5>Revenue trend</h5>
+                <svg viewBox="0 0 320 90" style="width:100%;height:80px;display:block" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#22d3ee" stop-opacity=".42"/>
+                      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0 70 L26 62 L52 66 L78 50 L104 55 L130 40 L156 47 L182 32 L208 38 L234 24 L260 30 L286 16 L320 22 L320 90 L0 90 Z" fill="url(#area)"/>
+                  <path d="M0 70 L26 62 L52 66 L78 50 L104 55 L130 40 L156 47 L182 32 L208 38 L234 24 L260 30 L286 16 L320 22" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="mock-tile">
+                <h5>Top products</h5>
+                <div class="mock-list">
+                  <div class="mock-row"><span class="grow">Flat white</span><span class="tag">128</span></div>
+                  <div class="mock-row"><span class="grow">Sourdough loaf</span><span class="tag">96</span></div>
+                  <div class="mock-row"><span class="grow">Cinnamon roll</span><span class="tag">84</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="row" style="gap:6px">
+              <span class="pill rose">3 products low on stock</span>
+              <span class="pill">2 milestones reached this week</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="slide" id="pos" data-title="Point of sale">
+        <div class="split wide-left">
+          <div class="stack">
+            <span class="kicker">Product tour · 02</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Ring up a sale <em>in seconds.</em></h2>
+            <ul class="checks">
+              <li><strong>Search by name, SKU or barcode</strong> and add with one keystroke.</li>
+              <li><strong>Quantity stepping, fixed discounts</strong>, customer name, notes and four payment methods.</li>
+              <li><strong>Atomic stock deduction</strong> — a sale can never oversell inventory, even under load.</li>
+              <li><strong>Receipts and a detail drawer</strong> with a generated transaction ID such as <span style="font-family:var(--mono);color:var(--text)">NWC-20261026-FE75A0</span>.</li>
+              <li><strong>Paginated history and CSV export</strong> for the bookkeeper.</li>
+            </ul>
+            <div class="row">
+              <span class="pill cyan">Keyboard-first</span>
+              <span class="pill">Cash · card · mobile · voucher</span>
+            </div>
+          </div>
+          <div class="card" style="padding: 16px">
+            <div class="receipt">
+              <div style="text-align:center;color:var(--text);font-weight:700;letter-spacing:.12em">PULSEBOARD</div>
+              <div style="text-align:center;margin-bottom:8px">Nordwind Café · Berlin</div>
+              <div class="line"><span>2 × Flat white</span><span>€8.40</span></div>
+              <div class="line"><span>1 × Sourdough loaf</span><span>€5.20</span></div>
+              <div class="line"><span>1 × Cinnamon roll</span><span>€3.60</span></div>
+              <div class="line"><span>Discount</span><span>−€1.20</span></div>
+              <div class="total"><span>TOTAL</span><span>€16.00</span></div>
+              <div style="margin-top:8px;font-size:.92em;text-align:center;color:var(--faint)">NWC-20261026-FE75A0 · Card</div>
+            </div>
+            <p class="tiny" style="margin-top:10px">Receipt and stock movement are written in one transaction.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section class="slide" id="inventory" data-title="Inventory">
+        <span class="kicker">Product tour · 03</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Inventory that <em>warns you first.</em></h2>
+        <div class="grid-3">
+          <div class="card cyan">
+            <h3>Products & stock</h3>
+            <p>SKU, category, cost, price, unit, expiry date and per-product low-stock thresholds.</p>
+          </div>
+          <div class="card emerald">
+            <h3>Adjustments with a trail</h3>
+            <p>Purchases, losses, damage, corrections and returns are logged with who, when and why.</p>
+          </div>
+          <div class="card amber">
+            <h3>Import & alert</h3>
+            <p>CSV import with per-row errors, a downloadable template, and low-stock email plus in-app alerts.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="mock-tile">
+            <h5>Low stock · needs attention</h5>
+            <div class="mock-list">
+              <div class="mock-row"><span class="grow">Sourdough loaf</span><span class="pill rose">4 left · min 12</span></div>
+              <div class="mock-row"><span class="grow">Oat milk 1 L</span><span class="pill rose">6 left · min 18</span></div>
+              <div class="mock-row"><span class="grow">Cinnamon roll</span><span class="pill amber">9 left · min 10</span></div>
+            </div>
+          </div>
+          <div class="row" style="gap:10px;align-items:stretch">
+            <div class="stat" style="flex:1"><b>€18.4k</b><span>Inventory valuation</span></div>
+            <div class="stat" style="flex:1"><b>€52.7k</b><span>Potential revenue</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="slide" id="analytics" data-title="Analytics">
+        <div class="split wide-left">
+          <div class="stack">
+            <span class="kicker">Product tour · 04</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Analytics you can hand <em>to a board.</em></h2>
+            <ul class="checks">
+              <li><strong>Revenue trends</strong> by day, week or month, with peak-hour heatmap data.</li>
+              <li><strong>Product performance and margins</strong> down to the single SKU.</li>
+              <li><strong>Customer analytics</strong>: repeat rate, average spend, top customers.</li>
+              <li><strong>Store comparison</strong> for owners running more than one location.</li>
+              <li><strong>Server-rendered PDF and CSV</strong> from the same aggregates shown on screen.</li>
+            </ul>
+          </div>
+          <div class="mock">
+            <div class="mock-bar"><i></i><i></i><i></i><span class="url">localhost:8080/analytics</span></div>
+            <div class="mock-body">
+              <div class="mock-head"><div><h4>Revenue · last 30 days</h4><p>Nordwind Café vs Kiez Markt</p></div><span class="pill emerald">▲ 14.2%</span></div>
+              <svg viewBox="0 0 360 110" style="width:100%;height:110px;display:block" aria-hidden="true">
+                <defs>
+                  <linearGradient id="a2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#818cf8" stop-opacity=".38"/>
+                    <stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0 84 L30 76 L60 80 L90 62 L120 68 L150 48 L180 55 L210 38 L240 44 L270 26 L300 32 L330 18 L360 24 L360 110 L0 110 Z" fill="url(#a2)"/>
+                <path d="M0 84 L30 76 L60 80 L90 62 L120 68 L150 48 L180 55 L210 38 L240 44 L270 26 L300 32 L330 18 L360 24" fill="none" stroke="#818cf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M0 92 L30 88 L60 90 L90 80 L120 84 L150 72 L180 78 L210 66 L240 70 L270 56 L300 62 L330 50 L360 54" fill="none" stroke="#34d399" stroke-width="1.6" stroke-dasharray="4 5" stroke-linecap="round"/>
+              </svg>
+              <div class="grid-2" style="gap:8px">
+                <div class="mock-tile"><h5>Repeat rate</h5><div class="big">41.8%</div></div>
+                <div class="mock-tile"><h5>Gross margin</h5><div class="big">63.4%</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section class="slide" id="roles" data-title="Roles">
+        <span class="kicker">Access control</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">The right access for <em>every role.</em></h2>
+        <div class="grid-4">
+          <div class="role">
+            <span class="scope">Business owner</span>
+            <h4>Admin</h4>
+            <ul><li>All stores and team</li><li>Store settings</li><li>Reports & deletion</li></ul>
+          </div>
+          <div class="role">
+            <span class="scope">One store</span>
+            <h4>Manager</h4>
+            <ul><li>Products & stock</li><li>Sales & exports</li><li>Analytics</li></ul>
+          </div>
+          <div class="role">
+            <span class="scope">Front of house</span>
+            <h4>Cashier</h4>
+            <ul><li>Create sales</li><li>View dashboard</li><li>No stock edits</li></ul>
+          </div>
+          <div class="role">
+            <span class="scope">Read only</span>
+            <h4>Viewer</h4>
+            <ul><li>Dashboard</li><li>Sales history</li><li>Analytics</li></ul>
+          </div>
+        </div>
+        <div class="card">
+          <p style="font-size:.86em"><strong style="color:var(--text)">Permissions are resolved per store on the server.</strong> The UI hides actions a role cannot perform, and every endpoint re-checks membership before the service runs — so a stale tab or a crafted request cannot bypass the matrix.</p>
+        </div>
+      </section>
+
+      <!-- 9 -->
+      <section class="slide" id="languages" data-title="Languages">
+        <div class="between">
+          <div>
+            <span class="kicker">Localisation</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px);margin-top:8px">Three languages. <em>Actually three.</em></h2>
+          </div>
+          <span class="pill cyan">English · Deutsch · O'zbekcha</span>
+        </div>
+        <div class="split" style="align-items:start">
+          <table class="lang-table">
+            <thead><tr><th>Interface string</th><th>Deutsch</th><th>O'zbekcha</th></tr></thead>
+            <tbody>
+              <tr><td>Sign in</td><td>Anmelden</td><td>Kirish</td></tr>
+              <tr><td>Email or password is incorrect</td><td>E-Mail oder Passwort ist falsch</td><td>Elektron pochta yoki parol noto'g'ri</td></tr>
+              <tr><td>Today's revenue</td><td>Umsatz heute</td><td>Bugungi tushum</td></tr>
+              <tr><td>Low stock</td><td>Niedriger Bestand</td><td>Kam qoldiq</td></tr>
+              <tr><td>€12,400</td><td>12.400 €</td><td>12 400 so'm</td></tr>
+            </tbody>
+          </table>
+          <div class="stack">
+            <ul class="checks">
+              <li><strong>Everything is translated:</strong> screens, modals, empty states, toasts, validation and server errors.</li>
+              <li><strong>Uzbek formatting is in-house</strong>, because browser ICU support for Latin Uzbek is inconsistent.</li>
+              <li><strong>First-visit detection</strong> from the browser, then persisted to the profile.</li>
+              <li><strong>Per-store currency and timezone</strong>, independent of the interface language.</li>
+            </ul>
+            <div class="row">
+              <span class="pill emerald">885 dictionary entries</span>
+              <span class="pill">Auth pages included</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section class="slide" id="architecture" data-title="Architecture">
+        <div class="split wide-right">
+          <div class="stack">
+            <span class="kicker">Under the hood</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Simple on the surface. <em>Serious underneath.</em></h2>
+            <p class="lede">One typed API, one schema, one source of truth. The web client can only see what the API allows, and every aggregate on screen comes from the same query the export uses.</p>
+            <div class="row">
+              <span class="pill">TypeScript strict</span>
+              <span class="pill">Drizzle ORM</span>
+              <span class="pill">Zod</span>
+              <span class="pill">TanStack Query</span>
+            </div>
+          </div>
+          <div class="arch">
+            <div class="node accent"><b>React SPA</b><span>Vite · Tailwind · Recharts · Zustand</span></div>
+            <div class="arch-arrow">↓ REST /api/v1 · WebSocket /socket.io</div>
+            <div class="node"><b>Nginx</b><span>static assets · SPA fallback · reverse proxy</span></div>
+            <div class="arch-arrow">↓</div>
+            <div class="node accent"><b>Express API</b><span>Zod validation · RBAC · services · Socket.io</span></div>
+            <div class="arch-arrow">↓ Drizzle</div>
+            <div class="node"><b>PostgreSQL 16</b><span>production · PGlite for zero-setup dev and tests</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 -->
+      <section class="slide" id="security" data-title="Security">
+        <span class="kicker">Security</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Security is a feature, <em>not a checkbox.</em></h2>
+        <div class="grid-3">
+          <div class="card cyan">
+            <h3>Tokens that never persist</h3>
+            <p>Access tokens live in memory only. Refresh tokens are httpOnly, hashed at rest and rotated on every use.</p>
+          </div>
+          <div class="card rose">
+            <h3>Replay detection</h3>
+            <p>Reusing an old refresh token revokes every active session for that account automatically.</p>
+          </div>
+          <div class="card emerald">
+            <h3>Tenant checks in middleware</h3>
+            <p>Membership and permissions resolve before any store-scoped service runs.</p>
+          </div>
+          <div class="card amber">
+            <h3>Hardened by default</h3>
+            <p>Helmet, rate limits on auth and sensitive actions, strict CORS and validated environment config.</p>
+          </div>
+          <div class="card">
+            <h3>Fail closed</h3>
+            <p>Production refuses to boot with placeholder or development JWT secrets.</p>
+          </div>
+          <div class="card">
+            <h3>Auditable</h3>
+            <p>Privileged actions are written to the activity log with actor, store and timestamp.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section class="slide" id="quality" data-title="Quality">
+        <span class="kicker">Quality</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Proven, <em>not promised.</em></h2>
+        <div class="grid-4">
+          <div class="stat"><b>90</b><span>API tests · real migrations</span></div>
+          <div class="stat"><b>54</b><span>Web tests · Testing Library</span></div>
+          <div class="stat"><b>83%</b><span>Statement coverage</span></div>
+          <div class="stat"><b>0</b><span>Production vulnerabilities</span></div>
+        </div>
+        <div class="split" style="align-items:start">
+          <ul class="checks">
+            <li><strong>Strict TypeScript</strong> in both workspaces, no implicit any, no unchecked indexing.</li>
+            <li><strong>ESLint 9 flat config</strong> with zero warnings allowed and Prettier enforced in CI.</li>
+            <li><strong>Real database in tests</strong> — PGlite boots migrations and exercises tenant isolation and RBAC end to end.</li>
+          </ul>
+          <div class="card">
+            <div class="between">
+              <div>
+                <div class="tiny" style="letter-spacing:.12em;text-transform:uppercase">GitHub Actions · main</div>
+                <div style="font-size:1.15em;font-weight:650;margin-top:5px">format → types → lint → tests → build</div>
+              </div>
+              <span class="pill emerald"><span class="dot"></span>Green</span>
+            </div>
+            <p class="small" style="margin-top:10px">The same command locally: <span style="font-family:var(--mono);color:var(--text)">npm run verify</span>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section class="slide" id="run" data-title="Run it">
+        <div class="split">
+          <div class="stack">
+            <span class="kicker">Run it</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">From clone to live <em>in one command.</em></h2>
+            <p class="lede">No database server required for local development: PGlite boots an embedded PostgreSQL, runs the migrations and seeds 90 days of realistic sales.</p>
+            <div class="receipt" style="font-size:.82em">
+              <div class="line"><span style="color:var(--faint)">$</span><span style="flex:1;margin-left:10px">npm install &amp;&amp; npm run seed &amp;&amp; npm run dev</span></div>
+              <div class="line"><span style="color:var(--faint)">$</span><span style="flex:1;margin-left:10px">npm run docker:env &amp;&amp; npm run docker:up</span></div>
+              <div class="line" style="margin-top:8px"><span style="color:var(--emerald)">web</span><span style="flex:1;text-align:right;color:var(--text)">http://localhost:8080</span></div>
+              <div class="line"><span style="color:var(--emerald)">api</span><span style="flex:1;text-align:right;color:var(--text)">http://localhost:4000/api/docs</span></div>
+            </div>
+          </div>
+          <div class="card" style="padding:18px">
+            <div class="tiny" style="letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Demo workspace</div>
+            <div class="mock-list">
+              <div class="mock-row"><span class="avatar">O</span><span class="grow">owner@demo.dev</span><span class="tag">Admin</span></div>
+              <div class="mock-row"><span class="avatar">M</span><span class="grow">manager@demo.dev</span><span class="tag">Manager</span></div>
+              <div class="mock-row"><span class="avatar">C</span><span class="grow">cashier@demo.dev</span><span class="tag">Cashier</span></div>
+            </div>
+            <p class="small" style="margin-top:12px">Password <span style="font-family:var(--mono);color:var(--text)">PulseDemo2026!</span> · two stores, 90 days of sales, low-stock products and activity history.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 -->
+      <section class="slide" id="next" data-title="Roadmap">
+        <div class="split">
+          <div class="closing">
+            <span class="kicker">What's next</span>
+            <h2 style="margin-top:12px">A calm control room for every independent shop.</h2>
+            <p class="lede" style="margin-top:12px">PulseBoard is built to grow from one café to a small chain without changing the mental model: one live picture, the right access, three languages.</p>
+            <div class="row" style="margin-top:18px">
+              <span class="pill cyan">Portfolio project</span>
+              <span class="pill">MIT licensed</span>
+              <span class="pill emerald">Open to feedback</span>
+            </div>
+          </div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="when">Now</span>
+              <div><b>Single-region, multi-store</b><span>Docker Compose, PostgreSQL 16, green CI.</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="when">Next</span>
+              <div><b>Redis adapter &amp; scheduled reports</b><span>Horizontal Socket.io scaling and emailed weekly digests.</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="when">Then</span>
+              <div><b>Demand forecasting</b><span>Reorder suggestions from 90 days of real sales history.</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="when">Later</span>
+              <div><b>Mobile PWA &amp; barcode hardware</b><span>Floor-ready stock counts and a scanner-first till.</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="tiny" style="text-align:center;margin-top:4px">PulseBoard · every sale, every shelf, one live pulse.</p>
+      </section>
+    </main>
+
+    <div class="footer-lang">English deck</div>
+    <div class="dots" data-dots aria-label="Slides"></div>
+    <div class="controls">
+      <button class="btn" type="button" data-prev aria-label="Previous slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <button class="btn" type="button" data-next aria-label="Next slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
+    <div class="progress"><b data-progress></b></div>
+  </div>
+  <script src="../assets/deck.js"></script>
+</body>
+</html>

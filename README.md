@@ -64,6 +64,27 @@ sale pushes a WebSocket event to open dashboards.
 - Store identity, location, receipt prefix, low-stock alerts, retention and owner-only deletion.
 - Light/dark/system theme persisted to the user profile.
 
+### Three languages, everything translated
+The whole interface works in **English**, **German** and **Uzbek (Latin)** — not just the
+navigation. That includes:
+
+- Every screen, modal, drawer, empty state and toast.
+- Form validation and server-side errors (for example *"E-Mail oder Passwort ist falsch"*
+  and *"Elektron pochta yoki parol noto'g'ri"*).
+- Number grouping, compact notation (`12,4 Tsd.` / `12,4 ming`), currency symbols, month and
+  weekday names, and relative timestamps.
+- Per-store currency and timezone, independent of the interface language.
+- A language switcher in the topbar **and** on the auth pages, so visitors can change the
+  language before signing in.
+- First-visit language detection from the browser, then persisted to both `localStorage` and
+  the user's profile.
+
+The i18n layer has no runtime dependency: English source strings are the keys, German and
+Uzbek dictionaries are typed, and Uzbek formatting is implemented in-house because browser
+ICU support for Latin Uzbek is inconsistent. See
+[`apps/web/src/lib/i18n.ts`](apps/web/src/lib/i18n.ts) and
+[`apps/web/src/lib/translations`](apps/web/src/lib/translations).
+
 ## Tech stack
 
 | Layer | Choices |
@@ -181,6 +202,22 @@ and `APP_URL` to your HTTPS origin when terminating TLS in front of the stack.
 
 See [docs/deployment.md](docs/deployment.md) for TLS, backups, SMTP and scaling guidance.
 
+## Presentations
+
+Portfolio-ready slide decks live in the repository as static HTML — no build step and no
+external assets:
+
+| Language | Deck |
+| --- | --- |
+| English | [`presentations/en/index.html`](presentations/en/index.html) |
+| Deutsch | [`presentations/de/index.html`](presentations/de/index.html) |
+| O'zbekcha | [`presentations/uz/index.html`](presentations/uz/index.html) |
+
+Open [`presentations/index.html`](presentations/index.html) for a language chooser, or open a
+deck directly in a browser. Navigate with `←` / `→`, `Space`, or the on-screen controls; press
+`F` for fullscreen. The decks cover the problem, the product, the architecture, security,
+quality and the roadmap, using the same design language as the app.
+
 ## Configuration
 
 The API validates every variable at boot with Zod and exits with a readable error if a value
@@ -239,7 +276,7 @@ and every endpoint re-checks access.
 ## Testing
 
 ```bash
-npm test                 # 90 API + 41 web tests
+npm test                 # 90 API + 54 web tests
 npm run test:coverage    # API coverage with thresholds
 npm run verify           # everything CI runs (format, types, lint, tests, build)
 ```
@@ -276,9 +313,11 @@ permission resolution, guards, the UI kit and modal behaviour with Testing Libra
 │       ├── Dockerfile
 │       └── nginx.conf
 ├── docs/                          architecture and deployment notes
-├── scripts/                       environment bootstrap
+├── presentations/                 self-contained slide decks (EN / DE / UZ)
+├── scripts/                       environment bootstrap and i18n tooling
+├── CHANGELOG.md
 ├── docker-compose.yml
-└── .github/workflows/ci.yml
+└── .github/                       CI, issue templates, pull-request template
 ```
 
 ## Engineering decisions
@@ -301,11 +340,12 @@ permission resolution, guards, the UI kit and modal behaviour with Testing Libra
 
 - Single-region deployment; Socket.io scaling would need a Redis adapter for multiple API
   replicas.
-- Email delivery requires SMTP; the local fallback logs messages instead of sending them.
+- Email delivery requires SMTP; without it, reset and invitation links are written to the API
+  logs.
 - The demo seed is intentionally deterministic; use `--force` to rebuild it after schema or
   seed changes.
-- Docker images are built in CI; the local machine used to develop this repository did not
-  have a running Docker daemon, so compose was validated by CI rather than locally.
+- The Docker Compose stack was built and smoke-tested locally (db, api and web all report
+  `healthy`) and is also exercised by CI.
 
 ## License
 

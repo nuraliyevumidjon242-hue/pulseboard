@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PulseBoard · Produktpräsentation</title>
+  <meta name="description" content="PulseBoard — Echtzeit-Analysen für Umsatz, Bestand und Kundenverhalten unabhängiger Händler." />
+  <link rel="stylesheet" href="../assets/deck.css" />
+</head>
+<body>
+  <div class="deck">
+    <header class="topbar">
+      <a class="brand" href="../index.html"><span class="brand-mark">▲</span> PulseBoard</a>
+      <span class="spacer"></span>
+      <nav class="deck-langs" aria-label="Präsentationssprache">
+        <a href="../en/index.html">EN</a>
+        <a href="index.html" aria-current="true">DE</a>
+        <a href="../uz/index.html">UZ</a>
+      </nav>
+      <span class="counter" data-counter></span>
+    </header>
+
+    <main class="stage">
+      <!-- 1 -->
+      <section class="slide title active" id="intro" data-title="Produktpräsentation">
+        <span class="kicker">Fallstudie · Full-Stack-Produkt</span>
+        <h1 class="display">PulseBoard</h1>
+        <p class="tagline">Machen Sie aus Ihrer Kasse eine Live-Leitwarte.</p>
+        <p class="sub">Echtzeit-Analysen für Umsatz, Bestand und Kundenverhalten — für unabhängige Händler. Echte API, echte Datenbank und eine Oberfläche, die in Deutsch, Englisch und Usbekisch wirklich funktioniert.</p>
+        <div class="meta-row">
+          <span class="pill cyan">React 18</span>
+          <span class="pill">Node.js + Express</span>
+          <span class="pill">PostgreSQL</span>
+          <span class="pill emerald">Socket.io</span>
+          <span class="pill amber">Docker</span>
+        </div>
+        <span class="hint">← → zum Navigieren · F für Vollbild</span>
+      </section>
+
+      <!-- 2 -->
+      <section class="slide" id="problem" data-title="Das Problem">
+        <span class="kicker">Das Problem</span>
+        <h2 class="title">Zahlen von gestern führen keinen Laden <em>von heute.</em></h2>
+        <div class="grid-3">
+          <div class="card rose">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></span>
+            <h3>Umsätze landen in Tabellen</h3>
+            <p>Der Tag ist vorbei, bevor der Bericht existiert. Inhaber entscheiden mit Zahlen, die längst veraltet sind.</p>
+          </div>
+          <div class="card amber">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 12l9 4 9-4"/><path d="M3 17l9 4 9-4"/></svg></span>
+            <h3>Fehlbestände fallen zu spät auf</h3>
+            <p>Regale leeren sich, bevor es jemand merkt. Bestseller verpassen ihre besten Stunden.</p>
+          </div>
+          <div class="card">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"/></svg></span>
+            <h3>Jeder Standort arbeitet anders</h3>
+            <p>Getrennte Exporte, getrennte Währungen, kein gemeinsames Bild des Geschäfts.</p>
+          </div>
+        </div>
+        <div class="row">
+          <span class="pill rose">Berichte kommen erst morgen</span>
+          <span class="pill amber">Bestand wird monatlich gezählt</span>
+          <span class="pill">Inhaber raten, Manager löschen Brände</span>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="slide" id="solution" data-title="Ein Live-Puls">
+        <div class="split">
+          <div class="stack">
+            <span class="kicker">Das Produkt</span>
+            <h2 class="title">Jeder Verkauf. Jedes Regal. <em>Ein Live-Puls.</em></h2>
+            <p class="lede">PulseBoard verbindet die Kasse mit einem gemeinsamen operativen Bild. Ein Verkauf wird gebucht, das Dashboard bewegt sich — kein Neuladen, kein nächtlicher Batch, keine Tabelle.</p>
+            <div class="grid-2">
+              <div class="card cyan">
+                <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
+                <h3>Live-Dashboard</h3>
+                <p>Umsatz, Warenkorb und Frequenz aktualisieren sich, sobald ein Verkauf abgeschlossen ist.</p>
+              </div>
+              <div class="card emerald">
+                <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
+                <h3>Tiefe Analysen</h3>
+                <p>Margen, Stoßzeiten, Kundenbindung und Filialvergleich — exportierbar als PDF oder CSV.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding: 18px">
+            <div class="between" style="margin-bottom: 14px">
+              <div>
+                <div class="tiny" style="letter-spacing:.12em;text-transform:uppercase">Nordwind Café · Berlin</div>
+                <div style="font-size:1.6em;font-weight:750;letter-spacing:-.04em;margin-top:4px">€4.286,50</div>
+              </div>
+              <span class="pill emerald">▲ 18,4 % vs. gestern</span>
+            </div>
+            <div class="bars" aria-hidden="true">
+              <b style="height:34%"></b><b style="height:46%"></b><b style="height:38%"></b><b style="height:56%"></b>
+              <b style="height:49%"></b><b style="height:64%"></b><b style="height:57%"></b><b style="height:72%"></b>
+              <b style="height:63%"></b><b style="height:82%"></b><b style="height:70%"></b><b style="height:94%"></b>
+            </div>
+            <div class="mock-list" style="margin-top: 12px">
+              <div class="mock-row"><span class="avatar">A</span><span class="grow">Anna Weber</span><span class="money">€14,80</span></div>
+              <div class="mock-row"><span class="avatar">L</span><span class="grow">Lukas Brandt</span><span class="money">€9,40</span></div>
+              <div class="mock-row"><span class="avatar">S</span><span class="grow">Selin Aydin</span><span class="money">€23,10</span></div>
+            </div>
+            <p class="tiny" style="margin-top: 12px">Über Socket.io gestreamt · vor 2 Sekunden aktualisiert</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="slide" id="dashboard" data-title="Dashboard">
+        <div class="between">
+          <div>
+            <span class="kicker">Produkttour · 01</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px);margin-top:8px">Das Dashboard auf einen Blick</h2>
+          </div>
+          <span class="pill">Inhaber-Ansicht · alle Standorte</span>
+        </div>
+        <div class="mock">
+          <div class="mock-bar"><i></i><i></i><i></i><span class="url">localhost:8080/dashboard</span></div>
+          <div class="mock-body">
+            <div class="mock-head">
+              <div><h4>Guten Morgen, Mara</h4><p>Nordwind Café · Berlin · Europe/Berlin</p></div>
+              <div class="row" style="gap:6px"><span class="pill emerald"><span class="dot"></span>Live</span><span class="pill">Letzte 7 Tage</span></div>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><span>Umsatz heute</span><b>€4.286,50</b><i>▲ 18,4 %</i></div>
+              <div class="kpi"><span>Transaktionen</span><b>182</b><i>▲ 6,1 %</i></div>
+              <div class="kpi"><span>Durchschnittsbon</span><b>€23,55</b><i>▲ 11,6 %</i></div>
+              <div class="kpi"><span>Artikel verkauft</span><b>512</b><i>▲ 9,2 %</i></div>
+            </div>
+            <div class="split" style="gap:10px;align-items:stretch">
+              <div class="mock-tile">
+                <h5>Umsatztrend</h5>
+                <svg viewBox="0 0 320 90" style="width:100%;height:80px;display:block" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="area-de" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#22d3ee" stop-opacity=".42"/>
+                      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0 70 L26 62 L52 66 L78 50 L104 55 L130 40 L156 47 L182 32 L208 38 L234 24 L260 30 L286 16 L320 22 L320 90 L0 90 Z" fill="url(#area-de)"/>
+                  <path d="M0 70 L26 62 L52 66 L78 50 L104 55 L130 40 L156 47 L182 32 L208 38 L234 24 L260 30 L286 16 L320 22" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="mock-tile">
+                <h5>Top-Produkte</h5>
+                <div class="mock-list">
+                  <div class="mock-row"><span class="grow">Flat white</span><span class="tag">128</span></div>
+                  <div class="mock-row"><span class="grow">Sourdough loaf</span><span class="tag">96</span></div>
+                  <div class="mock-row"><span class="grow">Cinnamon roll</span><span class="tag">84</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="row" style="gap:6px">
+              <span class="pill rose">3 Produkte mit niedrigem Bestand</span>
+              <span class="pill">2 Meilensteine diese Woche</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="slide" id="pos" data-title="Kasse">
+        <div class="split wide-left">
+          <div class="stack">
+            <span class="kicker">Produkttour · 02</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Ein Verkauf <em>in Sekunden.</em></h2>
+            <ul class="checks">
+              <li><strong>Suche nach Name, SKU oder Barcode</strong> und Hinzufügen mit einem Tastendruck.</li>
+              <li><strong>Mengenschritte, feste Rabatte</strong>, Kundenname, Notizen und vier Zahlungsarten.</li>
+              <li><strong>Atomare Bestandsbuchung</strong> — ein Verkauf kann den Bestand nie überverkaufen, auch unter Last.</li>
+              <li><strong>Belege und eine Detailansicht</strong> mit generierter Transaktions-ID wie <span style="font-family:var(--mono);color:var(--text)">NWC-20261026-FE75A0</span>.</li>
+              <li><strong>Seitenweise Historie und CSV-Export</strong> für die Buchhaltung.</li>
+            </ul>
+            <div class="row">
+              <span class="pill cyan">Tastaturorientiert</span>
+              <span class="pill">Bar · Karte · Mobil · Gutschein</span>
+            </div>
+          </div>
+          <div class="card" style="padding: 16px">
+            <div class="receipt">
+              <div style="text-align:center;color:var(--text);font-weight:700;letter-spacing:.12em">PULSEBOARD</div>
+              <div style="text-align:center;margin-bottom:8px">Nordwind Café · Berlin</div>
+              <div class="line"><span>2 × Flat white</span><span>€8,40</span></div>
+              <div class="line"><span>1 × Sourdough loaf</span><span>€5,20</span></div>
+              <div class="line"><span>1 × Cinnamon roll</span><span>€3,60</span></div>
+              <div class="line"><span>Rabatt</span><span>−€1,20</span></div>
+              <div class="total"><span>SUMME</span><span>€16,00</span></div>
+              <div style="margin-top:8px;font-size:.92em;text-align:center;color:var(--faint)">NWC-20261026-FE75A0 · Karte</div>
+            </div>
+            <p class="tiny" style="margin-top:10px">Beleg und Bestandsbewegung werden in einer Transaktion geschrieben.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section class="slide" id="inventory" data-title="Bestand">
+        <span class="kicker">Produkttour · 03</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Bestand, der <em>zuerst warnt.</em></h2>
+        <div class="grid-3">
+          <div class="card cyan">
+            <h3>Produkte &amp; Bestand</h3>
+            <p>SKU, Kategorie, Einkaufspreis, Verkaufspreis, Einheit, Haltbarkeitsdatum und Schwellenwerte pro Produkt.</p>
+          </div>
+          <div class="card emerald">
+            <h3>Korrekturen mit Protokoll</h3>
+            <p>Einkäufe, Verluste, Schäden, Korrekturen und Retouren werden mit Wer, Wann und Warum erfasst.</p>
+          </div>
+          <div class="card amber">
+            <h3>Import &amp; Warnung</h3>
+            <p>CSV-Import mit Zeilenfehlern, Vorlage zum Herunterladen sowie E-Mail- und In-App-Warnungen bei niedrigem Bestand.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="mock-tile">
+            <h5>Niedriger Bestand · Aufmerksamkeit nötig</h5>
+            <div class="mock-list">
+              <div class="mock-row"><span class="grow">Sourdough loaf</span><span class="pill rose">4 übrig · min. 12</span></div>
+              <div class="mock-row"><span class="grow">Oat milk 1 L</span><span class="pill rose">6 übrig · min. 18</span></div>
+              <div class="mock-row"><span class="grow">Cinnamon roll</span><span class="pill amber">9 übrig · min. 10</span></div>
+            </div>
+          </div>
+          <div class="row" style="gap:10px;align-items:stretch">
+            <div class="stat" style="flex:1"><b>€18,4k</b><span>Bestandsbewertung</span></div>
+            <div class="stat" style="flex:1"><b>€52,7k</b><span>Möglicher Umsatz</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="slide" id="analytics" data-title="Analysen">
+        <div class="split wide-left">
+          <div class="stack">
+            <span class="kicker">Produkttour · 04</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Analysen, die Sie <em>dem Vorstand zeigen können.</em></h2>
+            <ul class="checks">
+              <li><strong>Umsatztrends</strong> nach Tag, Woche oder Monat, mit Daten für die Stoßzeiten-Heatmap.</li>
+              <li><strong>Produktleistung und Margen</strong> bis auf die einzelne SKU.</li>
+              <li><strong>Kundenanalysen</strong>: Wiederkehrrate, durchschnittlicher Umsatz, Top-Kunden.</li>
+              <li><strong>Filialvergleich</strong> für Inhaber mit mehreren Standorten.</li>
+              <li><strong>Serverseitige PDF- und CSV-Exporte</strong> aus denselben Aggregaten wie auf dem Bildschirm.</li>
+            </ul>
+          </div>
+          <div class="mock">
+            <div class="mock-bar"><i></i><i></i><i></i><span class="url">localhost:8080/analytics</span></div>
+            <div class="mock-body">
+              <div class="mock-head"><div><h4>Umsatz · letzte 30 Tage</h4><p>Nordwind Café vs. Kiez Markt</p></div><span class="pill emerald">▲ 14,2 %</span></div>
+              <svg viewBox="0 0 360 110" style="width:100%;height:110px;display:block" aria-hidden="true">
+                <defs>
+                  <linearGradient id="a2-de" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#818cf8" stop-opacity=".38"/>
+                    <stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0 84 L30 76 L60 80 L90 62 L120 68 L150 48 L180 55 L210 38 L240 44 L270 26 L300 32 L330 18 L360 24 L360 110 L0 110 Z" fill="url(#a2-de)"/>
+                <path d="M0 84 L30 76 L60 80 L90 62 L120 68 L150 48 L180 55 L210 38 L240 44 L270 26 L300 32 L330 18 L360 24" fill="none" stroke="#818cf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M0 92 L30 88 L60 90 L90 80 L120 84 L150 72 L180 78 L210 66 L240 70 L270 56 L300 62 L330 50 L360 54" fill="none" stroke="#34d399" stroke-width="1.6" stroke-dasharray="4 5" stroke-linecap="round"/>
+              </svg>
+              <div class="grid-2" style="gap:8px">
+                <div class="mock-tile"><h5>Wiederkehrrate</h5><div class="big">41,8 %</div></div>
+                <div class="mock-tile"><h5>Bruttomarge</h5><div class="big">63,4 %</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section class="slide" id="roles" data-title="Rollen">
+        <span class="kicker">Zugriffskontrolle</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Die richtigen Rechte <em>für jede Rolle.</em></h2>
+        <div class="grid-4">
+          <div class="role">
+            <span class="scope">Geschäftsinhaber</span>
+            <h4>Admin</h4>
+            <ul><li>Alle Standorte &amp; Team</li><li>Standort-Einstellungen</li><li>Berichte &amp; Löschung</li></ul>
+          </div>
+          <div class="role">
+            <span class="scope">Ein Standort</span>
+            <h4>Manager</h4>
+            <ul><li>Produkte &amp; Bestand</li><li>Verkäufe &amp; Exporte</li><li>Analysen</li></ul>
+          </div>
+          <div class="role">
+            <span class="scope">Theke</span>
+            <h4>Kassierer</h4>
+            <ul><li>Verkäufe erfassen</li><li>Dashboard ansehen</li><li>Keine Bestandsänderung</li></ul>
+          </div>
+          <div class="role">
+            <span class="scope">Nur Lesen</span>
+            <h4>Betrachter</h4>
+            <ul><li>Dashboard</li><li>Verkaufshistorie</li><li>Analysen</li></ul>
+          </div>
+        </div>
+        <div class="card">
+          <p style="font-size:.86em"><strong style="color:var(--text)">Berechtigungen werden pro Standort auf dem Server aufgelöst.</strong> Die Oberfläche blendet Aktionen aus, die eine Rolle nicht ausführen darf, und jeder Endpunkt prüft die Mitgliedschaft erneut, bevor der Dienst läuft — ein veralteter Tab oder eine manipulierte Anfrage kann die Matrix nicht umgehen.</p>
+        </div>
+      </section>
+
+      <!-- 9 -->
+      <section class="slide" id="languages" data-title="Sprachen">
+        <div class="between">
+          <div>
+            <span class="kicker">Lokalisierung</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px);margin-top:8px">Drei Sprachen. <em>Wirklich drei.</em></h2>
+          </div>
+          <span class="pill cyan">English · Deutsch · O'zbekcha</span>
+        </div>
+        <div class="split" style="align-items:start">
+          <table class="lang-table">
+            <thead><tr><th>Oberflächentext</th><th>Deutsch</th><th>O'zbekcha</th></tr></thead>
+            <tbody>
+              <tr><td>Sign in</td><td>Anmelden</td><td>Kirish</td></tr>
+              <tr><td>Email or password is incorrect</td><td>E-Mail oder Passwort ist falsch</td><td>Elektron pochta yoki parol noto'g'ri</td></tr>
+              <tr><td>Today's revenue</td><td>Umsatz heute</td><td>Bugungi tushum</td></tr>
+              <tr><td>Low stock</td><td>Niedriger Bestand</td><td>Kam qoldiq</td></tr>
+              <tr><td>€12,400</td><td>12.400 €</td><td>12 400 so'm</td></tr>
+            </tbody>
+          </table>
+          <div class="stack">
+            <ul class="checks">
+              <li><strong>Alles übersetzt:</strong> Bildschirme, Dialoge, Leerzustände, Toasts, Validierung und Serverfehler.</li>
+              <li><strong>Usbekische Formatierung ist selbst implementiert</strong>, weil die ICU-Unterstützung für lateinisches Usbekisch inkonsistent ist.</li>
+              <li><strong>Spracherkennung beim ersten Besuch</strong>, danach im Profil gespeichert.</li>
+              <li><strong>Währung und Zeitzone pro Standort</strong>, unabhängig von der Oberflächensprache.</li>
+            </ul>
+            <div class="row">
+              <span class="pill emerald">885 Wörterbucheinträge</span>
+              <span class="pill">Anmeldeseiten inklusive</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section class="slide" id="architecture" data-title="Architektur">
+        <div class="split wide-right">
+          <div class="stack">
+            <span class="kicker">Unter der Haube</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Einfach an der Oberfläche. <em>Ernsthaft darunter.</em></h2>
+            <p class="lede">Eine typisierte API, ein Schema, eine Wahrheit. Der Web-Client sieht nur, was die API erlaubt, und jede Kennzahl auf dem Bildschirm stammt aus derselben Abfrage wie der Export.</p>
+            <div class="row">
+              <span class="pill">TypeScript strict</span>
+              <span class="pill">Drizzle ORM</span>
+              <span class="pill">Zod</span>
+              <span class="pill">TanStack Query</span>
+            </div>
+          </div>
+          <div class="arch">
+            <div class="node accent"><b>React SPA</b><span>Vite · Tailwind · Recharts · Zustand</span></div>
+            <div class="arch-arrow">↓ REST /api/v1 · WebSocket /socket.io</div>
+            <div class="node"><b>Nginx</b><span>statische Assets · SPA-Fallback · Reverse-Proxy</span></div>
+            <div class="arch-arrow">↓</div>
+            <div class="node accent"><b>Express API</b><span>Zod-Validierung · RBAC · Services · Socket.io</span></div>
+            <div class="arch-arrow">↓ Drizzle</div>
+            <div class="node"><b>PostgreSQL 16</b><span>Produktion · PGlite für Dev und Tests ohne Einrichtung</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 -->
+      <section class="slide" id="security" data-title="Sicherheit">
+        <span class="kicker">Sicherheit</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Sicherheit ist ein Feature, <em>kein Häkchen.</em></h2>
+        <div class="grid-3">
+          <div class="card cyan">
+            <h3>Token, die nie gespeichert werden</h3>
+            <p>Zugriffstoken leben nur im Speicher. Refresh-Token sind httpOnly, at rest gehasht und werden bei jeder Nutzung rotiert.</p>
+          </div>
+          <div class="card rose">
+            <h3>Replay-Erkennung</h3>
+            <p>Die Wiederverwendung eines alten Refresh-Tokens widerruft automatisch alle aktiven Sitzungen des Kontos.</p>
+          </div>
+          <div class="card emerald">
+            <h3>Mandantenprüfung in der Middleware</h3>
+            <p>Mitgliedschaft und Berechtigungen werden aufgelöst, bevor ein standortbezogener Dienst läuft.</p>
+          </div>
+          <div class="card amber">
+            <h3>Standardmäßig gehärtet</h3>
+            <p>Helmet, Rate Limits für Authentifizierung und sensible Aktionen, strikte CORS-Regeln und validierte Umgebungskonfiguration.</p>
+          </div>
+          <div class="card">
+            <h3>Fail closed</h3>
+            <p>Die Produktion startet nicht mit Platzhalter- oder Entwicklungs-JWT-Secrets.</p>
+          </div>
+          <div class="card">
+            <h3>Auditierbar</h3>
+            <p>Privilegierte Aktionen werden mit Akteur, Standort und Zeitstempel im Aktivitätsprotokoll erfasst.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section class="slide" id="quality" data-title="Qualität">
+        <span class="kicker">Qualität</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Belegt, <em>nicht versprochen.</em></h2>
+        <div class="grid-4">
+          <div class="stat"><b>90</b><span>API-Tests · echte Migrationen</span></div>
+          <div class="stat"><b>54</b><span>Web-Tests · Testing Library</span></div>
+          <div class="stat"><b>83 %</b><span>Statement-Coverage</span></div>
+          <div class="stat"><b>0</b><span>Produktions-Sicherheitslücken</span></div>
+        </div>
+        <div class="split" style="align-items:start">
+          <ul class="checks">
+            <li><strong>Striktes TypeScript</strong> in beiden Workspaces, kein implizites any, keine ungeprüften Indizes.</li>
+            <li><strong>ESLint 9 Flat Config</strong> ohne erlaubte Warnungen, Prettier in der CI erzwungen.</li>
+            <li><strong>Echte Datenbank in Tests</strong> — PGlite startet die Migrationen und prüft Mandantentrennung und RBAC end to end.</li>
+          </ul>
+          <div class="card">
+            <div class="between">
+              <div>
+                <div class="tiny" style="letter-spacing:.12em;text-transform:uppercase">GitHub Actions · main</div>
+                <div style="font-size:1.15em;font-weight:650;margin-top:5px">format → types → lint → tests → build</div>
+              </div>
+              <span class="pill emerald"><span class="dot"></span>Grün</span>
+            </div>
+            <p class="small" style="margin-top:10px">Derselbe Befehl lokal: <span style="font-family:var(--mono);color:var(--text)">npm run verify</span>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section class="slide" id="run" data-title="Ausführen">
+        <div class="split">
+          <div class="stack">
+            <span class="kicker">Ausführen</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Vom Klon zum Live-System <em>in einem Befehl.</em></h2>
+            <p class="lede">Für die lokale Entwicklung ist kein Datenbankserver nötig: PGlite startet ein eingebettetes PostgreSQL, führt die Migrationen aus und legt 90 Tage realistischer Verkäufe an.</p>
+            <div class="receipt" style="font-size:.82em">
+              <div class="line"><span style="color:var(--faint)">$</span><span style="flex:1;margin-left:10px">npm install &amp;&amp; npm run seed &amp;&amp; npm run dev</span></div>
+              <div class="line"><span style="color:var(--faint)">$</span><span style="flex:1;margin-left:10px">npm run docker:env &amp;&amp; npm run docker:up</span></div>
+              <div class="line" style="margin-top:8px"><span style="color:var(--emerald)">web</span><span style="flex:1;text-align:right;color:var(--text)">http://localhost:8080</span></div>
+              <div class="line"><span style="color:var(--emerald)">api</span><span style="flex:1;text-align:right;color:var(--text)">http://localhost:4000/api/docs</span></div>
+            </div>
+          </div>
+          <div class="card" style="padding:18px">
+            <div class="tiny" style="letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Demo-Arbeitsbereich</div>
+            <div class="mock-list">
+              <div class="mock-row"><span class="avatar">O</span><span class="grow">owner@demo.dev</span><span class="tag">Admin</span></div>
+              <div class="mock-row"><span class="avatar">M</span><span class="grow">manager@demo.dev</span><span class="tag">Manager</span></div>
+              <div class="mock-row"><span class="avatar">C</span><span class="grow">cashier@demo.dev</span><span class="tag">Kassierer</span></div>
+            </div>
+            <p class="small" style="margin-top:12px">Passwort <span style="font-family:var(--mono);color:var(--text)">PulseDemo2026!</span> · zwei Standorte, 90 Tage Verkäufe, Produkte mit niedrigem Bestand und Aktivitätsverlauf.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 -->
+      <section class="slide" id="next" data-title="Roadmap">
+        <div class="split">
+          <div class="closing">
+            <span class="kicker">Wie es weitergeht</span>
+            <h2 style="margin-top:12px">Ein ruhiger Kontrollraum für jeden unabhängigen Laden.</h2>
+            <p class="lede" style="margin-top:12px">PulseBoard wächst von einem Café zur kleinen Kette, ohne das Denkmodell zu ändern: ein gemeinsames Bild, die richtigen Rechte, drei Sprachen.</p>
+            <div class="row" style="margin-top:18px">
+              <span class="pill cyan">Portfolio-Projekt</span>
+              <span class="pill">MIT-Lizenz</span>
+              <span class="pill emerald">Offen für Feedback</span>
+            </div>
+          </div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="when">Jetzt</span>
+              <div><b>Einzelregion, mehrere Standorte</b><span>Docker Compose, PostgreSQL 16, grüne CI.</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="when">Als Nächstes</span>
+              <div><b>Redis-Adapter &amp; geplante Berichte</b><span>Horizontale Socket.io-Skalierung und wöchentliche E-Mail-Zusammenfassungen.</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="when">Danach</span>
+              <div><b>Bedarfsprognose</b><span>Nachbestellvorschläge aus 90 Tagen echter Verkaufshistorie.</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="when">Später</span>
+              <div><b>Mobile PWA &amp; Barcode-Hardware</b><span>Bestandszählung für die Fläche und eine scannerfreundliche Kasse.</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="tiny" style="text-align:center;margin-top:4px">PulseBoard · jeder Verkauf, jedes Regal, ein Live-Puls.</p>
+      </section>
+    </main>
+
+    <div class="footer-lang">Deutsches Deck</div>
+    <div class="dots" data-dots aria-label="Folien"></div>
+    <div class="controls">
+      <button class="btn" type="button" data-prev aria-label="Vorherige Folie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <button class="btn" type="button" data-next aria-label="Nächste Folie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
+    <div class="progress"><b data-progress></b></div>
+  </div>
+  <script src="../assets/deck.js"></script>
+</body>
+</html>

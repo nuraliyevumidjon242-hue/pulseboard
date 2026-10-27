@@ -1,7 +1,8 @@
 import { AlertTriangle, Inbox, Loader2, RefreshCw } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { cn } from '../../lib/utils';
+import { cn, formatPercent } from '../../lib/utils';
 import { Button } from './button';
+import { t } from '../../lib/i18n';
 
 export function Spinner({ className }: { className?: string }) {
   return <Loader2 className={cn('h-4 w-4 animate-spin text-brand-600', className)} aria-hidden />;
@@ -30,7 +31,7 @@ export function SkeletonTable({ rows = 6, columns = 5 }: { rows?: number; column
 }
 
 export function LoadingBlock({
-  label = 'Loading data',
+  label = t('Loading data'),
   className,
   rows = 4,
 }: {
@@ -54,7 +55,7 @@ export function LoadingBlock({
 }
 
 export function ErrorState({
-  title = 'Could not load this view',
+  title = t('Could not load this view'),
   message,
   onRetry,
   className,
@@ -88,7 +89,7 @@ export function ErrorState({
           onClick={onRetry}
           leftIcon={<RefreshCw className="h-3.5 w-3.5" />}
         >
-          Try again
+          {t('Try again')}
         </Button>
       ) : null}
     </div>
@@ -192,7 +193,7 @@ export function DeltaPill({
         className,
       )}
     >
-      {positive ? '▲' : '▼'} {Math.abs(value).toFixed(1)}%
+      {positive ? '▲' : '▼'} {formatPercent(Math.abs(value), 1, false)}
     </span>
   );
 }

@@ -5,6 +5,7 @@ import { useAuthStore, useActiveStore } from '../../stores/auth-store';
 import { toast } from '../../stores/toast-store';
 import { Avatar } from '../ui/avatar';
 import { Dropdown, DropdownDivider, DropdownItem, DropdownLabel } from '../ui/dropdown';
+import { t } from '../../lib/i18n';
 
 export function UserMenu() {
   const user = useAuthStore((state) => state.user);
@@ -16,7 +17,7 @@ export function UserMenu() {
 
   return (
     <Dropdown
-      label="Account menu"
+      label={t('Account menu')}
       panelClassName="w-64"
       trigger={
         <span className="flex items-center gap-2 rounded-xl p-1 transition hover:bg-ink-100 dark:hover:bg-ink-800">
@@ -54,7 +55,7 @@ export function UserMenu() {
             </div>
           </div>
           <DropdownDivider />
-          <DropdownLabel>Account</DropdownLabel>
+          <DropdownLabel>{t('Account')}</DropdownLabel>
           <DropdownItem
             icon={<UserRound className="h-4 w-4" />}
             onClick={() => {
@@ -62,7 +63,7 @@ export function UserMenu() {
               navigate('/settings?tab=profile');
             }}
           >
-            My profile
+            {t('My profile')}
           </DropdownItem>
           <DropdownItem
             icon={<Settings className="h-4 w-4" />}
@@ -71,7 +72,7 @@ export function UserMenu() {
               navigate('/settings');
             }}
           >
-            Workspace settings
+            {t('Workspace settings')}
           </DropdownItem>
           {store ? (
             <DropdownItem
@@ -81,7 +82,7 @@ export function UserMenu() {
                 navigate('/settings?tab=security');
               }}
             >
-              Security
+              {t('Security')}
             </DropdownItem>
           ) : null}
           <DropdownDivider />
@@ -91,11 +92,11 @@ export function UserMenu() {
             onClick={async () => {
               close();
               await logout();
-              toast.success('Signed out', 'See you again soon.');
+              toast.success(t('Signed out'), t('See you again soon.'));
               navigate('/login', { replace: true });
             }}
           >
-            Sign out
+            {t('Sign out')}
           </DropdownItem>
         </>
       )}

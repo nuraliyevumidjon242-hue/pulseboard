@@ -13,6 +13,7 @@ RUN npm ci
 # Compile the API (migrations stay in apps/api/drizzle).
 COPY apps/api/tsconfig.json apps/api/tsconfig.build.json apps/api/
 COPY apps/api/src apps/api/src
+COPY apps/api/drizzle apps/api/drizzle
 RUN npm run build -w @pulseboard/api
 
 # Drop dev dependencies so the runtime layer stays small.

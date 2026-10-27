@@ -4,6 +4,7 @@ import { cn } from '../../lib/utils';
 import { ROLE_LABELS } from '../../lib/permissions';
 import { useAuthStore, useActiveStore } from '../../stores/auth-store';
 import { Dropdown, DropdownDivider, DropdownItem, DropdownLabel } from '../ui/dropdown';
+import { t } from '../../lib/i18n';
 
 export function StoreSwitcher({ compact = false }: { compact?: boolean }) {
   const store = useActiveStore();
@@ -15,7 +16,7 @@ export function StoreSwitcher({ compact = false }: { compact?: boolean }) {
 
   return (
     <Dropdown
-      label="Switch store"
+      label={t('Switch store')}
       panelClassName="w-72"
       trigger={
         <span
@@ -29,12 +30,12 @@ export function StoreSwitcher({ compact = false }: { compact?: boolean }) {
           </span>
           <span className={cn('min-w-0 flex-1', compact && 'hidden sm:block')}>
             <span className="block truncate text-xs font-semibold text-ink-900 dark:text-white">
-              {store?.name ?? 'No store yet'}
+              {store?.name ?? t('No store yet')}
             </span>
             <span className="block truncate text-[10px] font-medium text-ink-500 dark:text-ink-400">
               {store
-                ? `${store.city ?? '—'} · ${ROLE_LABELS[store.role]}`
-                : 'Create your first store'}
+                ? `${store.city ?? '—'} · ${t(ROLE_LABELS[store.role])}`
+                : t('Create your first store')}
             </span>
           </span>
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-ink-400" />
@@ -43,10 +44,10 @@ export function StoreSwitcher({ compact = false }: { compact?: boolean }) {
     >
       {(close) => (
         <>
-          <DropdownLabel>Your stores</DropdownLabel>
+          <DropdownLabel>{t('Your stores')}</DropdownLabel>
           {stores.length === 0 ? (
             <p className="px-3 py-4 text-xs text-ink-500 dark:text-ink-400">
-              You do not have access to a store yet.
+              {t('You do not have access to a store yet.')}
             </p>
           ) : null}
           {stores.map((item) => (
@@ -80,7 +81,7 @@ export function StoreSwitcher({ compact = false }: { compact?: boolean }) {
               navigate('/stores');
             }}
           >
-            Manage stores
+            {t('Manage stores')}
           </DropdownItem>
           {canCreate ? (
             <DropdownItem
@@ -90,7 +91,7 @@ export function StoreSwitcher({ compact = false }: { compact?: boolean }) {
                 navigate('/stores?new=1');
               }}
             >
-              Add a new store
+              {t('Add a new store')}
             </DropdownItem>
           ) : null}
         </>

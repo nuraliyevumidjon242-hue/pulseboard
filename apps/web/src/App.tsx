@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppProviders } from './app/providers';
 import { BootSplash, RequireAuth, RequirePermission } from './components/auth/guards';
 import { AppShell } from './components/layout/app-shell';
+import { useLanguage } from './lib/i18n';
 import { useAuthStore } from './stores/auth-store';
 
 const DashboardPage = lazy(() => import('./pages/dashboard'));
@@ -29,6 +30,9 @@ function PublicOnly({ children }: { children: ReactNode }) {
 }
 
 function AppRoutes() {
+  // Subscribing here re-renders the current route when the language changes
+  // without remounting it, so unsaved form state and open modals survive.
+  useLanguage();
   return (
     <Suspense fallback={<BootSplash />}>
       <Routes>

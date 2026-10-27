@@ -43,6 +43,21 @@ new one.
 - Add accessible labels to controls and keep keyboard behaviour intact.
 - Prefer small, focused components and typed query hooks over ad-hoc `fetch` calls.
 
+## Localisation
+
+The UI must work in English, German and Uzbek (Latin). To add or change copy:
+
+1. Write the English string as the key: `t('Today’s revenue')`.
+2. Run `node scripts/collect-i18n-keys.cjs` to refresh `keys.json`.
+3. Add any tone-sensitive wording to `scripts/i18n-curated.cjs` or
+   `scripts/i18n-corrections.cjs`, then run `node scripts/generate-translations.cjs`.
+4. Run `node scripts/scan-untranslated.cjs` and fix anything it reports.
+5. Check the screen in all three languages, including validation and server errors.
+
+Do not translate customer names, store names, product names, SKUs, emails or URLs — they are
+data, not interface copy. Uzbek number and date formatting is implemented in
+`apps/web/src/lib/utils.ts`; do not replace it with `Intl` assumptions without testing.
+
 ## Tests
 
 - API changes need an integration test that exercises the real route and database.

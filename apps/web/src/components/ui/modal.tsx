@@ -3,6 +3,7 @@ import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/utils';
 import { Button } from './button';
+import { t } from '../../lib/i18n';
 
 type Size = 'sm' | 'md' | 'lg' | 'xl';
 
@@ -129,7 +130,7 @@ export function Modal({
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                aria-label="Close dialog"
+                aria-label={t('Close dialog')}
                 className="-mr-2 -mt-1 shrink-0"
               >
                 <X className="h-4 w-4" />
@@ -195,7 +196,7 @@ export function ConfirmDialog({
       }
     >
       <p className="text-sm text-ink-600 dark:text-ink-300">
-        This action cannot be undone. Please make sure you want to continue.
+        {t('This action cannot be undone. Please make sure you want to continue.')}
       </p>
     </Modal>
   );

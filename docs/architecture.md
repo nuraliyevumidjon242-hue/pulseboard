@@ -55,6 +55,39 @@ If the refresh cookie is missing or invalid, the app becomes a guest without sho
 error. A 401 during normal operation triggers a single-flight refresh and retries the
 original request once.
 
+### Localisation
+
+The interface ships in English, German and Uzbek (Latin). English source strings are the
+translation keys, so there is no separate key namespace to maintain:
+
+```tsx
+<span>{t('Today’s revenue')}</span>
+```
+
+- `apps/web/src/lib/i18n.ts` owns the current language, `t()`, `intlLocale()`, `htmlLang()`,
+  first-visit detection and the global Zod error map.
+- `apps/web/src/lib/translations/de.ts` and `uz.ts` are typed dictionaries keyed by the
+  English source string. Missing keys fall back to English rather than rendering a raw key.
+- `applyLanguage()` updates `<html lang>`, the Zod error map and the document title, and is
+  called on rehydration so a refresh never flashes English copy.
+- Uzbek number, currency, date and relative-time formatting lives in
+  `apps/web/src/lib/utils.ts`; browser ICU data for Latin Uzbek is inconsistent, so the app
+  does not rely on it.
+- The language is persisted in the UI store and in the user's profile. The topbar and the
+  auth pages share the same `LanguageMenu`, so visitors can switch before signing in.
+
+Translation tooling (not part of the runtime):
+
+```bash
+node scripts/collect-i18n-keys.cjs        # scan 74 files, write keys.json
+node scripts/generate-translations.cjs    # rebuild de.ts / uz.ts
+node scripts/scan-untranslated.cjs        # audit for hardcoded JSX copy
+```
+
+Curated wording lives in `scripts/i18n-curated.cjs` and `scripts/i18n-corrections.cjs`; they
+override the machine-generated fallback and are the right place to fix tone or terminology.
+Add new UI copy as a literal English string inside `t('…')` and re-run the first two scripts.
+
 ## Backend
 
 ```

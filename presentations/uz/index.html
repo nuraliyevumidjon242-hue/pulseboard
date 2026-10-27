@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="uz-Latn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PulseBoard · Mahsulot taqdimoti</title>
+  <meta name="description" content="PulseBoard — mustaqil savdogarlar uchun savdo, ombor va mijoz tahlillari real vaqtda." />
+  <link rel="stylesheet" href="../assets/deck.css" />
+</head>
+<body>
+  <div class="deck">
+    <header class="topbar">
+      <a class="brand" href="../index.html"><span class="brand-mark">▲</span> PulseBoard</a>
+      <span class="spacer"></span>
+      <nav class="deck-langs" aria-label="Taqdimot tili">
+        <a href="../en/index.html">EN</a>
+        <a href="../de/index.html">DE</a>
+        <a href="index.html" aria-current="true">UZ</a>
+      </nav>
+      <span class="counter" data-counter></span>
+    </header>
+
+    <main class="stage">
+      <!-- 1 -->
+      <section class="slide title active" id="intro" data-title="Mahsulot taqdimoti">
+        <span class="kicker">Keys tadqiqoti · To'liq stek mahsulot</span>
+        <h1 class="display">PulseBoard</h1>
+        <p class="tagline">Kassangizni jonli boshqaruv markaziga aylantiring.</p>
+        <p class="sub">Mustaqil savdogarlar uchun savdo, ombor va mijoz tahlillari — real vaqtda. Haqiqiy API, haqiqiy ma'lumotlar bazasi va ingliz, nemis hamda o'zbek tillarida chinakam ishlaydigan interfeys.</p>
+        <div class="meta-row">
+          <span class="pill cyan">React 18</span>
+          <span class="pill">Node.js + Express</span>
+          <span class="pill">PostgreSQL</span>
+          <span class="pill emerald">Socket.io</span>
+          <span class="pill amber">Docker</span>
+        </div>
+        <span class="hint">← → bilan harakatlaning · F — to'liq ekran</span>
+      </section>
+
+      <!-- 2 -->
+      <section class="slide" id="problem" data-title="Muammo">
+        <span class="kicker">Muammo</span>
+        <h2 class="title">Kechagi raqamlar bugungi do'konni <em>boshqarmaydi.</em></h2>
+        <div class="grid-3">
+          <div class="card rose">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></span>
+            <h3>Savdolar jadvalda qolib ketadi</h3>
+            <p>Hisobot paydo bo'lguncha kun tugaydi. Egasi allaqachon eskirgan raqamlar bilan qaror qabul qiladi.</p>
+          </div>
+          <div class="card amber">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 12l9 4 9-4"/><path d="M3 17l9 4 9-4"/></svg></span>
+            <h3>Tugagan tovar kech aniqlanadi</h3>
+            <p>Kimdir payqaguncha javon bo'shab qoladi. Eng ko'p sotilganlar eng yaxshi soatlarini o'tkazib yuboradi.</p>
+          </div>
+          <div class="card">
+            <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"/></svg></span>
+            <h3>Har bir do'kon boshqacha gapiradi</h3>
+            <p>Alohida eksportlar, alohida valyutalar, biznesning yagona ko'rinishi yo'q.</p>
+          </div>
+        </div>
+        <div class="row">
+          <span class="pill rose">Hisobot ertaga keladi</span>
+          <span class="pill amber">Ombor oyda bir marta sanaladi</span>
+          <span class="pill">Egasi taxmin qiladi, menejer yong'in o'chiradi</span>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="slide" id="solution" data-title="Bitta jonli puls">
+        <div class="split">
+          <div class="stack">
+            <span class="kicker">Mahsulot</span>
+            <h2 class="title">Har savdo. Har javon. <em>Bitta jonli puls.</em></h2>
+            <p class="lede">PulseBoard kassani yagona operatsion ko'rinishga bog'laydi. Savdo yakunlanadi — boshqaruv paneli darhol o'zgaradi: yangilash yo'q, tungi hisobot yo'q, jadval yo'q.</p>
+            <div class="grid-2">
+              <div class="card cyan">
+                <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
+                <h3>Jonli boshqaruv paneli</h3>
+                <p>Tushum, o'rtacha chek va mijozlar oqimi savdo yakunlangan zahoti yangilanadi.</p>
+              </div>
+              <div class="card emerald">
+                <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
+                <h3>Chuqur tahlil</h3>
+                <p>Marja, eng gavjum soatlar, mijozlarning qaytishi va do'konlarni taqqoslash — PDF yoki CSV sifatida.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding: 18px">
+            <div class="between" style="margin-bottom: 14px">
+              <div>
+                <div class="tiny" style="letter-spacing:.12em;text-transform:uppercase">Nordwind Café · Berlin</div>
+                <div style="font-size:1.6em;font-weight:750;letter-spacing:-.04em;margin-top:4px">4 286,50 €</div>
+              </div>
+              <span class="pill emerald">▲ kechagidan 18,4%</span>
+            </div>
+            <div class="bars" aria-hidden="true">
+              <b style="height:34%"></b><b style="height:46%"></b><b style="height:38%"></b><b style="height:56%"></b>
+              <b style="height:49%"></b><b style="height:64%"></b><b style="height:57%"></b><b style="height:72%"></b>
+              <b style="height:63%"></b><b style="height:82%"></b><b style="height:70%"></b><b style="height:94%"></b>
+            </div>
+            <div class="mock-list" style="margin-top: 12px">
+              <div class="mock-row"><span class="avatar">A</span><span class="grow">Anna Weber</span><span class="money">14,80 €</span></div>
+              <div class="mock-row"><span class="avatar">L</span><span class="grow">Lukas Brandt</span><span class="money">9,40 €</span></div>
+              <div class="mock-row"><span class="avatar">S</span><span class="grow">Selin Aydin</span><span class="money">23,10 €</span></div>
+            </div>
+            <p class="tiny" style="margin-top: 12px">Socket.io orqali · 2 soniya oldin yangilandi</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="slide" id="dashboard" data-title="Boshqaruv paneli">
+        <div class="between">
+          <div>
+            <span class="kicker">Mahsulot sayohati · 01</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px);margin-top:8px">Boshqaruv paneli bir qarashda</h2>
+          </div>
+          <span class="pill">Egasi ko'rinishi · barcha do'konlar</span>
+        </div>
+        <div class="mock">
+          <div class="mock-bar"><i></i><i></i><i></i><span class="url">localhost:8080/dashboard</span></div>
+          <div class="mock-body">
+            <div class="mock-head">
+              <div><h4>Xayrli tong, Mara</h4><p>Nordwind Café · Berlin · Europe/Berlin</p></div>
+              <div class="row" style="gap:6px"><span class="pill emerald"><span class="dot"></span>Jonli</span><span class="pill">Oxirgi 7 kun</span></div>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><span>Bugungi tushum</span><b>4 286,50 €</b><i>▲ 18,4%</i></div>
+              <div class="kpi"><span>Tranzaksiyalar</span><b>182</b><i>▲ 6,1%</i></div>
+              <div class="kpi"><span>O'rtacha chek</span><b>23,55 €</b><i>▲ 11,6%</i></div>
+              <div class="kpi"><span>Sotilgan tovarlar</span><b>512</b><i>▲ 9,2%</i></div>
+            </div>
+            <div class="split" style="gap:10px;align-items:stretch">
+              <div class="mock-tile">
+                <h5>Tushum trendi</h5>
+                <svg viewBox="0 0 320 90" style="width:100%;height:80px;display:block" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="area-uz" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#22d3ee" stop-opacity=".42"/>
+                      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0 70 L26 62 L52 66 L78 50 L104 55 L130 40 L156 47 L182 32 L208 38 L234 24 L260 30 L286 16 L320 22 L320 90 L0 90 Z" fill="url(#area-uz)"/>
+                  <path d="M0 70 L26 62 L52 66 L78 50 L104 55 L130 40 L156 47 L182 32 L208 38 L234 24 L260 30 L286 16 L320 22" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="mock-tile">
+                <h5>Eng ko'p sotilganlar</h5>
+                <div class="mock-list">
+                  <div class="mock-row"><span class="grow">Flat white</span><span class="tag">128</span></div>
+                  <div class="mock-row"><span class="grow">Sourdough loaf</span><span class="tag">96</span></div>
+                  <div class="mock-row"><span class="grow">Cinnamon roll</span><span class="tag">84</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="row" style="gap:6px">
+              <span class="pill rose">3 mahsulotda qoldiq kam</span>
+              <span class="pill">Bu hafta 2 muhim bosqich</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="slide" id="pos" data-title="Kassa">
+        <div class="split wide-left">
+          <div class="stack">
+            <span class="kicker">Mahsulot sayohati · 02</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Sotuvni <em>bir necha soniyada</em> yakunlang.</h2>
+            <ul class="checks">
+              <li><strong>Nom, SKU yoki shtrix-kod bo'yicha qidiring</strong> va bitta tugma bilan savatga qo'shing.</li>
+              <li><strong>Miqdorni oshirish, belgilangan chegirmalar</strong>, mijoz ismi, izohlar va to'rt to'lov usuli.</li>
+              <li><strong>Atomar qoldiq hisobi</strong> — savdo hech qachon ombordagi tovardan ko'proq sotmaydi, hatto yuklama ostida ham.</li>
+              <li><strong>Chek va tafsilotlar oynasi</strong>, <span style="font-family:var(--mono);color:var(--text)">NWC-20261026-FE75A0</span> kabi avtomatik tranzaksiya ID bilan.</li>
+              <li><strong>Sahifalangan tarix va CSV eksport</strong> buxgalter uchun.</li>
+            </ul>
+            <div class="row">
+              <span class="pill cyan">Klaviatura uchun qulay</span>
+              <span class="pill">Naqd · Karta · Mobil · Vaucher</span>
+            </div>
+          </div>
+          <div class="card" style="padding: 16px">
+            <div class="receipt">
+              <div style="text-align:center;color:var(--text);font-weight:700;letter-spacing:.12em">PULSEBOARD</div>
+              <div style="text-align:center;margin-bottom:8px">Nordwind Café · Berlin</div>
+              <div class="line"><span>2 × Flat white</span><span>8,40 €</span></div>
+              <div class="line"><span>1 × Sourdough loaf</span><span>5,20 €</span></div>
+              <div class="line"><span>1 × Cinnamon roll</span><span>3,60 €</span></div>
+              <div class="line"><span>Chegirma</span><span>−1,20 €</span></div>
+              <div class="total"><span>SUMMA</span><span>16,00 €</span></div>
+              <div style="margin-top:8px;font-size:.92em;text-align:center;color:var(--faint)">NWC-20261026-FE75A0 · Karta</div>
+            </div>
+            <p class="tiny" style="margin-top:10px">Chek va ombor harakati bitta tranzaksiyada yoziladi.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section class="slide" id="inventory" data-title="Ombor">
+        <span class="kicker">Mahsulot sayohati · 03</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Avval <em>ogohlantiradigan</em> ombor.</h2>
+        <div class="grid-3">
+          <div class="card cyan">
+            <h3>Mahsulot va qoldiq</h3>
+            <p>SKU, kategoriya, tannarx, narx, birlik, yaroqlilik muddati va har mahsulot uchun kam qoldiq chegarasi.</p>
+          </div>
+          <div class="card emerald">
+            <h3>Tarix bilan tuzatishlar</h3>
+            <p>Xarid, yo'qotish, shikast, tuzatish va qaytarish — kim, qachon va nima uchun bilan yoziladi.</p>
+          </div>
+          <div class="card amber">
+            <h3>Import va ogohlantirish</h3>
+            <p>Qator xatolarini ko'rsatadigan CSV import, yuklab olinadigan shablon, kam qoldiqda e-pochta va ilova ichidagi bildirishnomalar.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="mock-tile">
+            <h5>Kam qoldiq · e'tibor talab qiladi</h5>
+            <div class="mock-list">
+              <div class="mock-row"><span class="grow">Sourdough loaf</span><span class="pill rose">4 ta qoldi · min. 12</span></div>
+              <div class="mock-row"><span class="grow">Oat milk 1 L</span><span class="pill rose">6 ta qoldi · min. 18</span></div>
+              <div class="mock-row"><span class="grow">Cinnamon roll</span><span class="pill amber">9 ta qoldi · min. 10</span></div>
+            </div>
+          </div>
+          <div class="row" style="gap:10px;align-items:stretch">
+            <div class="stat" style="flex:1"><b>18,4 ming €</b><span>Ombor qiymati</span></div>
+            <div class="stat" style="flex:1"><b>52,7 ming €</b><span>Potensial tushum</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="slide" id="analytics" data-title="Tahlil">
+        <div class="split wide-left">
+          <div class="stack">
+            <span class="kicker">Mahsulot sayohati · 04</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Kengashga <em>ko'rsatsa bo'ladigan</em> tahlil.</h2>
+            <ul class="checks">
+              <li><strong>Kun, hafta yoki oy bo'yicha tushum trendlari</strong> va eng gavjum soatlar ma'lumotlari.</li>
+              <li><strong>Mahsulot samaradorligi va marja</strong> — alohida SKU darajasigacha.</li>
+              <li><strong>Mijoz tahlili</strong>: qaytish darajasi, o'rtacha xarid, eng yaxshi mijozlar.</li>
+              <li><strong>Do'konlarni taqqoslash</strong> bir nechta manzilga ega egalar uchun.</li>
+              <li><strong>Serverda yaratiladigan PDF va CSV</strong> — ekrandagi bilan bir xil hisob-kitoblardan.</li>
+            </ul>
+          </div>
+          <div class="mock">
+            <div class="mock-bar"><i></i><i></i><i></i><span class="url">localhost:8080/analytics</span></div>
+            <div class="mock-body">
+              <div class="mock-head"><div><h4>Tushum · oxirgi 30 kun</h4><p>Nordwind Café vs Kiez Markt</p></div><span class="pill emerald">▲ 14,2%</span></div>
+              <svg viewBox="0 0 360 110" style="width:100%;height:110px;display:block" aria-hidden="true">
+                <defs>
+                  <linearGradient id="a2-uz" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#818cf8" stop-opacity=".38"/>
+                    <stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0 84 L30 76 L60 80 L90 62 L120 68 L150 48 L180 55 L210 38 L240 44 L270 26 L300 32 L330 18 L360 24 L360 110 L0 110 Z" fill="url(#a2-uz)"/>
+                <path d="M0 84 L30 76 L60 80 L90 62 L120 68 L150 48 L180 55 L210 38 L240 44 L270 26 L300 32 L330 18 L360 24" fill="none" stroke="#818cf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M0 92 L30 88 L60 90 L90 80 L120 84 L150 72 L180 78 L210 66 L240 70 L270 56 L300 62 L330 50 L360 54" fill="none" stroke="#34d399" stroke-width="1.6" stroke-dasharray="4 5" stroke-linecap="round"/>
+              </svg>
+              <div class="grid-2" style="gap:8px">
+                <div class="mock-tile"><h5>Qaytish darajasi</h5><div class="big">41,8%</div></div>
+                <div class="mock-tile"><h5>Yalpi marja</h5><div class="big">63,4%</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section class="slide" id="roles" data-title="Rollar">
+        <span class="kicker">Ruxsatlar nazorati</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Har rol uchun <em>to'g'ri huquqlar.</em></h2>
+        <div class="grid-4">
+          <div class="role">
+            <span class="scope">Biznes egasi</span>
+            <h4>Admin</h4>
+            <ul><li>Barcha do'konlar va jamoa</li><li>Do'kon sozlamalari</li><li>Hisobotlar va o'chirish</li></ul>
+          </div>
+          <div class="role">
+            <span class="scope">Bitta do'kon</span>
+            <h4>Menejer</h4>
+            <ul><li>Mahsulot va qoldiq</li><li>Savdo va eksport</li><li>Tahlil</li></ul>
+          </div>
+          <div class="role">
+            <span class="scope">Kassa oldi</span>
+            <h4>Kassir</h4>
+            <ul><li>Savdo yaratish</li><li>Panelni ko'rish</li><li>Qoldiqni tahrirlash yo'q</li></ul>
+          </div>
+          <div class="role">
+            <span class="scope">Faqat o'qish</span>
+            <h4>Kuzatuvchi</h4>
+            <ul><li>Boshqaruv paneli</li><li>Savdo tarixi</li><li>Tahlil</li></ul>
+          </div>
+        </div>
+        <div class="card">
+          <p style="font-size:.86em"><strong style="color:var(--text)">Huquqlar serverda har bir do'kon bo'yicha aniqlanadi.</strong> Interfeys rol bajara olmaydigan amallarni yashiradi, har bir API nuqtasi esa xizmat ishga tushishidan oldin a'zolikni qayta tekshiradi — eskirgan varaq yoki soxta so'rov ham matritsani chetlab o'ta olmaydi.</p>
+        </div>
+      </section>
+
+      <!-- 9 -->
+      <section class="slide" id="languages" data-title="Tillar">
+        <div class="between">
+          <div>
+            <span class="kicker">Mahalliylashtirish</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px);margin-top:8px">Uch til. <em>Haqiqatan uchta.</em></h2>
+          </div>
+          <span class="pill cyan">English · Deutsch · O'zbekcha</span>
+        </div>
+        <div class="split" style="align-items:start">
+          <table class="lang-table">
+            <thead><tr><th>Interfeys matni</th><th>Deutsch</th><th>O'zbekcha</th></tr></thead>
+            <tbody>
+              <tr><td>Sign in</td><td>Anmelden</td><td>Kirish</td></tr>
+              <tr><td>Email or password is incorrect</td><td>E-Mail oder Passwort ist falsch</td><td>Elektron pochta yoki parol noto'g'ri</td></tr>
+              <tr><td>Today's revenue</td><td>Umsatz heute</td><td>Bugungi tushum</td></tr>
+              <tr><td>Low stock</td><td>Niedriger Bestand</td><td>Kam qoldiq</td></tr>
+              <tr><td>€12,400</td><td>12.400 €</td><td>12 400 so'm</td></tr>
+            </tbody>
+          </table>
+          <div class="stack">
+            <ul class="checks">
+              <li><strong>Hammasi tarjima qilingan:</strong> ekranlar, oynalar, bo'sh holatlar, bildirishnomalar, validatsiya va server xatolari.</li>
+              <li><strong>O'zbekcha formatlash o'zimizda yozilgan</strong>, chunki brauzer ICU'da lotin o'zbekchasi izchil emas.</li>
+              <li><strong>Birinchi tashrifda til brauzerdan aniqlanadi</strong>, keyin profilga saqlanadi.</li>
+              <li><strong>Har do'kon uchun valyuta va vaqt mintaqasi</strong> — interfeys tilidan mustaqil.</li>
+            </ul>
+            <div class="row">
+              <span class="pill emerald">885 lug'at yozuvi</span>
+              <span class="pill">Kirish sahifalari ham</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section class="slide" id="architecture" data-title="Arxitektura">
+        <div class="split wide-right">
+          <div class="stack">
+            <span class="kicker">Ichki tuzilma</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Yuzasi sodda. <em>Ichida jiddiy.</em></h2>
+            <p class="lede">Bitta tiplashtirilgan API, bitta sxema, bitta haqiqat manbai. Web mijozi faqat API ruxsat bergan narsani ko'radi, ekrandagi har bir ko'rsatkich eksport bilan bir xil so'rovdan olinadi.</p>
+            <div class="row">
+              <span class="pill">TypeScript strict</span>
+              <span class="pill">Drizzle ORM</span>
+              <span class="pill">Zod</span>
+              <span class="pill">TanStack Query</span>
+            </div>
+          </div>
+          <div class="arch">
+            <div class="node accent"><b>React SPA</b><span>Vite · Tailwind · Recharts · Zustand</span></div>
+            <div class="arch-arrow">↓ REST /api/v1 · WebSocket /socket.io</div>
+            <div class="node"><b>Nginx</b><span>statik fayllar · SPA fallback · teskari proksi</span></div>
+            <div class="arch-arrow">↓</div>
+            <div class="node accent"><b>Express API</b><span>Zod validatsiyasi · RBAC · servislar · Socket.io</span></div>
+            <div class="arch-arrow">↓ Drizzle</div>
+            <div class="node"><b>PostgreSQL 16</b><span>ishlab chiqarish · PGlite sozlashsiz ishlab chiqish va testlar uchun</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 -->
+      <section class="slide" id="security" data-title="Xavfsizlik">
+        <span class="kicker">Xavfsizlik</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Xavfsizlik — bu belgi emas, <em>xususiyat.</em></h2>
+        <div class="grid-3">
+          <div class="card cyan">
+            <h3>Saqlanmaydigan tokenlar</h3>
+            <p>Kirish tokenlari faqat xotirada. Yangilash tokenlari httpOnly, bazada xeshlangan va har ishlatishda almashtiriladi.</p>
+          </div>
+          <div class="card rose">
+            <h3>Qayta ishlatishni aniqlash</h3>
+            <p>Eski yangilash tokeni qayta ishlatilsa, hisobning barcha faol sessiyalari avtomatik bekor qilinadi.</p>
+          </div>
+          <div class="card emerald">
+            <h3>Middleware'da tenant tekshiruvi</h3>
+            <p>Har qanday do'kon darajasidagi servis ishga tushishidan oldin a'zolik va huquqlar aniqlanadi.</p>
+          </div>
+          <div class="card amber">
+            <h3>Sukut bo'yicha himoyalangan</h3>
+            <p>Helmet, autentifikatsiya va nozik amallar uchun chastota cheklovlari, qat'iy CORS va tekshirilgan muhit sozlamalari.</p>
+          </div>
+          <div class="card">
+            <h3>Xatoda to'xtaydi (fail closed)</h3>
+            <p>Ishlab chiqarish muhiti placeholder yoki dev JWT sirlari bilan ishga tushmaydi.</p>
+          </div>
+          <div class="card">
+            <h3>Auditga tayyor</h3>
+            <p>Muhim amallar kim, qaysi do'kon va qachon bilan faoliyat jurnaliga yoziladi.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section class="slide" id="quality" data-title="Sifat">
+        <span class="kicker">Sifat</span>
+        <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Va'da emas — <em>isbot.</em></h2>
+        <div class="grid-4">
+          <div class="stat"><b>90</b><span>API test · haqiqiy migratsiyalar</span></div>
+          <div class="stat"><b>54</b><span>Web test · Testing Library</span></div>
+          <div class="stat"><b>83%</b><span>Kod qamrovi</span></div>
+          <div class="stat"><b>0</b><span>Ishlab chiqarish zaifligi</span></div>
+        </div>
+        <div class="split" style="align-items:start">
+          <ul class="checks">
+            <li><strong>Ikkala workspace'da qat'iy TypeScript</strong>, yashirin any yo'q, tekshirilmagan indeks yo'q.</li>
+            <li><strong>ESLint 9 flat config</strong> — ogohlantirishlarga yo'l qo'yilmaydi, CI'da Prettier majburiy.</li>
+            <li><strong>Testlarda haqiqiy baza</strong> — PGlite migratsiyalarni ishga tushiradi va tenant ajratilishi hamda RBAC'ni oxirigacha tekshiradi.</li>
+          </ul>
+          <div class="card">
+            <div class="between">
+              <div>
+                <div class="tiny" style="letter-spacing:.12em;text-transform:uppercase">GitHub Actions · main</div>
+                <div style="font-size:1.15em;font-weight:650;margin-top:5px">format → types → lint → tests → build</div>
+              </div>
+              <span class="pill emerald"><span class="dot"></span>Yashil</span>
+            </div>
+            <p class="small" style="margin-top:10px">Lokalda xuddi shu buyruq: <span style="font-family:var(--mono);color:var(--text)">npm run verify</span>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section class="slide" id="run" data-title="Ishga tushirish">
+        <div class="split">
+          <div class="stack">
+            <span class="kicker">Ishga tushirish</span>
+            <h2 class="title" style="font-size:clamp(22px,3vw,38px)">Klondan jonli tizimgacha — <em>bitta buyruq.</em></h2>
+            <p class="lede">Lokal ishlash uchun ma'lumotlar bazasi serveri shart emas: PGlite ichki PostgreSQL'ni ishga tushiradi, migratsiyalarni bajaradi va 90 kunlik real savdoni yuklaydi.</p>
+            <div class="receipt" style="font-size:.82em">
+              <div class="line"><span style="color:var(--faint)">$</span><span style="flex:1;margin-left:10px">npm install &amp;&amp; npm run seed &amp;&amp; npm run dev</span></div>
+              <div class="line"><span style="color:var(--faint)">$</span><span style="flex:1;margin-left:10px">npm run docker:env &amp;&amp; npm run docker:up</span></div>
+              <div class="line" style="margin-top:8px"><span style="color:var(--emerald)">web</span><span style="flex:1;text-align:right;color:var(--text)">http://localhost:8080</span></div>
+              <div class="line"><span style="color:var(--emerald)">api</span><span style="flex:1;text-align:right;color:var(--text)">http://localhost:4000/api/docs</span></div>
+            </div>
+          </div>
+          <div class="card" style="padding:18px">
+            <div class="tiny" style="letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Demo ish maydoni</div>
+            <div class="mock-list">
+              <div class="mock-row"><span class="avatar">O</span><span class="grow">owner@demo.dev</span><span class="tag">Admin</span></div>
+              <div class="mock-row"><span class="avatar">M</span><span class="grow">manager@demo.dev</span><span class="tag">Menejer</span></div>
+              <div class="mock-row"><span class="avatar">C</span><span class="grow">cashier@demo.dev</span><span class="tag">Kassir</span></div>
+            </div>
+            <p class="small" style="margin-top:12px">Parol <span style="font-family:var(--mono);color:var(--text)">PulseDemo2026!</span> · ikki do'kon, 90 kunlik savdo, kam qoldiqdagi mahsulotlar va faoliyat tarixi.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 -->
+      <section class="slide" id="next" data-title="Yo'l xaritasi">
+        <div class="split">
+          <div class="closing">
+            <span class="kicker">Keyingi qadamlar</span>
+            <h2 style="margin-top:12px">Har bir mustaqil do'kon uchun xotirjam boshqaruv markazi.</h2>
+            <p class="lede" style="margin-top:12px">PulseBoard bitta kofedan kichik tarmoqqacha o'sadi va fikrlash modelini o'zgartirmaydi: yagona jonli ko'rinish, to'g'ri huquqlar, uch til.</p>
+            <div class="row" style="margin-top:18px">
+              <span class="pill cyan">Portfolio loyihasi</span>
+              <span class="pill">MIT litsenziyasi</span>
+              <span class="pill emerald">Fikr-mulohazaga ochiq</span>
+            </div>
+          </div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="when">Hozir</span>
+              <div><b>Bitta hudud, bir nechta do'kon</b><span>Docker Compose, PostgreSQL 16, yashil CI.</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="when">Keyingi</span>
+              <div><b>Redis adapteri va rejalashtirilgan hisobotlar</b><span>Socket.io gorizontal masshtablash va haftalik e-pochta xulosalari.</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="when">So'ngra</span>
+              <div><b>Talab prognozi</b><span>90 kunlik haqiqiy savdo tarixidan qayta buyurtma takliflari.</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="when">Keyinroq</span>
+              <div><b>Mobil PWA va shtrix-kod uskunalari</b><span>Savdo maydonida qoldiq sanash va skanerga moslashgan kassa.</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="tiny" style="text-align:center;margin-top:4px">PulseBoard · har savdo, har javon, bitta jonli puls.</p>
+      </section>
+    </main>
+
+    <div class="footer-lang">O'zbekcha taqdimot</div>
+    <div class="dots" data-dots aria-label="Slaydlar"></div>
+    <div class="controls">
+      <button class="btn" type="button" data-prev aria-label="Oldingi slayd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <button class="btn" type="button" data-next aria-label="Keyingi slayd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
+    <div class="progress"><b data-progress></b></div>
+  </div>
+  <script src="../assets/deck.js"></script>
+</body>
+</html>

@@ -1,19 +1,20 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, Check } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { api, getErrorMessage } from '../../lib/api';
-import { firstFieldErrors } from '../../lib/forms';
+import { firstFieldErrors, localizedZodResolver } from '../../lib/forms';
 import { useAuthStore } from '../../stores/auth-store';
 import { toast } from '../../stores/toast-store';
 import { cn } from '../../lib/utils';
+import { CURRENCY_LABELS } from '../../lib/constants';
 import type { AuthResponse } from '../../types';
 import { AuthLayout, FormAlert } from '../../components/auth/auth-layout';
 import { PasswordInput } from '../../components/auth/password-input';
 import { Button } from '../../components/ui/button';
 import { Checkbox, Field, Input, Select } from '../../components/ui/form';
+import { t } from '../../lib/i18n';
 
 const schema = z
   .object({
@@ -86,7 +87,7 @@ export default function RegisterPage() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterForm>({
-    resolver: zodResolver(schema),
+    resolver: localizedZodResolver(schema),
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -117,7 +118,10 @@ export default function RegisterPage() {
         timezone: values.timezone,
       });
       await authenticate(response.data.data.accessToken);
-      toast.success('Workspace created', 'Add a product or record your first sale to get going.');
+      toast.success(
+        t('Workspace created'),
+        t('Add a product or record your first sale to get going.'),
+      );
       navigate('/dashboard', { replace: true });
     } catch (error) {
       setServerError(getErrorMessage(error));
@@ -127,16 +131,16 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Start your workspace"
-      subtitle="Create your store in under a minute — no credit card, no setup calls."
+      title={t('Start your workspace')}
+      subtitle={t('Create your store in under a minute — no credit card, no setup calls.')}
       footer={
         <>
-          Already have an account?{' '}
+          {t('Already have an account?')}{' '}
           <Link
             to="/login"
             className="font-semibold text-brand-600 hover:underline dark:text-brand-400"
           >
-            Sign in
+            {t('Sign in')}
           </Link>
         </>
       }
@@ -146,7 +150,7 @@ export default function RegisterPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
-            label="First name"
+            label={t('First name')}
             htmlFor="firstName"
             error={errors.firstName?.message ?? fieldErrors.firstName}
           >
@@ -159,7 +163,7 @@ export default function RegisterPage() {
             />
           </Field>
           <Field
-            label="Last name"
+            label={t('Last name')}
             htmlFor="lastName"
             error={errors.lastName?.message ?? fieldErrors.lastName}
           >
@@ -174,7 +178,7 @@ export default function RegisterPage() {
         </div>
 
         <Field
-          label="Work email"
+          label={t('Work email')}
           htmlFor="register-email"
           error={errors.email?.message ?? fieldErrors.email}
         >
@@ -190,27 +194,27 @@ export default function RegisterPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
-            label="Password"
+            label={t('Password')}
             htmlFor="register-password"
             error={errors.password?.message ?? fieldErrors.password}
           >
             <PasswordInput
               id="register-password"
               autoComplete="new-password"
-              placeholder="At least 10 characters"
+              placeholder={t('At least 10 characters')}
               invalid={Boolean(errors.password)}
               {...register('password')}
             />
           </Field>
           <Field
-            label="Confirm password"
+            label={t('Confirm password')}
             htmlFor="confirmPassword"
             error={errors.confirmPassword?.message}
           >
             <PasswordInput
               id="confirmPassword"
               autoComplete="new-password"
-              placeholder="Repeat password"
+              placeholder={t('Repeat password')}
               invalid={Boolean(errors.confirmPassword)}
               {...register('confirmPassword')}
             />
@@ -231,18 +235,18 @@ export default function RegisterPage() {
               ))}
             </div>
             <span className="text-[10px] font-semibold text-ink-500 dark:text-ink-400">
-              {strength.label}
+              {t(strength.label)}
             </span>
           </div>
         ) : null}
 
         <div className="rounded-2xl border border-ink-200 bg-ink-50/70 p-4 dark:border-ink-700 dark:bg-ink-900/50">
           <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-            Your first store
+            {t('Your first store')}
           </p>
           <div className="space-y-3">
             <Field
-              label="Store name"
+              label={t('Store name')}
               htmlFor="storeName"
               error={errors.storeName?.message ?? fieldErrors.storeName}
             >
@@ -254,16 +258,16 @@ export default function RegisterPage() {
               />
             </Field>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Currency" htmlFor="currency" error={errors.currency?.message}>
+              <Field label={t('Currency')} htmlFor="currency" error={errors.currency?.message}>
                 <Select id="currency" {...register('currency')}>
                   {CURRENCIES.map((currency) => (
                     <option key={currency} value={currency}>
-                      {currency}
+                      {t(CURRENCY_LABELS[currency] ?? currency)}
                     </option>
                   ))}
                 </Select>
               </Field>
-              <Field label="Timezone" htmlFor="timezone" error={errors.timezone?.message}>
+              <Field label={t('Timezone')} htmlFor="timezone" error={errors.timezone?.message}>
                 <Select id="timezone" {...register('timezone')}>
                   {TIMEZONES.map((timezone) => (
                     <option key={timezone} value={timezone}>
@@ -278,7 +282,7 @@ export default function RegisterPage() {
 
         <div>
           <Checkbox
-            label="I agree to the Terms of Service and Privacy Policy"
+            label={t('I agree to the Terms of Service and Privacy Policy')}
             {...register('terms')}
           />
           {errors.terms?.message ? (
@@ -295,11 +299,11 @@ export default function RegisterPage() {
           loading={isSubmitting}
           rightIcon={<ArrowRight className="h-4 w-4" />}
         >
-          Create workspace
+          {t('Create workspace')}
         </Button>
 
         <p className="flex items-center justify-center gap-1.5 text-[10px] text-ink-400">
-          <Check className="h-3 w-3" /> Free forever plan · No credit card required
+          <Check className="h-3 w-3" /> {t('Free forever plan · No credit card required')}
         </p>
       </form>
     </AuthLayout>

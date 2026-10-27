@@ -28,9 +28,10 @@ import { usePageTitle, useDebouncedValue } from '../hooks/use-utils';
 import { can } from '../lib/permissions';
 import { formatCurrency, formatDateTime, formatNumber, paymentLabel, toNumber } from '../lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
+import { t } from '../lib/i18n';
 
 export default function SalesPage() {
-  usePageTitle('Sales');
+  usePageTitle(t('Sales'));
   const queryClient = useQueryClient();
   const { storeId, currency, timezone, role } = useStoreContext();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -92,28 +93,32 @@ export default function SalesPage() {
     {
       label: 'Revenue today',
       value: formatCurrency(dashboard?.today.revenue, currency),
-      hint: `${formatNumber(dashboard?.today.transactions ?? 0)} transactions`,
+      hint: t('{{count}} transactions', {
+        count: formatNumber(dashboard?.today.transactions ?? 0),
+      }),
       icon: Wallet,
       tone: 'text-brand-600 dark:text-brand-300 bg-brand-50 dark:bg-brand-500/10',
     },
     {
       label: 'Items sold',
       value: formatNumber(dashboard?.today.itemsSold ?? 0),
-      hint: 'Units across all sales today',
+      hint: t('Units across all sales today'),
       icon: ShoppingBag,
       tone: 'text-cyan-600 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-500/10',
     },
     {
       label: 'Average basket',
       value: formatCurrency(dashboard?.today.avgTransaction, currency),
-      hint: 'Per transaction today',
+      hint: t('Per transaction today'),
       icon: ReceiptText,
       tone: 'text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10',
     },
     {
       label: '30-day revenue',
       value: formatCurrency(dashboard?.last30Days.revenue, currency, { compact: true }),
-      hint: `${formatNumber(dashboard?.last30Days.transactions ?? 0)} transactions`,
+      hint: t('{{count}} transactions', {
+        count: formatNumber(dashboard?.last30Days.transactions ?? 0),
+      }),
       icon: Banknote,
       tone: 'text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10',
     },
@@ -122,13 +127,13 @@ export default function SalesPage() {
   return (
     <div className="space-y-5">
       <PageHeader
-        eyebrow="Point of sale"
-        title="Sales"
-        description="Every transaction, with live totals, payment mix and cashier attribution."
+        eyebrow={t('Point of sale')}
+        title={t('Sales')}
+        description={t('Every transaction, with live totals, payment mix and cashier attribution.')}
         actions={
           can(role, 'sales:write') ? (
             <Button onClick={openModal} leftIcon={<Plus className="h-4 w-4" />}>
-              Record sale
+              {t('Record sale')}
               <span className="kbd ml-1 border-white/25 bg-white/10 text-white/80">N</span>
             </Button>
           ) : null
@@ -143,7 +148,7 @@ export default function SalesPage() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-                    {stat.label}
+                    {t(stat.label)}
                   </p>
                   <p className="mt-1.5 text-xl font-bold tracking-tight text-ink-900 dark:text-white">
                     {stat.value}
@@ -165,31 +170,31 @@ export default function SalesPage() {
         <div className="flex flex-wrap items-end gap-2 border-b border-ink-100 p-4 dark:border-ink-800">
           <div className="min-w-[12rem] flex-1">
             <Input
-              placeholder="Search transaction ID or customer…"
+              placeholder={t('Search transaction ID or customer…')}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               leftIcon={<Search className="h-4 w-4" />}
-              aria-label="Search sales"
+              aria-label={t('Search sales')}
             />
           </div>
           <Select
             value={paymentMethod}
             onChange={(event) => setPaymentMethod(event.target.value)}
-            aria-label="Filter by payment method"
+            aria-label={t('Filter by payment method')}
             className="w-auto min-w-[8.5rem]"
           >
-            <option value="">All payments</option>
-            <option value="card">Card</option>
-            <option value="cash">Cash</option>
-            <option value="mobile">Mobile pay</option>
-            <option value="cheque">Cheque</option>
+            <option value="">{t('All payments')}</option>
+            <option value="card">{t('Card')}</option>
+            <option value="cash">{t('Cash')}</option>
+            <option value="mobile">{t('Mobile pay')}</option>
+            <option value="cheque">{t('Cheque')}</option>
           </Select>
           <div className="flex items-center gap-1.5">
             <Input
               type="date"
               value={from}
               onChange={(event) => setFrom(event.target.value)}
-              aria-label="From date"
+              aria-label={t('From date')}
               className="w-[9.5rem] py-2 text-xs"
             />
             <span className="text-xs text-ink-400">→</span>
@@ -197,7 +202,7 @@ export default function SalesPage() {
               type="date"
               value={to}
               onChange={(event) => setTo(event.target.value)}
-              aria-label="To date"
+              aria-label={t('To date')}
               className="w-[9.5rem] py-2 text-xs"
             />
           </div>
@@ -206,13 +211,13 @@ export default function SalesPage() {
             size="md"
             onClick={() => setSortOrder((value) => (value === 'desc' ? 'asc' : 'desc'))}
             leftIcon={<ArrowDownUp className="h-3.5 w-3.5" />}
-            title="Toggle sort order"
+            title={t('Toggle sort order')}
           >
-            {sortOrder === 'desc' ? 'Newest first' : 'Oldest first'}
+            {sortOrder === 'desc' ? t('Newest first') : t('Oldest first')}
           </Button>
           {hasFilters ? (
             <Button variant="ghost" size="md" onClick={clearFilters}>
-              Clear
+              {t('Clear')}
             </Button>
           ) : null}
         </div>
@@ -226,16 +231,16 @@ export default function SalesPage() {
           />
         ) : data && data.data.length === 0 ? (
           <EmptyState
-            title={hasFilters ? 'No sales match those filters' : 'No sales yet'}
+            title={hasFilters ? t('No sales match those filters') : t('No sales yet')}
             description={
               hasFilters
-                ? 'Try widening the date range or clearing the search.'
-                : 'Record your first sale to see revenue, items and payment methods here.'
+                ? t('Try widening the date range or clearing the search.')
+                : t('Record your first sale to see revenue, items and payment methods here.')
             }
             action={
               can(role, 'sales:write') ? (
                 <Button size="sm" onClick={openModal} leftIcon={<Plus className="h-3.5 w-3.5" />}>
-                  Record a sale
+                  {t('Record a sale')}
                 </Button>
               ) : undefined
             }
@@ -245,13 +250,13 @@ export default function SalesPage() {
             <Table>
               <thead>
                 <tr>
-                  <Th>Transaction</Th>
-                  <Th>Date</Th>
-                  <Th>Cashier</Th>
-                  <Th className="text-center">Items</Th>
-                  <Th>Payment</Th>
-                  <Th className="text-right">Total</Th>
-                  <Th className="text-right">Status</Th>
+                  <Th>{t('Transaction')}</Th>
+                  <Th>{t('Date')}</Th>
+                  <Th>{t('Cashier')}</Th>
+                  <Th className="text-center">{t('Items')}</Th>
+                  <Th>{t('Payment')}</Th>
+                  <Th className="text-right">{t('Total')}</Th>
+                  <Th className="text-right">{t('Status')}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -281,7 +286,7 @@ export default function SalesPage() {
                             {sale.transactionId}
                           </span>
                           <span className="block text-[10px] text-ink-400">
-                            {sale.items.length} line{sale.items.length === 1 ? '' : 's'}
+                            {sale.items.length} {t(sale.items.length === 1 ? 'line' : 'lines')}
                           </span>
                         </span>
                       </span>
@@ -292,7 +297,7 @@ export default function SalesPage() {
                         {formatDateTime(sale.createdAt, timezone)}
                       </span>
                     </Td>
-                    <Td className="text-xs">{sale.cashierName ?? 'Store team'}</Td>
+                    <Td className="text-xs">{sale.cashierName ?? t('Store team')}</Td>
                     <Td className="text-center text-xs">
                       {sale.items.reduce((sum, item) => sum + item.quantity, 0)}
                     </Td>
@@ -312,7 +317,7 @@ export default function SalesPage() {
                       ) : null}
                     </Td>
                     <Td className="text-right">
-                      <Badge tone="success">Completed</Badge>
+                      <Badge tone="success">{t('Completed')}</Badge>
                     </Td>
                   </TableRow>
                 ))}
@@ -323,7 +328,7 @@ export default function SalesPage() {
         )}
         {isFetching && !isLoading ? (
           <div className="border-t border-ink-100 px-4 py-1.5 text-[10px] font-medium text-ink-400 dark:border-ink-800">
-            Syncing latest sales…
+            {t('Syncing latest sales…')}
           </div>
         ) : null}
       </DataCard>
@@ -331,11 +336,11 @@ export default function SalesPage() {
       <Card>
         <CardContent className="flex flex-wrap items-center gap-3 text-xs text-ink-500 dark:text-ink-400">
           <span className="flex items-center gap-1.5">
-            <ReceiptText className="h-3.5 w-3.5" /> Click any row to inspect line items and reprint
-            the receipt.
+            <ReceiptText className="h-3.5 w-3.5" />{' '}
+            {t('Click any row to inspect line items and reprint the receipt.')}
           </span>
           <span className="text-ink-300 dark:text-ink-700">•</span>
-          <span>Discounts are included in reported revenue.</span>
+          <span>{t('Discounts are included in reported revenue.')}</span>
         </CardContent>
       </Card>
 

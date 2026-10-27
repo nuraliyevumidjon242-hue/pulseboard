@@ -2,6 +2,7 @@ import axios, { type InternalAxiosRequestConfig } from 'axios';
 import type { ApiErrorBody, AuthResponse } from '../types';
 import { downloadBlob, filenameFromDisposition } from './utils';
 import { tokenStore } from './token';
+import { t } from './i18n';
 
 const API_ORIGIN = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 export const API_BASE_URL = `${API_ORIGIN}/api/v1`;
@@ -78,16 +79,43 @@ api.interceptors.response.use(
   },
 );
 
+const SERVER_MESSAGE_PATTERNS: Array<[RegExp, (match: RegExpMatchArray) => string]> = [
+  [
+    /^Insufficient stock: product currently has (\d+) units$/,
+    (match) => t('Insufficient stock: only {{count}} units left.', { count: Number(match[1]) }),
+  ],
+  [
+    /^Stock changed while completing the sale for (.+)$/,
+    (match) => t('Stock changed while completing the sale for {{name}}.', { name: match[1] }),
+  ],
+  [
+    /^Your role \((.+)\) cannot perform this action$/,
+    (match) => t('Your role ({{role}}) cannot perform this action.', { role: t(match[1]) }),
+  ],
+];
+
+/**
+ * The API answers with English messages. Translating them on the client keeps
+ * error states consistent with the rest of the interface.
+ */
+function translateServerMessage(message: string): string {
+  for (const [pattern, build] of SERVER_MESSAGE_PATTERNS) {
+    const match = message.match(pattern);
+    if (match) return build(match);
+  }
+  return t(message);
+}
+
 export function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
     const body = error.response?.data as ApiErrorBody | undefined;
-    if (body?.error?.message) return body.error.message;
-    if (error.code === 'ECONNABORTED') return 'The request timed out. Please try again.';
-    if (!error.response) return 'Cannot reach the PulseBoard API. Is it running?';
-    return `Request failed with status ${error.response.status}.`;
+    if (body?.error?.message) return translateServerMessage(body.error.message);
+    if (error.code === 'ECONNABORTED') return t('The request timed out. Please try again.');
+    if (!error.response) return t('Cannot reach the PulseBoard API. Is it running?');
+    return t('Request failed with status {{status}}.', { status: error.response.status });
   }
   if (error instanceof Error && error.message) return error.message;
-  return 'Something went wrong. Please try again.';
+  return t('Something went wrong. Please try again.');
 }
 
 export function getErrorFields(error: unknown): Record<string, string[]> {

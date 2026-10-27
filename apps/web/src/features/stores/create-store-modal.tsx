@@ -1,4 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Building2 } from 'lucide-react';
 import { useState } from 'react';
@@ -6,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { api, getErrorMessage } from '../../lib/api';
 import { CURRENCIES, CURRENCY_LABELS, TIMEZONES } from '../../lib/constants';
-import { firstFieldErrors } from '../../lib/forms';
+import { firstFieldErrors, localizedZodResolver } from '../../lib/forms';
 import { useAuthStore } from '../../stores/auth-store';
 import { toast } from '../../stores/toast-store';
 import type { Store } from '../../types';
@@ -14,6 +13,7 @@ import { Button } from '../../components/ui/button';
 import { Field, Input, Select, Textarea } from '../../components/ui/form';
 import { FormAlert } from '../../components/auth/auth-layout';
 import { Modal } from '../../components/ui/modal';
+import { t } from '../../lib/i18n';
 
 const schema = z.object({
   name: z.string().trim().min(2, 'Store name must be at least 2 characters').max(255),
@@ -49,7 +49,7 @@ export function CreateStoreModal({
     reset,
     formState: { errors },
   } = useForm<StoreForm>({
-    resolver: zodResolver(schema),
+    resolver: localizedZodResolver(schema),
     defaultValues: {
       name: '',
       city: '',
@@ -72,7 +72,10 @@ export function CreateStoreModal({
       return response.data.data.store;
     },
     onSuccess: async (store) => {
-      toast.success('Store created', `${store.name} is ready for its first sale.`);
+      toast.success(
+        t('Store created'),
+        t('{{store}} is ready for its first sale.', { store: store.name }),
+      );
       await refreshMe();
       void queryClient.invalidateQueries({ queryKey: ['stores'] });
       reset();
@@ -95,20 +98,20 @@ export function CreateStoreModal({
     <Modal
       open={open}
       onClose={onClose}
-      title="Add a store"
-      description="Create another location and switch between them at any time."
+      title={t('Add a store')}
+      description={t('Create another location and switch between them at any time.')}
       size="lg"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={mutation.isPending}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             onClick={onSubmit}
             loading={mutation.isPending}
             leftIcon={<Building2 className="h-4 w-4" />}
           >
-            Create store
+            {t('Create store')}
           </Button>
         </>
       }
@@ -117,7 +120,7 @@ export function CreateStoreModal({
         {serverError ? <FormAlert>{serverError}</FormAlert> : null}
 
         <Field
-          label="Store name"
+          label={t('Store name')}
           htmlFor="store-name"
           error={errors.name?.message ?? fieldErrors.name}
         >
@@ -130,29 +133,29 @@ export function CreateStoreModal({
         </Field>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="City" htmlFor="store-city">
-            <Input id="store-city" placeholder="Berlin" {...register('city')} />
+          <Field label={t('City')} htmlFor="store-city">
+            <Input id="store-city" placeholder={t('Berlin')} {...register('city')} />
           </Field>
-          <Field label="Country" htmlFor="store-country">
-            <Input id="store-country" placeholder="Germany" {...register('country')} />
+          <Field label={t('Country')} htmlFor="store-country">
+            <Input id="store-country" placeholder={t('Germany')} {...register('country')} />
           </Field>
         </div>
 
-        <Field label="Street address" htmlFor="store-address">
+        <Field label={t('Street address')} htmlFor="store-address">
           <Input id="store-address" placeholder="Warschauer Str. 12" {...register('address')} />
         </Field>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Currency" htmlFor="store-currency">
+          <Field label={t('Currency')} htmlFor="store-currency">
             <Select id="store-currency" {...register('currency')}>
               {CURRENCIES.map((currency) => (
                 <option key={currency} value={currency}>
-                  {CURRENCY_LABELS[currency] ?? currency}
+                  {t(CURRENCY_LABELS[currency] ?? currency)}
                 </option>
               ))}
             </Select>
           </Field>
-          <Field label="Timezone" htmlFor="store-timezone">
+          <Field label={t('Timezone')} htmlFor="store-timezone">
             <Select id="store-timezone" {...register('timezone')}>
               {TIMEZONES.map((timezone) => (
                 <option key={timezone} value={timezone}>
@@ -164,10 +167,10 @@ export function CreateStoreModal({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Phone" htmlFor="store-phone">
+          <Field label={t('Phone')} htmlFor="store-phone">
             <Input id="store-phone" placeholder="+49 30 123456" {...register('phone')} />
           </Field>
-          <Field label="Contact email" htmlFor="store-email" error={errors.email?.message}>
+          <Field label={t('Contact email')} htmlFor="store-email" error={errors.email?.message}>
             <Input
               id="store-email"
               type="email"
@@ -177,18 +180,19 @@ export function CreateStoreModal({
           </Field>
         </div>
 
-        <Field label="Description" htmlFor="store-description">
+        <Field label={t('Description')} htmlFor="store-description">
           <Textarea
             id="store-description"
             rows={2}
-            placeholder="A short description of this location"
+            placeholder={t('A short description of this location')}
             {...register('description')}
           />
         </Field>
 
         <p className="rounded-xl bg-ink-50 p-3 text-[11px] leading-relaxed text-ink-500 dark:bg-ink-950/40 dark:text-ink-400">
-          You will be the owner and administrator of this store. Currency and timezone control how
-          revenue and daily reports are calculated.
+          {t(
+            'You will be the owner and administrator of this store. Currency and timezone control how revenue and daily reports are calculated.',
+          )}
         </p>
       </form>
     </Modal>

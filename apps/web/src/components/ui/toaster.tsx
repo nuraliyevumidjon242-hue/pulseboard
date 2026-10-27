@@ -1,6 +1,7 @@
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useToastStore, type ToastVariant } from '../../stores/toast-store';
+import { t } from '../../lib/i18n';
 
 const icons: Record<ToastVariant, typeof CheckCircle2> = {
   success: CheckCircle2,
@@ -52,7 +53,7 @@ export function Toaster() {
             <button
               type="button"
               onClick={() => dismiss(item.id)}
-              aria-label="Dismiss notification"
+              aria-label={t('Dismiss notification')}
               className="rounded-md p-1 text-ink-400 transition hover:bg-ink-100 hover:text-ink-700 dark:hover:bg-ink-800 dark:hover:text-ink-200"
             >
               <X className="h-3.5 w-3.5" />

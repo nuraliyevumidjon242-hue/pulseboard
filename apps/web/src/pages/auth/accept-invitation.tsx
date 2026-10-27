@@ -1,11 +1,12 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, ShieldAlert, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { api, getErrorMessage } from '../../lib/api';
-import { firstFieldErrors } from '../../lib/forms';
+import { firstFieldErrors, localizedZodResolver } from '../../lib/forms';
+import { t } from '../../lib/i18n';
+import { ROLE_LABELS } from '../../lib/permissions';
 import { useAuthStore } from '../../stores/auth-store';
 import { toast } from '../../stores/toast-store';
 import { AuthLayout, FormAlert } from '../../components/auth/auth-layout';
@@ -53,7 +54,7 @@ export default function AcceptInvitationPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<AcceptForm>({
-    resolver: zodResolver(schema),
+    resolver: localizedZodResolver(schema),
     defaultValues: { firstName: '', lastName: '', password: '', confirmPassword: '' },
   });
 
@@ -69,7 +70,11 @@ export default function AcceptInvitationPage() {
       });
       const data = response.data.data;
       await authenticate(data.accessToken);
-      toast.success(`Welcome to ${data.storeName}`, `You joined as ${data.role}.`);
+      const roleLabel = ROLE_LABELS[data.role as keyof typeof ROLE_LABELS] ?? data.role;
+      toast.success(
+        t('Welcome to {{store}}', { store: data.storeName }),
+        t('You joined as {{role}}.', { role: t(roleLabel) }),
+      );
       navigate('/dashboard', { replace: true });
     } catch (error) {
       setServerError(getErrorMessage(error));
@@ -80,20 +85,21 @@ export default function AcceptInvitationPage() {
   if (!token) {
     return (
       <AuthLayout
-        title="Invitation link is invalid"
-        subtitle="This invitation is missing its token."
+        title={t('Invitation link is invalid')}
+        subtitle={t('This invitation is missing its token.')}
       >
         <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 dark:border-rose-500/30 dark:bg-rose-500/10">
           <div className="flex items-start gap-3">
             <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
             <p className="text-sm text-rose-700 dark:text-rose-300">
-              Ask a store administrator to send you a fresh invitation. Invitations expire after
-              seven days.
+              {t(
+                'Ask a store administrator to send you a fresh invitation. Invitations expire after seven days.',
+              )}
             </p>
           </div>
         </div>
         <Button className="mt-5" fullWidth onClick={() => navigate('/login')}>
-          Go to sign in
+          {t('Go to sign in')}
         </Button>
       </AuthLayout>
     );
@@ -101,14 +107,14 @@ export default function AcceptInvitationPage() {
 
   return (
     <AuthLayout
-      title="Join your team on PulseBoard"
-      subtitle="Set up your profile to accept the invitation and start collaborating."
+      title={t('Join your team on PulseBoard')}
+      subtitle={t('Set up your profile to accept the invitation and start collaborating.')}
       footer={
         <Link
           to="/login"
           className="font-semibold text-brand-600 hover:underline dark:text-brand-400"
         >
-          I already have an account
+          {t('I already have an account')}
         </Link>
       }
     >
@@ -117,7 +123,7 @@ export default function AcceptInvitationPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
-            label="First name"
+            label={t('First name')}
             htmlFor="invite-first"
             error={errors.firstName?.message ?? fieldErrors.firstName}
           >
@@ -129,7 +135,7 @@ export default function AcceptInvitationPage() {
             />
           </Field>
           <Field
-            label="Last name"
+            label={t('Last name')}
             htmlFor="invite-last"
             error={errors.lastName?.message ?? fieldErrors.lastName}
           >
@@ -143,27 +149,27 @@ export default function AcceptInvitationPage() {
         </div>
 
         <Field
-          label="Create a password"
+          label={t('Create a password')}
           htmlFor="invite-password"
           error={errors.password?.message ?? fieldErrors.password}
         >
           <PasswordInput
             id="invite-password"
             autoComplete="new-password"
-            placeholder="At least 10 characters"
+            placeholder={t('At least 10 characters')}
             invalid={Boolean(errors.password ?? fieldErrors.password)}
             {...register('password')}
           />
         </Field>
         <Field
-          label="Confirm password"
+          label={t('Confirm password')}
           htmlFor="invite-confirm"
           error={errors.confirmPassword?.message}
         >
           <PasswordInput
             id="invite-confirm"
             autoComplete="new-password"
-            placeholder="Repeat password"
+            placeholder={t('Repeat password')}
             invalid={Boolean(errors.confirmPassword)}
             {...register('confirmPassword')}
           />
@@ -177,7 +183,7 @@ export default function AcceptInvitationPage() {
           leftIcon={<UserPlus className="h-4 w-4" />}
           rightIcon={<ArrowRight className="h-4 w-4" />}
         >
-          Accept invitation
+          {t('Accept invitation')}
         </Button>
       </form>
     </AuthLayout>

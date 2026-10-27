@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { api } from '../../lib/api';
+import { t } from '../../lib/i18n';
 import { can } from '../../lib/permissions';
 import { useAuthStore } from '../../stores/auth-store';
 import { useUiStore } from '../../stores/ui-store';
@@ -11,6 +12,7 @@ import { Button } from '../ui/button';
 import { NotificationsMenu } from './notifications-menu';
 import { StoreSwitcher } from './store-switcher';
 import { UserMenu } from './user-menu';
+import { LanguageMenu } from './language-menu';
 
 const LABELS: Record<string, string> = {
   dashboard: 'Dashboard',
@@ -67,25 +69,26 @@ export function Topbar() {
           size="icon"
           className="lg:hidden"
           onClick={() => setMobileNavOpen(true)}
-          aria-label="Open navigation"
+          aria-label={t('Open navigation')}
         >
           <Menu className="h-5 w-5" />
         </Button>
 
         <div className="hidden min-w-0 items-center gap-2 sm:flex">
-          <span className="text-xs font-medium text-ink-400">Workspace</span>
+          <span className="text-xs font-medium text-ink-400">{t('Workspace')}</span>
           <span className="text-xs text-ink-300 dark:text-ink-600">/</span>
-          <span className="text-xs font-semibold text-ink-700 dark:text-ink-200">{label}</span>
+          <span className="text-xs font-semibold text-ink-700 dark:text-ink-200">{t(label)}</span>
           {status === 'authenticated' ? (
             <span className="ml-2 hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 md:inline-flex">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              Live
+              {t('Live')}
             </span>
           ) : null}
         </div>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
           <StoreSwitcher compact />
+          <LanguageMenu />
           <Button
             variant="primary"
             size="sm"
@@ -93,7 +96,7 @@ export function Topbar() {
             onClick={() => navigate('/sales?new=1')}
             leftIcon={<Plus className="h-3.5 w-3.5" />}
           >
-            New sale
+            {t('New sale')}
             <span className="kbd ml-1 hidden border-white/25 bg-white/10 text-white/80 xl:inline">
               N
             </span>
@@ -115,8 +118,8 @@ export function Topbar() {
                 // The local theme still applies; the preference will retry on the next save.
               }
             }}
-            aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-            title={isDark ? 'Light theme' : 'Dark theme'}
+            aria-label={t(isDark ? 'Switch to light theme' : 'Switch to dark theme')}
+            title={t(isDark ? 'Light theme' : 'Dark theme')}
           >
             {isDark ? (
               <Sun className="h-[18px] w-[18px]" />

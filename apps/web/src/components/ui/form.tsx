@@ -5,7 +5,13 @@ import {
   type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from 'react';
+import { t } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
+
+/** Translates plain string children while leaving rich nodes untouched. */
+function localize(node: ReactNode): ReactNode {
+  return typeof node === 'string' ? t(node) : node;
+}
 
 export interface FieldProps {
   label?: ReactNode;
@@ -22,15 +28,17 @@ export function Field({ label, hint, error, required, htmlFor, children, classNa
     <div className={className}>
       {label ? (
         <label className="label" htmlFor={htmlFor}>
-          {label}
+          {localize(label)}
           {required ? <span className="ml-0.5 text-rose-500">*</span> : null}
         </label>
       ) : null}
       {children}
       {error ? (
-        <p className="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">{error}</p>
+        <p className="mt-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">
+          {localize(error)}
+        </p>
       ) : hint ? (
-        <p className="field-hint">{hint}</p>
+        <p className="field-hint">{localize(hint)}</p>
       ) : null}
     </div>
   );
@@ -137,9 +145,11 @@ export const Checkbox = forwardRef<
         {...props}
       />
       <span>
-        <span className="font-medium text-ink-800 dark:text-ink-100">{label}</span>
+        <span className="font-medium text-ink-800 dark:text-ink-100">{localize(label)}</span>
         {description ? (
-          <span className="mt-0.5 block text-xs text-ink-500 dark:text-ink-400">{description}</span>
+          <span className="mt-0.5 block text-xs text-ink-500 dark:text-ink-400">
+            {localize(description)}
+          </span>
         ) : null}
       </span>
     </label>
@@ -162,16 +172,18 @@ export function Switch({
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <div className="text-sm font-medium text-ink-800 dark:text-ink-100">{label}</div>
+        <div className="text-sm font-medium text-ink-800 dark:text-ink-100">{localize(label)}</div>
         {description ? (
-          <div className="mt-0.5 text-xs text-ink-500 dark:text-ink-400">{description}</div>
+          <div className="mt-0.5 text-xs text-ink-500 dark:text-ink-400">
+            {localize(description)}
+          </div>
         ) : null}
       </div>
       <button
         type="button"
         role="switch"
         aria-checked={checked}
-        aria-label={typeof label === 'string' ? label : 'Toggle'}
+        aria-label={typeof label === 'string' ? t(label) : 'Toggle'}
         disabled={disabled}
         onClick={() => onChange(!checked)}
         className={cn(

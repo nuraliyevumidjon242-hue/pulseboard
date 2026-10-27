@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   computeStockTone,
   dateRangeParams,
+  formatCompact,
   formatCurrency,
+  formatDate,
+  formatNumber,
   formatPercent,
   initials,
   paymentLabel,
@@ -46,6 +49,46 @@ describe('formatPercent', () => {
   it('renders an em dash for unknown values', () => {
     expect(formatPercent(null)).toBe('—');
     expect(formatPercent(Number.NaN)).toBe('—');
+  });
+});
+
+describe('localized formatting', () => {
+  it('uses space grouping and comma decimals for Uzbek', () => {
+    expect(formatCurrency('213.57', 'EUR', { locale: 'uz-UZ' })).toBe('213,57 €');
+    expect(formatCurrency('8727.5', 'EUR', { compact: true, locale: 'uz-UZ' })).toBe('8,7 ming €');
+    expect(formatNumber(8727.5, 'uz-UZ')).toBe('8\u00A0727,5');
+    expect(formatPercent(34.1, 1, false, 'uz-UZ')).toBe('34,1%');
+  });
+
+  it('uses Uzbek month and weekday names instead of ICU fallbacks', () => {
+    expect(
+      formatDate(
+        '2026-10-26T12:00:00Z',
+        'UTC',
+        { weekday: 'long', month: 'long', day: 'numeric' },
+        'uz-UZ',
+      ),
+    ).toBe('dushanba, 26-oktabr');
+    expect(
+      formatDate('2026-10-26T12:00:00Z', 'UTC', { month: 'short', day: 'numeric' }, 'uz-UZ'),
+    ).toBe('26-okt');
+    expect(
+      formatDate('2026-01-05T12:00:00Z', 'UTC', { month: 'long', year: 'numeric' }, 'uz-UZ'),
+    ).toBe('yanvar 2026');
+  });
+
+  it('shortens German chart numbers with Tsd. and Mio.', () => {
+    expect(formatCompact(8727, 'de-DE')).toBe('8,7 Tsd.');
+    expect(formatCompact(1_500_000, 'de-DE')).toBe('1,5 Mio.');
+  });
+
+  it('falls back to full precision when German does not abbreviate', () => {
+    expect(formatCurrency('8727.5', 'EUR', { compact: true, locale: 'de-DE' })).toBe(
+      '8.727,50\u00A0€',
+    );
+    expect(formatCurrency('1500000', 'EUR', { compact: true, locale: 'de-DE' })).toBe(
+      '1,5\u00A0Mio.\u00A0€',
+    );
   });
 });
 

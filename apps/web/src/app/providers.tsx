@@ -1,5 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, type ReactNode } from 'react';
+import { htmlLang, t } from '../lib/i18n';
 import { queryClient } from '../lib/query-client';
 import { tokenStore } from '../lib/token';
 import { useAuthStore } from '../stores/auth-store';
@@ -28,13 +29,23 @@ function ThemeSync() {
   return null;
 }
 
+function LanguageSync() {
+  const language = useUiStore((state) => state.language);
+
+  useEffect(() => {
+    document.documentElement.lang = htmlLang(language);
+  }, [language]);
+
+  return null;
+}
+
 function AuthBootstrap() {
   const expire = useAuthStore((state) => state.expire);
 
   useEffect(() => {
     tokenStore.onUnauthorized(() => {
       expire();
-      toast.warning('Session expired', 'Please sign in again to continue.');
+      toast.warning(t('Session expired'), t('Please sign in again to continue.'));
     });
 
     bootstrapPromise ??= useAuthStore
@@ -59,6 +70,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeSync />
+      <LanguageSync />
       <AuthBootstrap />
       <SocketBridge />
       {children}

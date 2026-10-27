@@ -1,0 +1,55 @@
+name: Bug report
+description: Report something broken or behaving unexpectedly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue. Please fill in the details below —
+        the more context you share, the faster this can be fixed.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Sign in as `owner@demo.dev`
+        2. Open Inventory → Import
+        3. Upload …
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Web UI
+        - API
+        - Database / seed
+        - Docker / deployment
+        - Auth / security
+        - Analytics / exports
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, browser or Node/Docker versions
+      placeholder: e.g. Windows 11, Chrome 131 / Docker 27
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Console output, server logs or screenshots (mind any sensitive data).
+    validations:
+      required: false

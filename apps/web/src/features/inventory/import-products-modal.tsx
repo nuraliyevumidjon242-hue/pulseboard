@@ -8,6 +8,7 @@ import { toast } from '../../stores/toast-store';
 import { Button } from '../../components/ui/button';
 import { FormAlert } from '../../components/auth/auth-layout';
 import { Modal } from '../../components/ui/modal';
+import { t } from '../../lib/i18n';
 
 interface ImportResult {
   imported: number;
@@ -46,8 +47,12 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
     onSuccess: (data) => {
       setResult(data);
       toast.success(
-        'Import finished',
-        `${data.imported} added, ${data.updated} updated, ${data.failed} failed.`,
+        t('Import finished'),
+        t('{{imported}} added, {{updated}} updated, {{failed}} failed.', {
+          imported: data.imported,
+          updated: data.updated,
+          failed: data.failed,
+        }),
       );
       void queryClient.invalidateQueries({ queryKey: ['products'] });
       void queryClient.invalidateQueries({ queryKey: ['inventory'] });
@@ -61,11 +66,11 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
     setResult(null);
     if (!next) return;
     if (!next.name.toLowerCase().endsWith('.csv')) {
-      setError('Please choose a .csv file.');
+      setError(t('Please choose a .csv file.'));
       return;
     }
     if (next.size > 5 * 1024 * 1024) {
-      setError('The file is larger than 5 MB.');
+      setError(t('The file is larger than 5 MB.'));
       return;
     }
     setFile(next);
@@ -75,7 +80,7 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
     try {
       await downloadExport(`/stores/${storeId}/inventory/template`, 'product-import-template.csv');
     } catch (downloadError) {
-      toast.error('Could not download template', getErrorMessage(downloadError));
+      toast.error(t('Could not download template'), getErrorMessage(downloadError));
     }
   };
 
@@ -83,13 +88,13 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
     <Modal
       open={open}
       onClose={onClose}
-      title="Import products"
-      description="Bulk add or update products from a CSV file. Existing SKUs are updated."
+      title={t('Import products')}
+      description={t('Bulk add or update products from a CSV file. Existing SKUs are updated.')}
       size="md"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={mutation.isPending}>
-            {result ? 'Close' : 'Cancel'}
+            {t(result ? 'Close' : 'Cancel')}
           </Button>
           <Button
             onClick={() => file && mutation.mutate(file)}
@@ -97,7 +102,7 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
             disabled={!file}
             leftIcon={<UploadCloud className="h-4 w-4" />}
           >
-            Import {file ? 'file' : ''}
+            {t(file ? 'Import file' : 'Import')}
           </Button>
         </>
       }
@@ -125,12 +130,14 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
         >
           <FileSpreadsheet className="h-8 w-8 text-ink-300 dark:text-ink-600" />
           <p className="mt-2 text-sm font-semibold text-ink-800 dark:text-ink-100">
-            {file ? file.name : 'Drop your CSV here'}
+            {file ? file.name : t('Drop your CSV here')}
           </p>
           <p className="mt-0.5 text-[11px] text-ink-500 dark:text-ink-400">
             {file
-              ? `${(file.size / 1024).toFixed(1)} KB · ready to import`
-              : 'or choose a file below · max 5 MB · up to 5,000 rows'}
+              ? t('{{size}} KB · ready to import', {
+                  size: (file.size / 1024).toFixed(1),
+                })
+              : t('or choose a file below · max 5 MB · up to 5,000 rows')}
           </p>
           <input
             ref={inputRef}
@@ -141,7 +148,7 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
           />
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
             <Button variant="secondary" size="sm" onClick={() => inputRef.current?.click()}>
-              Choose file
+              {t('Choose file')}
             </Button>
             <Button
               variant="ghost"
@@ -149,18 +156,19 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
               onClick={() => void downloadTemplate()}
               leftIcon={<Download className="h-3.5 w-3.5" />}
             >
-              Download template
+              {t('Download template')}
             </Button>
           </div>
         </div>
 
         <div className="rounded-xl border border-ink-200 p-3.5 dark:border-ink-700">
           <p className="text-[10px] font-bold uppercase tracking-wide text-ink-500 dark:text-ink-400">
-            Expected columns
+            {t('Expected columns')}
           </p>
           <p className="mt-1 font-mono text-[10px] leading-relaxed text-ink-500 dark:text-ink-400">
-            sku, name, category, price, cost, stock, min_stock, max_stock, unit, barcode,
-            expiry_date
+            {t(
+              'sku, name, category, price, cost, stock, min_stock, max_stock, unit, barcode, expiry_date',
+            )}
           </p>
         </div>
 
@@ -173,7 +181,7 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
                   {result.imported}
                 </p>
                 <p className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
-                  Added
+                  {t('Added')}
                 </p>
               </div>
               <div className="rounded-xl bg-brand-50 p-3 text-center dark:bg-brand-500/10">
@@ -182,7 +190,7 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
                   {result.updated}
                 </p>
                 <p className="text-[10px] font-medium text-brand-600 dark:text-brand-400">
-                  Updated
+                  {t('Updated')}
                 </p>
               </div>
               <div className="rounded-xl bg-rose-50 p-3 text-center dark:bg-rose-500/10">
@@ -190,7 +198,9 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
                 <p className="mt-1 text-lg font-bold text-rose-700 dark:text-rose-300">
                   {result.failed}
                 </p>
-                <p className="text-[10px] font-medium text-rose-600 dark:text-rose-400">Failed</p>
+                <p className="text-[10px] font-medium text-rose-600 dark:text-rose-400">
+                  {t('Failed')}
+                </p>
               </div>
             </div>
             {result.errors.length > 0 ? (
@@ -200,12 +210,15 @@ export function ImportProductsModal({ open, onClose }: { open: boolean; onClose:
                     key={`${item.row}-${item.message}`}
                     className="text-[11px] text-rose-700 dark:text-rose-300"
                   >
-                    <span className="font-bold">Row {item.row}:</span> {item.message}
+                    <span className="font-bold">
+                      {t('Row')} {item.row}:
+                    </span>{' '}
+                    {item.message}
                   </p>
                 ))}
                 {result.errors.length > 10 ? (
                   <p className="text-[10px] font-semibold text-rose-600">
-                    +{result.errors.length - 10} more issues
+                    +{result.errors.length - 10} {t('more issues')}
                   </p>
                 ) : null}
               </div>

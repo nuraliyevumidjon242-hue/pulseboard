@@ -24,9 +24,10 @@ import { cn, formatCurrency, formatNumber } from '../lib/utils';
 import { ROLE_LABELS } from '../lib/permissions';
 import { toast } from '../stores/toast-store';
 import type { Store } from '../types';
+import { t } from '../lib/i18n';
 
 export default function StoresPage() {
-  usePageTitle('Stores');
+  usePageTitle(t('Stores'));
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const user = useAuthStore((state) => state.user);
@@ -47,7 +48,7 @@ export default function StoresPage() {
 
   const openStore = (store: Store) => {
     setActiveStore(store.id);
-    toast.success('Store switched', `You are now viewing ${store.name}.`);
+    toast.success(t('Store switched'), t('You are now viewing {{store}}.', { store: store.name }));
     navigate('/dashboard');
   };
 
@@ -63,9 +64,11 @@ export default function StoresPage() {
   return (
     <div className="space-y-5">
       <PageHeader
-        eyebrow="Multi-store"
-        title="Stores"
-        description="A portfolio view of every location — compare revenue, stock health and team size."
+        eyebrow={t('Multi-store')}
+        title={t('Stores')}
+        description={t(
+          'A portfolio view of every location — compare revenue, stock health and team size.',
+        )}
         actions={
           canCreate ? (
             <Button
@@ -77,7 +80,7 @@ export default function StoresPage() {
               }}
               leftIcon={<Plus className="h-4 w-4" />}
             >
-              Add store
+              {t('Add store')}
             </Button>
           ) : null
         }
@@ -86,28 +89,28 @@ export default function StoresPage() {
       <div className="grid gap-3 sm:grid-cols-3">
         <Card className="p-4">
           <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-            Locations
+            {t('Locations')}
           </p>
           <p className="mt-1 text-xl font-bold text-ink-900 dark:text-white">{stores.length}</p>
-          <p className="mt-0.5 text-[11px] text-ink-400">Across your workspace</p>
+          <p className="mt-0.5 text-[11px] text-ink-400">{t('Across your workspace')}</p>
         </Card>
         <Card className="p-4">
           <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-            30-day revenue
+            {t('30-day revenue')}
           </p>
           <p className="mt-1 text-xl font-bold text-ink-900 dark:text-white">
             {formatCurrency(totalRevenue, stores[0]?.currency ?? 'EUR', { compact: true })}
           </p>
-          <p className="mt-0.5 text-[11px] text-ink-400">Combined across stores</p>
+          <p className="mt-0.5 text-[11px] text-ink-400">{t('Combined across stores')}</p>
         </Card>
         <Card className="p-4">
           <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-            Team members
+            {t('Team members')}
           </p>
           <p className="mt-1 text-xl font-bold text-ink-900 dark:text-white">
             {formatNumber(stores.reduce((sum, store) => sum + store.memberCount, 0))}
           </p>
-          <p className="mt-0.5 text-[11px] text-ink-400">With access across locations</p>
+          <p className="mt-0.5 text-[11px] text-ink-400">{t('With access across locations')}</p>
         </Card>
       </div>
 
@@ -120,18 +123,18 @@ export default function StoresPage() {
       ) : storesQuery.isError ? (
         <Card>
           <ErrorState
-            message="Could not load your stores."
+            message={t('Could not load your stores.')}
             onRetry={() => void storesQuery.refetch()}
           />
         </Card>
       ) : stores.length === 0 ? (
         <Card>
           <EmptyState
-            title="No stores yet"
+            title={t('No stores yet')}
             description={
               canCreate
-                ? 'Create your first store to start recording sales and tracking stock.'
-                : 'Ask a business owner to invite you to their store.'
+                ? t('Create your first store to start recording sales and tracking stock.')
+                : t('Ask a business owner to invite you to their store.')
             }
             icon={<StoreIcon className="h-6 w-6" />}
             action={
@@ -141,7 +144,7 @@ export default function StoresPage() {
                   onClick={() => setModalOpen(true)}
                   leftIcon={<Plus className="h-3.5 w-3.5" />}
                 >
-                  Add store
+                  {t('Add store')}
                 </Button>
               ) : undefined
             }
@@ -161,7 +164,7 @@ export default function StoresPage() {
               >
                 {active ? (
                   <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-bold text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">
-                    <span className="h-1.5 w-1.5 rounded-full bg-brand-500" /> Active
+                    <span className="h-1.5 w-1.5 rounded-full bg-brand-500" /> {t('Active')}
                   </span>
                 ) : null}
                 <div className="flex items-start gap-3">
@@ -174,14 +177,14 @@ export default function StoresPage() {
                     </p>
                     <p className="flex items-center gap-1 truncate text-[11px] text-ink-500 dark:text-ink-400">
                       <MapPin className="h-3 w-3" /> {store.city ?? '—'}
-                      {store.country ? `, ${store.country}` : ''}
+                      {store.country ? `, ${t(store.country)}` : ''}
                     </p>
                     <div className="mt-1 flex flex-wrap items-center gap-1">
                       <Badge tone={store.role === 'admin' ? 'purple' : 'brand'}>
-                        {ROLE_LABELS[store.role]}
+                        {t(ROLE_LABELS[store.role])}
                       </Badge>
                       <Badge tone={store.isActive ? 'success' : 'neutral'}>
-                        {store.isActive ? 'Open' : 'Inactive'}
+                        {store.isActive ? t('Open') : t('Inactive')}
                       </Badge>
                     </div>
                   </div>
@@ -190,7 +193,7 @@ export default function StoresPage() {
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   <div className="rounded-xl bg-ink-50 px-3 py-2 dark:bg-ink-950/40">
                     <p className="text-[9px] font-bold uppercase tracking-wide text-ink-400">
-                      Today
+                      {t('Today')}
                     </p>
                     <p className="mt-0.5 truncate text-sm font-bold text-ink-900 dark:text-white">
                       {formatCurrency(store.metrics.todayRevenue, store.currency, {
@@ -198,12 +201,12 @@ export default function StoresPage() {
                       })}
                     </p>
                     <p className="text-[10px] text-ink-400">
-                      {formatNumber(store.metrics.todayTransactions)} transactions
+                      {formatNumber(store.metrics.todayTransactions)} {t('transactions')}
                     </p>
                   </div>
                   <div className="rounded-xl bg-ink-50 px-3 py-2 dark:bg-ink-950/40">
                     <p className="text-[9px] font-bold uppercase tracking-wide text-ink-400">
-                      30 days
+                      {t('30 days')}
                     </p>
                     <p className="mt-0.5 truncate text-sm font-bold text-ink-900 dark:text-white">
                       {formatCurrency(store.metrics.monthRevenue, store.currency, {
@@ -217,7 +220,7 @@ export default function StoresPage() {
                 <div className="mt-3 flex items-center justify-between text-[11px] text-ink-500 dark:text-ink-400">
                   <span className="flex items-center gap-1">
                     <Users className="h-3.5 w-3.5" /> {store.memberCount}{' '}
-                    {store.memberCount === 1 ? 'member' : 'members'}
+                    {t(store.memberCount === 1 ? 'member' : 'members')}
                   </span>
                   <span
                     className={cn(
@@ -229,8 +232,8 @@ export default function StoresPage() {
                   >
                     <Wallet className="h-3.5 w-3.5" />
                     {store.metrics.lowStockCount > 0
-                      ? `${store.metrics.lowStockCount} low stock`
-                      : 'Stock healthy'}
+                      ? t('{{count}} low stock', { count: store.metrics.lowStockCount })
+                      : t('Stock healthy')}
                   </span>
                 </div>
 
@@ -242,7 +245,7 @@ export default function StoresPage() {
                     onClick={() => openStore(store)}
                     rightIcon={<ArrowRight className="h-3.5 w-3.5" />}
                   >
-                    {active ? 'View dashboard' : 'Switch store'}
+                    {active ? t('View dashboard') : t('Switch store')}
                   </Button>
                   <Button
                     size="sm"
@@ -251,10 +254,10 @@ export default function StoresPage() {
                       setActiveStore(store.id);
                       navigate('/settings');
                     }}
-                    aria-label={`Settings for ${store.name}`}
+                    aria-label={t('Settings for {{name}}', { name: store.name })}
                     leftIcon={<Settings2 className="h-3.5 w-3.5" />}
                   >
-                    Settings
+                    {t('Settings')}
                   </Button>
                 </div>
               </Card>
@@ -265,11 +268,11 @@ export default function StoresPage() {
 
       <Card>
         <CardHeader
-          title="Store comparison"
-          description="30-day revenue, transactions and basket size side by side"
+          title={t('Store comparison')}
+          description={t('30-day revenue, transactions and basket size side by side')}
           action={
             <Badge tone="brand">
-              <ArrowUpRight className="h-3 w-3" /> Live
+              <ArrowUpRight className="h-3 w-3" /> {t('Live')}
             </Badge>
           }
         />
@@ -292,8 +295,12 @@ export default function StoresPage() {
                       <span className="text-[10px] text-ink-400">{row.city ?? '—'}</span>
                     </span>
                     <span className="flex items-center gap-3 text-[11px] text-ink-500 dark:text-ink-400">
-                      <span>{formatNumber(row.transactions30d)} tx</span>
-                      <span>avg {formatCurrency(row.avgTransaction30d, row.currency)}</span>
+                      <span>
+                        {formatNumber(row.transactions30d)} {t('tx')}
+                      </span>
+                      <span>
+                        {t('avg')} {formatCurrency(row.avgTransaction30d, row.currency)}
+                      </span>
                       <span className="w-20 text-right font-bold text-ink-900 dark:text-white">
                         {formatCurrency(row.revenue30d, row.currency, { compact: true })}
                       </span>
@@ -312,7 +319,7 @@ export default function StoresPage() {
             </div>
           ) : (
             <p className="py-8 text-center text-xs text-ink-400">
-              No comparison data available yet.
+              {t('No comparison data available yet.')}
             </p>
           )}
         </CardContent>

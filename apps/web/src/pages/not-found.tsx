@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { usePageTitle } from '../hooks/use-utils';
+import { t } from '../lib/i18n';
 
 const QUICK_LINKS = [
   {
@@ -34,7 +35,7 @@ const QUICK_LINKS = [
 ];
 
 export default function NotFoundPage() {
-  usePageTitle('Page not found');
+  usePageTitle(t('Page not found'));
   const navigate = useNavigate();
 
   return (
@@ -47,14 +48,15 @@ export default function NotFoundPage() {
       </div>
 
       <Badge tone="brand" className="mt-6">
-        404 · Off the map
+        {t('404 · Off the map')}
       </Badge>
       <h1 className="mt-3 max-w-xl text-3xl font-bold tracking-tight text-ink-900 dark:text-white sm:text-4xl">
-        This page slipped off the shelf.
+        {t('This page slipped off the shelf.')}
       </h1>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-500 dark:text-ink-400">
-        The link may be outdated, the store may have moved, or the page never existed. Your live
-        data is safe — let’s get you back to solid ground.
+        {t(
+          'The link may be outdated, the store may have moved, or the page never existed. Your live data is safe — let’s get you back to solid ground.',
+        )}
       </p>
 
       <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
@@ -62,14 +64,14 @@ export default function NotFoundPage() {
           onClick={() => navigate('/dashboard', { replace: true })}
           leftIcon={<LayoutDashboard className="h-4 w-4" />}
         >
-          Back to dashboard
+          {t('Back to dashboard')}
         </Button>
         <Button
           variant="secondary"
           onClick={() => navigate(-1)}
           leftIcon={<ArrowLeft className="h-4 w-4" />}
         >
-          Previous page
+          {t('Previous page')}
         </Button>
       </div>
 
@@ -88,10 +90,10 @@ export default function NotFoundPage() {
               </span>
               <span className="min-w-0">
                 <span className="block text-xs font-semibold text-ink-900 dark:text-white">
-                  {link.label}
+                  {t(link.label)}
                 </span>
                 <span className="block truncate text-[11px] text-ink-500 dark:text-ink-400">
-                  {link.description}
+                  {t(link.description)}
                 </span>
               </span>
             </button>

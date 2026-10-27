@@ -1,5 +1,6 @@
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { t } from '../lib/i18n';
 
 interface Props {
   children: ReactNode;
@@ -35,11 +36,12 @@ export class AppErrorBoundary extends Component<Props, State> {
           <AlertTriangle className="h-6 w-6" />
         </div>
         <h1 className="mt-5 text-xl font-bold tracking-tight text-ink-900 dark:text-white">
-          Something went wrong
+          {t('Something went wrong')}
         </h1>
         <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-500 dark:text-ink-400">
-          PulseBoard hit an unexpected error while rendering this view. Reloading usually fixes it;
-          if it keeps happening, contact support with the details below.
+          {t(
+            'PulseBoard hit an unexpected error while rendering this view. Reloading usually fixes it; if it keeps happening, contact support with the details below.',
+          )}
         </p>
         <pre className="mt-4 max-h-32 w-full max-w-lg overflow-auto rounded-xl border border-ink-200 bg-white p-3 text-left text-[11px] text-ink-500 dark:border-ink-800 dark:bg-ink-900 dark:text-ink-400">
           {this.state.error.message}
@@ -50,13 +52,13 @@ export class AppErrorBoundary extends Component<Props, State> {
             onClick={() => window.location.reload()}
             className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-500"
           >
-            <RefreshCw className="h-4 w-4" /> Reload app
+            <RefreshCw className="h-4 w-4" /> {t('Reload app')}
           </button>
           <a
             href="/"
             className="inline-flex h-10 items-center rounded-xl border border-ink-200 bg-white px-4 text-sm font-semibold text-ink-700 transition hover:bg-ink-50 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:bg-ink-800"
           >
-            Go home
+            {t('Go home')}
           </a>
         </div>
       </div>

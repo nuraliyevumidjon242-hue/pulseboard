@@ -1,4 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRight,
@@ -42,13 +41,14 @@ import { usePageTitle } from '../hooks/use-utils';
 import { useCan, useStoreContext } from '../hooks/use-store-context';
 import { api, getErrorMessage } from '../lib/api';
 import { CURRENCIES, CURRENCY_LABELS, REFRESH_OPTIONS, TIMEZONES } from '../lib/constants';
-import { firstFieldErrors } from '../lib/forms';
+import { firstFieldErrors, localizedZodResolver } from '../lib/forms';
+import { LANGUAGES, t } from '../lib/i18n';
 import { ROLE_LABELS } from '../lib/permissions';
 import { cn, formatCurrency, formatDate } from '../lib/utils';
 import { useAuthStore } from '../stores/auth-store';
 import { toast } from '../stores/toast-store';
 import { useUiStore } from '../stores/ui-store';
-import type { Preferences, Theme, User } from '../types';
+import type { Language, Preferences, Theme, User } from '../types';
 
 const TABS = [
   { id: 'profile', label: 'Profile', icon: <UserRound className="h-4 w-4" /> },
@@ -147,7 +147,7 @@ function ReadOnlyRow({ label, value }: { label: string; value: React.ReactNode }
 }
 
 export default function SettingsPage() {
-  usePageTitle('Settings');
+  usePageTitle(t('Settings'));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -159,6 +159,7 @@ export default function SettingsPage() {
   const refreshMe = useAuthStore((state) => state.refreshMe);
   const logout = useAuthStore((state) => state.logout);
   const setTheme = useUiStore((state) => state.setTheme);
+  const setLanguage = useUiStore((state) => state.setLanguage);
   const canManageSettings = useCan('settings:write');
 
   const requestedTab = (searchParams.get('tab') ?? 'profile') as SettingsTab;
@@ -182,6 +183,7 @@ export default function SettingsPage() {
   const [signOutAllOpen, setSignOutAllOpen] = useState(false);
   const [preferenceError, setPreferenceError] = useState<string | null>(null);
   const [themeChoice, setThemeChoice] = useState<Theme>(preferences?.theme ?? 'system');
+  const [languageChoice, setLanguageChoice] = useState<Language>(preferences?.language ?? 'en');
   const [refreshChoice, setRefreshChoice] = useState(preferences?.autoRefreshInterval ?? 0);
   const [notificationsChoice, setNotificationsChoice] = useState(
     preferences?.notificationsEnabled ?? true,
@@ -198,7 +200,7 @@ export default function SettingsPage() {
   );
 
   const profileForm = useForm<ProfileForm>({
-    resolver: zodResolver(profileSchema),
+    resolver: localizedZodResolver(profileSchema),
     defaultValues: profileDefaults,
   });
   const [profileError, setProfileError] = useState<string | null>(null);
@@ -209,7 +211,7 @@ export default function SettingsPage() {
   }, [profileDefaults, profileForm]);
 
   const storeForm = useForm<StoreForm>({
-    resolver: zodResolver(storeSchema),
+    resolver: localizedZodResolver(storeSchema),
     defaultValues: {
       name: '',
       city: '',
@@ -253,6 +255,7 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!preferences) return;
     setThemeChoice(preferences.theme);
+    setLanguageChoice(preferences.language);
     setRefreshChoice(preferences.autoRefreshInterval);
     setNotificationsChoice(preferences.notificationsEnabled);
   }, [preferences]);
@@ -264,7 +267,7 @@ export default function SettingsPage() {
     },
     onSuccess: (updated) => {
       setUser(updated);
-      toast.success('Profile updated', 'Your details are now up to date.');
+      toast.success(t('Profile updated'), t('Your details are now up to date.'));
     },
     onError: (error) => {
       setProfileError(getErrorMessage(error));
@@ -295,7 +298,7 @@ export default function SettingsPage() {
       });
     },
     onSuccess: async () => {
-      toast.success('Store settings saved', 'New sales and reports will use these settings.');
+      toast.success(t('Store settings saved'), t('New sales and reports will use these settings.'));
       await refreshMe();
       if (storeId) {
         void queryClient.invalidateQueries({ queryKey: ['store', storeId] });
@@ -312,7 +315,7 @@ export default function SettingsPage() {
   });
 
   const passwordForm = useForm<PasswordForm>({
-    resolver: zodResolver(passwordSchema),
+    resolver: localizedZodResolver(passwordSchema),
     defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
   });
   const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -327,7 +330,7 @@ export default function SettingsPage() {
     onSuccess: () => {
       passwordForm.reset();
       setPasswordError(null);
-      toast.success('Password changed', 'Use your new password the next time you sign in.');
+      toast.success(t('Password changed'), t('Use your new password the next time you sign in.'));
     },
     onError: (error) => setPasswordError(getErrorMessage(error)),
   });
@@ -336,6 +339,7 @@ export default function SettingsPage() {
     mutationFn: async () => {
       const response = await api.put<{ data: { preferences: Preferences } }>('/user/preferences', {
         theme: themeChoice,
+        language: languageChoice,
         autoRefreshInterval: refreshChoice,
         notificationsEnabled: notificationsChoice,
       });
@@ -344,8 +348,9 @@ export default function SettingsPage() {
     onSuccess: (updated) => {
       setPreferences(updated);
       setTheme(updated.theme);
+      setLanguage(updated.language);
       setPreferenceError(null);
-      toast.success('Preferences saved', 'Your workspace will remember these choices.');
+      toast.success(t('Preferences saved'), t('Your workspace will remember these choices.'));
     },
     onError: (error) => setPreferenceError(getErrorMessage(error)),
   });
@@ -357,9 +362,9 @@ export default function SettingsPage() {
     onSuccess: async () => {
       await logout();
       navigate('/login', { replace: true });
-      toast.success('Signed out everywhere', 'All refresh sessions have been revoked.');
+      toast.success(t('Signed out everywhere'), t('All refresh sessions have been revoked.'));
     },
-    onError: (error) => toast.error('Could not revoke sessions', getErrorMessage(error)),
+    onError: (error) => toast.error(t('Could not revoke sessions'), getErrorMessage(error)),
   });
 
   const deleteStoreMutation = useMutation({
@@ -368,13 +373,16 @@ export default function SettingsPage() {
       await api.delete(`/stores/${storeId}`);
     },
     onSuccess: async () => {
-      toast.success('Store deleted', `${storeDetails?.name ?? 'The store'} has been removed.`);
+      toast.success(
+        t('Store deleted'),
+        t('{{name}} has been removed.', { name: storeDetails?.name ?? t('The store') }),
+      );
       setDeleteOpen(false);
       await refreshMe();
       void queryClient.invalidateQueries({ queryKey: ['stores'] });
       navigate('/stores', { replace: true });
     },
-    onError: (error) => toast.error('Could not delete store', getErrorMessage(error)),
+    onError: (error) => toast.error(t('Could not delete store'), getErrorMessage(error)),
   });
 
   const onProfileSubmit = profileForm.handleSubmit((values) => {
@@ -402,19 +410,22 @@ export default function SettingsPage() {
   const storeDirty = storeForm.formState.isDirty;
   const preferencesDirty =
     themeChoice !== (preferences?.theme ?? 'system') ||
+    languageChoice !== (preferences?.language ?? 'en') ||
     refreshChoice !== (preferences?.autoRefreshInterval ?? 0) ||
     notificationsChoice !== (preferences?.notificationsEnabled ?? true);
 
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Workspace"
-        title="Settings"
-        description="Manage your personal profile, store configuration, dashboard preferences and account security."
+        eyebrow={t('Workspace')}
+        title={t('Settings')}
+        description={t(
+          'Manage your personal profile, store configuration, dashboard preferences and account security.',
+        )}
         actions={
           <Badge tone="brand">
             <ShieldCheck className="h-3.5 w-3.5" />
-            {user ? ROLE_LABELS[store?.role ?? 'viewer'] : 'Member'}
+            {user ? t(ROLE_LABELS[store?.role ?? 'viewer']) : t('Member')}
           </Badge>
         }
       />
@@ -428,8 +439,8 @@ export default function SettingsPage() {
                 <div className="space-y-6">
                   <CardHeader
                     className="-mx-5 -mt-5 mb-5 border-ink-100 px-5 pt-0 dark:border-ink-800 sm:-mx-6 sm:-mt-6 sm:px-6"
-                    title="Profile information"
-                    description="This is how teammates see you across every store."
+                    title={t('Profile information')}
+                    description={t('This is how teammates see you across every store.')}
                   />
                   <form onSubmit={onProfileSubmit} className="space-y-5" noValidate>
                     {profileError ? <FormAlert>{profileError}</FormAlert> : null}
@@ -449,7 +460,7 @@ export default function SettingsPage() {
                           {user?.email}
                         </p>
                         <p className="mt-1 text-[11px] text-ink-400">
-                          Member since{' '}
+                          {t('Member since')}{' '}
                           {formatDate(user?.createdAt, 'UTC', { month: 'long', year: 'numeric' })}
                         </p>
                       </div>
@@ -457,7 +468,7 @@ export default function SettingsPage() {
 
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Field
-                        label="First name"
+                        label={t('First name')}
                         htmlFor="profile-first-name"
                         required
                         error={
@@ -473,7 +484,7 @@ export default function SettingsPage() {
                         />
                       </Field>
                       <Field
-                        label="Last name"
+                        label={t('Last name')}
                         htmlFor="profile-last-name"
                         required
                         error={
@@ -492,14 +503,14 @@ export default function SettingsPage() {
 
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Field
-                        label="Email address"
+                        label={t('Email address')}
                         htmlFor="profile-email"
-                        hint="Email changes require support verification."
+                        hint={t('Email changes require support verification.')}
                       >
                         <Input id="profile-email" value={user?.email ?? ''} disabled readOnly />
                       </Field>
                       <Field
-                        label="Phone"
+                        label={t('Phone')}
                         htmlFor="profile-phone"
                         error={
                           profileForm.formState.errors.phone?.message ?? profileFieldErrors.phone
@@ -515,9 +526,9 @@ export default function SettingsPage() {
                     </div>
 
                     <Field
-                      label="Avatar URL"
+                      label={t('Avatar URL')}
                       htmlFor="profile-avatar"
-                      hint="Paste a square image URL. Leave empty to use your initials."
+                      hint={t('Paste a square image URL. Leave empty to use your initials.')}
                       error={
                         profileForm.formState.errors.avatarUrl?.message ??
                         profileFieldErrors.avatarUrl
@@ -538,7 +549,7 @@ export default function SettingsPage() {
                         onClick={() => profileForm.reset(profileDefaults)}
                         disabled={!profileDirty || profileMutation.isPending}
                       >
-                        Discard
+                        {t('Discard')}
                       </Button>
                       <Button
                         type="submit"
@@ -546,7 +557,7 @@ export default function SettingsPage() {
                         disabled={!profileDirty}
                         leftIcon={<CheckCircle2 className="h-4 w-4" />}
                       >
-                        Save profile
+                        {t('Save profile')}
                       </Button>
                     </div>
                   </form>
@@ -556,8 +567,8 @@ export default function SettingsPage() {
               {activeTab === 'store' ? (
                 !storeId ? (
                   <EmptyState
-                    title="No store selected"
-                    description="Create or join a store before configuring location settings."
+                    title={t('No store selected')}
+                    description={t('Create or join a store before configuring location settings.')}
                     icon={<Building2 className="h-6 w-6" />}
                     action={
                       <Button
@@ -565,7 +576,7 @@ export default function SettingsPage() {
                         onClick={() => navigate('/stores')}
                         rightIcon={<ArrowRight className="h-3.5 w-3.5" />}
                       >
-                        Go to stores
+                        {t('Go to stores')}
                       </Button>
                     }
                   />
@@ -577,26 +588,29 @@ export default function SettingsPage() {
                   </div>
                 ) : detailsQuery.isError ? (
                   <ErrorState
-                    message="Could not load this store's settings."
+                    message={t("Could not load this store's settings.")}
                     onRetry={() => void detailsQuery.refetch()}
                   />
                 ) : storeDetails ? (
                   <div className="space-y-6">
                     <CardHeader
                       className="-mx-5 -mt-5 mb-5 border-ink-100 px-5 pt-0 dark:border-ink-800 sm:-mx-6 sm:-mt-6 sm:px-6"
-                      title="Store configuration"
-                      description="Currency, timezone and receipt rules apply to every new transaction."
+                      title={t('Store configuration')}
+                      description={t(
+                        'Currency, timezone and receipt rules apply to every new transaction.',
+                      )}
                       action={
                         <Badge tone={canManageSettings ? 'success' : 'neutral'}>
-                          {canManageSettings ? 'Editable' : 'Read only'}
+                          {t(canManageSettings ? 'Editable' : 'Read only')}
                         </Badge>
                       }
                     />
 
                     {!canManageSettings ? (
                       <div className="rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-xs text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
-                        Only store administrators can change these settings. Ask an owner or admin
-                        if something needs updating.
+                        {t(
+                          'Only store administrators can change these settings. Ask an owner or admin if something needs updating.',
+                        )}
                       </div>
                     ) : null}
 
@@ -605,10 +619,10 @@ export default function SettingsPage() {
                         {storeError ? <FormAlert>{storeError}</FormAlert> : null}
 
                         <section>
-                          <SectionLabel>Identity</SectionLabel>
+                          <SectionLabel>{t('Identity')}</SectionLabel>
                           <div className="grid gap-4 sm:grid-cols-2">
                             <Field
-                              label="Store name"
+                              label={t('Store name')}
                               htmlFor="store-name"
                               required
                               className="sm:col-span-2"
@@ -622,7 +636,7 @@ export default function SettingsPage() {
                                 {...storeForm.register('name')}
                               />
                             </Field>
-                            <Field label="Phone" htmlFor="store-phone">
+                            <Field label={t('Phone')} htmlFor="store-phone">
                               <Input
                                 id="store-phone"
                                 placeholder="+49 30 123456"
@@ -630,7 +644,7 @@ export default function SettingsPage() {
                               />
                             </Field>
                             <Field
-                              label="Contact email"
+                              label={t('Contact email')}
                               htmlFor="store-email"
                               error={
                                 storeForm.formState.errors.email?.message ?? storeFieldErrors.email
@@ -643,7 +657,11 @@ export default function SettingsPage() {
                                 {...storeForm.register('email')}
                               />
                             </Field>
-                            <Field label="Logo URL" htmlFor="store-logo" className="sm:col-span-2">
+                            <Field
+                              label={t('Logo URL')}
+                              htmlFor="store-logo"
+                              className="sm:col-span-2"
+                            >
                               <Input
                                 id="store-logo"
                                 type="url"
@@ -652,14 +670,14 @@ export default function SettingsPage() {
                               />
                             </Field>
                             <Field
-                              label="Description"
+                              label={t('Description')}
                               htmlFor="store-description"
                               className="sm:col-span-2"
                             >
                               <Textarea
                                 id="store-description"
                                 rows={2}
-                                placeholder="A short description shown on receipts and reports"
+                                placeholder={t('A short description shown on receipts and reports')}
                                 {...storeForm.register('description')}
                               />
                             </Field>
@@ -667,10 +685,10 @@ export default function SettingsPage() {
                         </section>
 
                         <section>
-                          <SectionLabel>Location & locale</SectionLabel>
+                          <SectionLabel>{t('Location & locale')}</SectionLabel>
                           <div className="grid gap-4 sm:grid-cols-2">
                             <Field
-                              label="Street address"
+                              label={t('Street address')}
                               htmlFor="store-address"
                               className="sm:col-span-2"
                             >
@@ -680,21 +698,21 @@ export default function SettingsPage() {
                                 {...storeForm.register('address')}
                               />
                             </Field>
-                            <Field label="City" htmlFor="store-city">
+                            <Field label={t('City')} htmlFor="store-city">
                               <Input
                                 id="store-city"
-                                placeholder="Berlin"
+                                placeholder={t('Berlin')}
                                 {...storeForm.register('city')}
                               />
                             </Field>
-                            <Field label="Country" htmlFor="store-country">
+                            <Field label={t('Country')} htmlFor="store-country">
                               <Input
                                 id="store-country"
-                                placeholder="Germany"
+                                placeholder={t('Germany')}
                                 {...storeForm.register('country')}
                               />
                             </Field>
-                            <Field label="Timezone" htmlFor="store-timezone">
+                            <Field label={t('Timezone')} htmlFor="store-timezone">
                               <Select id="store-timezone" {...storeForm.register('timezone')}>
                                 {TIMEZONES.map((timezone) => (
                                   <option key={timezone} value={timezone}>
@@ -704,14 +722,14 @@ export default function SettingsPage() {
                               </Select>
                             </Field>
                             <Field
-                              label="Currency"
+                              label={t('Currency')}
                               htmlFor="store-currency"
-                              hint="Changing currency does not convert historical amounts."
+                              hint={t('Changing currency does not convert historical amounts.')}
                             >
                               <Select id="store-currency" {...storeForm.register('currency')}>
                                 {CURRENCIES.map((code) => (
                                   <option key={code} value={code}>
-                                    {CURRENCY_LABELS[code] ?? code}
+                                    {t(CURRENCY_LABELS[code] ?? code)}
                                   </option>
                                 ))}
                               </Select>
@@ -720,12 +738,12 @@ export default function SettingsPage() {
                         </section>
 
                         <section>
-                          <SectionLabel>Operations</SectionLabel>
+                          <SectionLabel>{t('Operations')}</SectionLabel>
                           <div className="grid gap-4 sm:grid-cols-2">
                             <Field
-                              label="Receipt prefix"
+                              label={t('Receipt prefix')}
                               htmlFor="store-receipt-prefix"
-                              hint="Used for transaction IDs, e.g. KIEZ-000142."
+                              hint={t('Used for transaction IDs, e.g. KIEZ-000142.')}
                               error={storeForm.formState.errors.receiptPrefix?.message}
                             >
                               <Input
@@ -736,9 +754,17 @@ export default function SettingsPage() {
                               />
                             </Field>
                             <Field
-                              label="Milestone amount"
+                              label={t('Milestone amount')}
                               htmlFor="store-milestone"
-                              hint={`Celebrate a live milestone after ${formatCurrency(storeForm.watch('milestoneAmount') || 0, currency)} in daily revenue.`}
+                              hint={t(
+                                'Celebrate a live milestone after {{amount}} in daily revenue.',
+                                {
+                                  amount: formatCurrency(
+                                    storeForm.watch('milestoneAmount') || 0,
+                                    currency,
+                                  ),
+                                },
+                              )}
                               error={storeForm.formState.errors.milestoneAmount?.message}
                             >
                               <Input
@@ -751,9 +777,11 @@ export default function SettingsPage() {
                               />
                             </Field>
                             <Field
-                              label="Data retention"
+                              label={t('Data retention')}
                               htmlFor="store-retention"
-                              hint="Historical analytics older than this are archived. 0 keeps everything."
+                              hint={t(
+                                'Historical analytics older than this are archived. 0 keeps everything.',
+                              )}
                               error={storeForm.formState.errors.dataRetentionDays?.message}
                             >
                               <Input
@@ -769,8 +797,10 @@ export default function SettingsPage() {
                             </Field>
                             <div className="flex items-end pb-1">
                               <Checkbox
-                                label="Email me low-stock alerts"
-                                description="Daily digest when items fall below their minimum stock."
+                                label={t('Email me low-stock alerts')}
+                                description={t(
+                                  'Daily digest when items fall below their minimum stock.',
+                                )}
                                 {...storeForm.register('lowStockEmails')}
                               />
                             </div>
@@ -784,7 +814,7 @@ export default function SettingsPage() {
                             onClick={() => storeForm.reset()}
                             disabled={!storeDirty || storeMutation.isPending}
                           >
-                            Discard changes
+                            {t('Discard changes')}
                           </Button>
                           <Button
                             type="submit"
@@ -792,37 +822,40 @@ export default function SettingsPage() {
                             disabled={!storeDirty}
                             leftIcon={<CheckCircle2 className="h-4 w-4" />}
                           >
-                            Save store settings
+                            {t('Save store settings')}
                           </Button>
                         </div>
                       </form>
                     ) : (
                       <div>
-                        <ReadOnlyRow label="Store name" value={storeDetails.name} />
+                        <ReadOnlyRow label={t('Store name')} value={storeDetails.name} />
                         <ReadOnlyRow
-                          label="Location"
+                          label={t('Location')}
                           value={
                             [storeDetails.address, storeDetails.city, storeDetails.country]
                               .filter(Boolean)
-                              .join(', ') || 'Not set'
+                              .map((value) => t(value as string))
+                              .join(', ') || t('Not set')
                           }
                         />
-                        <ReadOnlyRow label="Timezone" value={storeDetails.timezone} />
-                        <ReadOnlyRow label="Currency" value={storeDetails.currency} />
+                        <ReadOnlyRow label={t('Timezone')} value={storeDetails.timezone} />
+                        <ReadOnlyRow label={t('Currency')} value={storeDetails.currency} />
                         <ReadOnlyRow
-                          label="Receipt prefix"
+                          label={t('Receipt prefix')}
                           value={storeDetails.settings?.receiptPrefix ?? 'PB'}
                         />
                         <ReadOnlyRow
-                          label="Low-stock emails"
+                          label={t('Low-stock emails')}
                           value={storeDetails.settings?.lowStockEmails ? 'Enabled' : 'Disabled'}
                         />
                         <ReadOnlyRow
-                          label="Data retention"
+                          label={t('Data retention')}
                           value={
                             storeDetails.settings?.dataRetentionDays
-                              ? `${storeDetails.settings.dataRetentionDays} days`
-                              : 'Keep everything'
+                              ? t('{{count}} days', {
+                                  count: storeDetails.settings.dataRetentionDays,
+                                })
+                              : t('Keep everything')
                           }
                         />
                       </div>
@@ -833,12 +866,14 @@ export default function SettingsPage() {
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div>
                             <p className="flex items-center gap-1.5 text-sm font-bold text-rose-700 dark:text-rose-300">
-                              <Trash2 className="h-4 w-4" /> Delete this store
+                              <Trash2 className="h-4 w-4" /> {t('Delete this store')}
                             </p>
                             <p className="mt-1 max-w-md text-xs leading-relaxed text-rose-600/90 dark:text-rose-300/80">
-                              Permanently removes products, sales, inventory history and team access
-                              for <span className="font-semibold">{storeDetails.name}</span>. This
-                              cannot be undone.
+                              {t(
+                                'Permanently removes products, sales, inventory history and team access for',
+                              )}{' '}
+                              <span className="font-semibold">{storeDetails.name}</span>
+                              {t('. This cannot be undone.')}
                             </p>
                           </div>
                           <Button
@@ -850,7 +885,7 @@ export default function SettingsPage() {
                             }}
                             leftIcon={<Trash2 className="h-3.5 w-3.5" />}
                           >
-                            Delete store
+                            {t('Delete store')}
                           </Button>
                         </div>
                       </section>
@@ -863,13 +898,13 @@ export default function SettingsPage() {
                 <div className="space-y-6">
                   <CardHeader
                     className="-mx-5 -mt-5 mb-5 border-ink-100 px-5 pt-0 dark:border-ink-800 sm:-mx-6 sm:-mt-6 sm:px-6"
-                    title="Dashboard preferences"
-                    description="Personal choices that follow your account across devices."
+                    title={t('Dashboard preferences')}
+                    description={t('Personal choices that follow your account across devices.')}
                   />
                   {preferenceError ? <FormAlert>{preferenceError}</FormAlert> : null}
 
                   <section>
-                    <SectionLabel>Appearance</SectionLabel>
+                    <SectionLabel>{t('Appearance')}</SectionLabel>
                     <div className="grid gap-3 sm:grid-cols-3">
                       {THEME_OPTIONS.map((option) => {
                         const Icon = option.icon;
@@ -902,26 +937,53 @@ export default function SettingsPage() {
                             </span>
                             <span>
                               <span className="block text-xs font-semibold text-ink-900 dark:text-white">
-                                {option.label}
+                                {t(option.label)}
                               </span>
                               <span className="block text-[10px] text-ink-500 dark:text-ink-400">
                                 {option.value === 'system'
-                                  ? 'Match your device'
-                                  : `Always ${option.value}`}
+                                  ? t('Match your device')
+                                  : t(`Always ${option.value}`)}
                               </span>
                             </span>
                           </button>
                         );
                       })}
                     </div>
+                    <div className="mt-5 max-w-sm">
+                      <Field
+                        label={t('Interface language')}
+                        htmlFor="pref-language"
+                        hint={t(
+                          'Applies instantly across the dashboard and is saved to your account.',
+                        )}
+                      >
+                        <Select
+                          id="pref-language"
+                          value={languageChoice}
+                          onChange={(event) => {
+                            const next = event.target.value as Language;
+                            setLanguageChoice(next);
+                            setLanguage(next);
+                          }}
+                        >
+                          {LANGUAGES.map((option) => (
+                            <option key={option.code} value={option.code}>
+                              {option.native} ({t(option.label)})
+                            </option>
+                          ))}
+                        </Select>
+                      </Field>
+                    </div>
                   </section>
 
                   <section className="space-y-4 border-t border-ink-100 pt-5 dark:border-ink-800">
-                    <SectionLabel>Live data</SectionLabel>
+                    <SectionLabel>{t('Live data')}</SectionLabel>
                     <Field
-                      label="Auto-refresh dashboard"
+                      label={t('Auto-refresh dashboard')}
                       htmlFor="pref-refresh"
-                      hint="Realtime sales still stream instantly over the socket; this controls full refreshes."
+                      hint={t(
+                        'Realtime sales still stream instantly over the socket; this controls full refreshes.',
+                      )}
                     >
                       <Select
                         id="pref-refresh"
@@ -930,7 +992,7 @@ export default function SettingsPage() {
                       >
                         {REFRESH_OPTIONS.map((option) => (
                           <option key={option.value} value={option.value}>
-                            {option.label}
+                            {t(option.label)}
                           </option>
                         ))}
                       </Select>
@@ -938,25 +1000,30 @@ export default function SettingsPage() {
                     <div className="flex flex-wrap items-center gap-2 rounded-xl bg-ink-50 px-3 py-2 text-[11px] text-ink-500 dark:bg-ink-950/40 dark:text-ink-400">
                       <RefreshCw className="h-3.5 w-3.5" />
                       {refreshChoice === 0
-                        ? 'Manual refresh only.'
-                        : `Dashboard refreshes every ${refreshChoice}s while open.`}
+                        ? t('Manual refresh only.')
+                        : t('Dashboard refreshes every {{seconds}}s while open.', {
+                            seconds: refreshChoice,
+                          })}
                     </div>
                   </section>
 
                   <section className="space-y-4 border-t border-ink-100 pt-5 dark:border-ink-800">
-                    <SectionLabel>Notifications</SectionLabel>
+                    <SectionLabel>{t('Notifications')}</SectionLabel>
                     <div className="rounded-xl border border-ink-200 p-4 dark:border-ink-800">
                       <Switch
                         checked={notificationsChoice}
                         onChange={setNotificationsChoice}
-                        label="In-app notifications"
-                        description="Low-stock alerts, milestone celebrations and important account updates."
+                        label={t('In-app notifications')}
+                        description={t(
+                          'Low-stock alerts, milestone celebrations and important account updates.',
+                        )}
                       />
                     </div>
                     <div className="flex items-start gap-2 rounded-xl bg-ink-50 px-3 py-2.5 text-[11px] text-ink-500 dark:bg-ink-950/40 dark:text-ink-400">
                       <BellRing className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                      Turning this off hides the notifications menu but keeps your order history
-                      intact.
+                      {t(
+                        'Turning this off hides the notifications menu but keeps your order history intact.',
+                      )}
                     </div>
                   </section>
 
@@ -968,12 +1035,14 @@ export default function SettingsPage() {
                       onClick={() => {
                         const previous = preferences?.theme ?? 'system';
                         setThemeChoice(previous);
+                        setLanguageChoice(preferences?.language ?? 'en');
+                        setLanguage(preferences?.language ?? 'en');
                         setRefreshChoice(preferences?.autoRefreshInterval ?? 0);
                         setNotificationsChoice(preferences?.notificationsEnabled ?? true);
                         setTheme(previous);
                       }}
                     >
-                      Discard
+                      {t('Discard')}
                     </Button>
                     <Button
                       onClick={() => preferencesMutation.mutate()}
@@ -981,7 +1050,7 @@ export default function SettingsPage() {
                       disabled={!preferencesDirty}
                       leftIcon={<CheckCircle2 className="h-4 w-4" />}
                     >
-                      Save preferences
+                      {t('Save preferences')}
                     </Button>
                   </div>
                 </div>
@@ -991,14 +1060,16 @@ export default function SettingsPage() {
                 <div className="space-y-6">
                   <CardHeader
                     className="-mx-5 -mt-5 mb-5 border-ink-100 px-5 pt-0 dark:border-ink-800 sm:-mx-6 sm:-mt-6 sm:px-6"
-                    title="Account security"
-                    description="Protect your account with a strong password and by closing unused sessions."
+                    title={t('Account security')}
+                    description={t(
+                      'Protect your account with a strong password and by closing unused sessions.',
+                    )}
                   />
 
                   <form onSubmit={onPasswordSubmit} className="space-y-4" noValidate>
                     {passwordError ? <FormAlert>{passwordError}</FormAlert> : null}
                     <Field
-                      label="Current password"
+                      label={t('Current password')}
                       htmlFor="current-password"
                       required
                       error={passwordForm.formState.errors.currentPassword?.message}
@@ -1012,10 +1083,10 @@ export default function SettingsPage() {
                     </Field>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Field
-                        label="New password"
+                        label={t('New password')}
                         htmlFor="new-password"
                         required
-                        hint="At least 10 characters with a letter and a number."
+                        hint={t('At least 10 characters with a letter and a number.')}
                         error={passwordForm.formState.errors.newPassword?.message}
                       >
                         <PasswordInput
@@ -1026,7 +1097,7 @@ export default function SettingsPage() {
                         />
                       </Field>
                       <Field
-                        label="Confirm new password"
+                        label={t('Confirm new password')}
                         htmlFor="confirm-password"
                         required
                         error={passwordForm.formState.errors.confirmPassword?.message}
@@ -1045,13 +1116,13 @@ export default function SettingsPage() {
                         loading={passwordMutation.isPending}
                         leftIcon={<KeyRound className="h-4 w-4" />}
                       >
-                        Update password
+                        {t('Update password')}
                       </Button>
                     </div>
                   </form>
 
                   <section className="border-t border-ink-100 pt-5 dark:border-ink-800">
-                    <SectionLabel>Sessions</SectionLabel>
+                    <SectionLabel>{t('Sessions')}</SectionLabel>
                     <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-ink-200 p-4 dark:border-ink-800">
                       <div className="flex items-start gap-3">
                         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink-100 text-ink-500 dark:bg-ink-800 dark:text-ink-300">
@@ -1059,22 +1130,23 @@ export default function SettingsPage() {
                         </span>
                         <div>
                           <p className="text-sm font-semibold text-ink-900 dark:text-white">
-                            Sign out of all devices
+                            {t('Sign out of all devices')}
                           </p>
                           <p className="mt-0.5 max-w-sm text-xs leading-relaxed text-ink-500 dark:text-ink-400">
-                            Revokes every refresh token for your account. Other browsers and phones
-                            will need to sign in again.
+                            {t(
+                              'Revokes every refresh token for your account. Other browsers and phones will need to sign in again.',
+                            )}
                           </p>
                         </div>
                       </div>
                       <Button variant="secondary" size="sm" onClick={() => setSignOutAllOpen(true)}>
-                        Sign out everywhere
+                        {t('Sign out everywhere')}
                       </Button>
                     </div>
                   </section>
 
                   <section className="border-t border-ink-100 pt-5 dark:border-ink-800">
-                    <SectionLabel>How we protect your account</SectionLabel>
+                    <SectionLabel>{t('How we protect your account')}</SectionLabel>
                     <ul className="space-y-2.5 text-xs text-ink-600 dark:text-ink-300">
                       {[
                         'Short-lived access tokens are kept in memory, never in local storage.',
@@ -1084,7 +1156,7 @@ export default function SettingsPage() {
                       ].map((tip) => (
                         <li key={tip} className="flex items-start gap-2">
                           <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" />
-                          <span>{tip}</span>
+                          <span>{t(tip)}</span>
                         </li>
                       ))}
                     </ul>
@@ -1099,20 +1171,23 @@ export default function SettingsPage() {
           <Card className="overflow-hidden">
             <div className="bg-gradient-to-br from-brand-600 via-brand-500 to-cyan-500 px-5 py-4 text-white">
               <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/70">
-                Current workspace
+                {t('Current workspace')}
               </p>
               <p className="mt-1 truncate text-base font-bold">
-                {store?.name ?? 'No store selected'}
+                {store?.name ?? t('No store selected')}
               </p>
               <p className="mt-0.5 flex items-center gap-1 text-[11px] text-white/80">
                 <MapPin className="h-3 w-3" />
-                {[store?.city, store?.country].filter(Boolean).join(', ') || 'Location not set'}
+                {[store?.city, store?.country]
+                  .filter(Boolean)
+                  .map((value) => t(value as string))
+                  .join(', ') || t('Location not set')}
               </p>
             </div>
             <CardContent className="space-y-3 p-4">
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center gap-1.5 text-ink-500 dark:text-ink-400">
-                  <Globe2 className="h-3.5 w-3.5" /> Timezone
+                  <Globe2 className="h-3.5 w-3.5" /> {t('Timezone')}
                 </span>
                 <span className="font-semibold text-ink-800 dark:text-ink-100">
                   {store?.timezone ?? 'UTC'}
@@ -1120,7 +1195,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center gap-1.5 text-ink-500 dark:text-ink-400">
-                  <Wallet className="h-3.5 w-3.5" /> Currency
+                  <Wallet className="h-3.5 w-3.5" /> {t('Currency')}
                 </span>
                 <span className="font-semibold text-ink-800 dark:text-ink-100">
                   {store?.currency ?? 'EUR'}
@@ -1128,9 +1203,9 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center gap-1.5 text-ink-500 dark:text-ink-400">
-                  <ShieldCheck className="h-3.5 w-3.5" /> Your role
+                  <ShieldCheck className="h-3.5 w-3.5" /> {t('Your role')}
                 </span>
-                <Badge tone="brand">{ROLE_LABELS[store?.role ?? 'viewer']}</Badge>
+                <Badge tone="brand">{t(ROLE_LABELS[store?.role ?? 'viewer'])}</Badge>
               </div>
               <Button
                 variant="secondary"
@@ -1139,7 +1214,7 @@ export default function SettingsPage() {
                 onClick={() => navigate('/stores')}
                 rightIcon={<ArrowRight className="h-3.5 w-3.5" />}
               >
-                Manage stores
+                {t('Manage stores')}
               </Button>
             </CardContent>
           </Card>
@@ -1149,10 +1224,10 @@ export default function SettingsPage() {
               <div>
                 <p className="flex items-center gap-1.5 text-xs font-semibold text-ink-900 dark:text-white">
                   <ShoppingBag className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
-                  Quick links
+                  {t('Quick links')}
                 </p>
                 <p className="mt-0.5 text-[11px] text-ink-500 dark:text-ink-400">
-                  Jump straight into your daily workflow.
+                  {t('Jump straight into your daily workflow.')}
                 </p>
               </div>
               <div className="space-y-1.5">
@@ -1171,7 +1246,7 @@ export default function SettingsPage() {
                       className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-medium text-ink-600 transition hover:bg-ink-50 hover:text-ink-900 dark:text-ink-300 dark:hover:bg-ink-800 dark:hover:text-white"
                     >
                       <Icon className="h-3.5 w-3.5 shrink-0" />
-                      <span className="flex-1">{link.label}</span>
+                      <span className="flex-1">{t(link.label)}</span>
                       <ArrowRight className="h-3 w-3 opacity-50" />
                     </button>
                   );
@@ -1182,14 +1257,14 @@ export default function SettingsPage() {
 
           <div className="rounded-2xl border border-ink-200 bg-ink-50/60 p-4 dark:border-ink-800 dark:bg-ink-900/40">
             <p className="flex items-center gap-1.5 text-[11px] font-semibold text-ink-600 dark:text-ink-300">
-              <Mail className="h-3.5 w-3.5" /> Need a hand?
+              <Mail className="h-3.5 w-3.5" /> {t('Need a hand?')}
             </p>
             <p className="mt-1 text-[11px] leading-relaxed text-ink-500 dark:text-ink-400">
-              Email{' '}
+              {t('Email')}{' '}
               <span className="font-semibold text-ink-700 dark:text-ink-200">
                 support@pulseboard.app
               </span>{' '}
-              and our team will get back to you within one business day.
+              {t('and our team will get back to you within one business day.')}
             </p>
           </div>
         </aside>
@@ -1199,9 +1274,9 @@ export default function SettingsPage() {
         open={signOutAllOpen}
         onClose={() => setSignOutAllOpen(false)}
         onConfirm={() => signOutAllMutation.mutate()}
-        title="Sign out of all devices?"
-        description="Every refresh token for your account will be revoked immediately."
-        confirmLabel="Sign out everywhere"
+        title={t('Sign out of all devices?')}
+        description={t('Every refresh token for your account will be revoked immediately.')}
+        confirmLabel={t('Sign out everywhere')}
         destructive
         loading={signOutAllMutation.isPending}
       />
@@ -1212,8 +1287,10 @@ export default function SettingsPage() {
           setDeleteOpen(false);
           setDeleteConfirmation('');
         }}
-        title="Delete this store?"
-        description="Products, sales, inventory history and team access will be permanently removed."
+        title={t('Delete this store?')}
+        description={t(
+          'Products, sales, inventory history and team access will be permanently removed.',
+        )}
         size="sm"
         footer={
           <>
@@ -1225,7 +1302,7 @@ export default function SettingsPage() {
               }}
               disabled={deleteStoreMutation.isPending}
             >
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               variant="danger"
@@ -1234,22 +1311,22 @@ export default function SettingsPage() {
               disabled={deleteConfirmation !== (storeDetails?.name ?? '')}
               leftIcon={<Trash2 className="h-4 w-4" />}
             >
-              Delete store
+              {t('Delete store')}
             </Button>
           </>
         }
       >
         <div className="space-y-3">
           <p className="text-sm text-ink-600 dark:text-ink-300">
-            Type{' '}
+            {t('Type')}{' '}
             <span className="font-semibold text-ink-900 dark:text-white">{storeDetails?.name}</span>{' '}
-            to confirm. This action cannot be undone.
+            {t('to confirm. This action cannot be undone.')}
           </p>
           <Input
             value={deleteConfirmation}
             onChange={(event) => setDeleteConfirmation(event.target.value)}
-            placeholder={storeDetails?.name ?? 'Store name'}
-            aria-label="Store name confirmation"
+            placeholder={storeDetails?.name ?? t('Store name')}
+            aria-label={t('Store name confirmation')}
             autoComplete="off"
           />
         </div>

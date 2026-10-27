@@ -21,9 +21,10 @@ import { activityLabel, formatDate, formatDateTime, relativeTime, titleCase } fr
 import { toast } from '../stores/toast-store';
 import { useAuthStore } from '../stores/auth-store';
 import type { StoreRole, TeamMember } from '../types';
+import { t } from '../lib/i18n';
 
 export default function TeamPage() {
-  usePageTitle('Team');
+  usePageTitle(t('Team'));
   const queryClient = useQueryClient();
   const { storeId, role, timezone } = useStoreContext();
   const currentUser = useAuthStore((state) => state.user);
@@ -51,34 +52,36 @@ export default function TeamPage() {
     mutationFn: ({ userId, newRole }: { userId: string; newRole: StoreRole }) =>
       api.put(`/stores/${storeId}/team/${userId}/role`, { role: newRole }),
     onSuccess: () => {
-      toast.success('Role updated', 'Permissions take effect on their next request.');
+      toast.success(t('Role updated'), t('Permissions take effect on their next request.'));
       void queryClient.invalidateQueries({ queryKey: ['team'] });
       void queryClient.invalidateQueries({ queryKey: ['activity'] });
     },
-    onError: (error) => toast.error('Could not update role', getErrorMessage(error)),
+    onError: (error) => toast.error(t('Could not update role'), getErrorMessage(error)),
   });
 
   const removeMutation = useMutation({
     mutationFn: (member: TeamMember) => api.delete(`/stores/${storeId}/team/${member.userId}`),
     onSuccess: () => {
-      toast.success('Member removed', 'They no longer have access to this store.');
+      toast.success(t('Member removed'), t('They no longer have access to this store.'));
       void queryClient.invalidateQueries({ queryKey: ['team'] });
       void queryClient.invalidateQueries({ queryKey: ['activity'] });
       setRemoveTarget(null);
     },
-    onError: (error) => toast.error('Could not remove member', getErrorMessage(error)),
+    onError: (error) => toast.error(t('Could not remove member'), getErrorMessage(error)),
   });
 
   return (
     <div className="space-y-5">
       <PageHeader
-        eyebrow="People & access"
-        title="Team"
-        description="Control who can see and change your store — with precise, role-based permissions."
+        eyebrow={t('People & access')}
+        title={t('Team')}
+        description={t(
+          'Control who can see and change your store — with precise, role-based permissions.',
+        )}
         actions={
           canManage ? (
             <Button onClick={() => setInviteOpen(true)} leftIcon={<UserPlus className="h-4 w-4" />}>
-              Invite member
+              {t('Invite member')}
             </Button>
           ) : null
         }
@@ -89,7 +92,7 @@ export default function TeamPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-                Team members
+                {t('Team members')}
               </p>
               <p className="mt-1 text-xl font-bold text-ink-900 dark:text-white">
                 {members.length}
@@ -104,7 +107,7 @@ export default function TeamPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-                Administrators
+                {t('Administrators')}
               </p>
               <p className="mt-1 text-xl font-bold text-ink-900 dark:text-white">{admins}</p>
             </div>
@@ -117,7 +120,7 @@ export default function TeamPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-                Pending invites
+                {t('Pending invites')}
               </p>
               <p className="mt-1 text-xl font-bold text-ink-900 dark:text-white">
                 {pendingInvitations.length}
@@ -164,12 +167,12 @@ export default function TeamPage() {
             />
           ) : members.length === 0 ? (
             <EmptyState
-              title="No team members yet"
-              description="Invite a manager or cashier to collaborate on this store."
+              title={t('No team members yet')}
+              description={t('Invite a manager or cashier to collaborate on this store.')}
               action={
                 canManage ? (
                   <Button size="sm" onClick={() => setInviteOpen(true)}>
-                    Invite member
+                    {t('Invite member')}
                   </Button>
                 ) : undefined
               }
@@ -178,11 +181,11 @@ export default function TeamPage() {
             <Table>
               <thead>
                 <tr>
-                  <Th>Member</Th>
-                  <Th>Role</Th>
-                  <Th>Joined</Th>
-                  <Th>Last active</Th>
-                  <Th className="text-right">Actions</Th>
+                  <Th>{t('Member')}</Th>
+                  <Th>{t('Role')}</Th>
+                  <Th>{t('Joined')}</Th>
+                  <Th>{t('Last active')}</Th>
+                  <Th className="text-right">{t('Actions')}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -201,8 +204,8 @@ export default function TeamPage() {
                           <div className="min-w-0">
                             <p className="flex items-center gap-1.5 truncate text-xs font-semibold text-ink-800 dark:text-ink-100">
                               {member.firstName} {member.lastName}
-                              {member.isOwner ? <Badge tone="brand">Owner</Badge> : null}
-                              {isSelf ? <Badge tone="neutral">You</Badge> : null}
+                              {member.isOwner ? <Badge tone="brand">{t('Owner')}</Badge> : null}
+                              {isSelf ? <Badge tone="neutral">{t('You')}</Badge> : null}
                             </p>
                             <p className="truncate text-[10px] text-ink-400">{member.email}</p>
                           </div>
@@ -219,19 +222,19 @@ export default function TeamPage() {
                               })
                             }
                             className="h-8 w-auto min-w-[7.5rem] py-1 text-xs"
-                            aria-label={`Role for ${member.firstName}`}
+                            aria-label={t('Role for {{name}}', { name: member.firstName })}
                             disabled={roleMutation.isPending}
                           >
                             {(['admin', 'manager', 'cashier', 'viewer'] as StoreRole[]).map(
                               (item) => (
                                 <option key={item} value={item}>
-                                  {ROLE_LABELS[item]}
+                                  {t(ROLE_LABELS[item])}
                                 </option>
                               ),
                             )}
                           </Select>
                         ) : (
-                          <span title={ROLE_DESCRIPTIONS[member.role]}>
+                          <span title={t(ROLE_DESCRIPTIONS[member.role])}>
                             <Badge
                               tone={
                                 member.role === 'admin'
@@ -241,7 +244,7 @@ export default function TeamPage() {
                                     : 'neutral'
                               }
                             >
-                              {ROLE_LABELS[member.role]}
+                              {t(ROLE_LABELS[member.role])}
                             </Badge>
                           </span>
                         )}
@@ -250,7 +253,7 @@ export default function TeamPage() {
                         {formatDate(member.assignedAt, timezone)}
                       </Td>
                       <Td className="whitespace-nowrap text-xs text-ink-500 dark:text-ink-400">
-                        {member.lastLoginAt ? relativeTime(member.lastLoginAt) : 'Never'}
+                        {member.lastLoginAt ? relativeTime(member.lastLoginAt) : t('Never')}
                       </Td>
                       <Td>
                         <div className="flex justify-end">
@@ -259,8 +262,10 @@ export default function TeamPage() {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 text-rose-500"
-                              title="Remove member"
-                              aria-label={`Remove ${member.firstName} ${member.lastName}`}
+                              title={t('Remove member')}
+                              aria-label={t('Remove {{name}}', {
+                                name: `${member.firstName} ${member.lastName}`,
+                              })}
                               onClick={() => setRemoveTarget(member)}
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -288,12 +293,14 @@ export default function TeamPage() {
             />
           ) : invitations.length === 0 ? (
             <EmptyState
-              title="No invitations"
-              description="Invited teammates appear here until they accept or the invitation expires."
+              title={t('No invitations')}
+              description={t(
+                'Invited teammates appear here until they accept or the invitation expires.',
+              )}
               action={
                 canManage ? (
                   <Button size="sm" onClick={() => setInviteOpen(true)}>
-                    Invite member
+                    {t('Invite member')}
                   </Button>
                 ) : undefined
               }
@@ -302,11 +309,11 @@ export default function TeamPage() {
             <Table>
               <thead>
                 <tr>
-                  <Th>Email</Th>
-                  <Th>Role</Th>
-                  <Th>Status</Th>
-                  <Th>Expires</Th>
-                  <Th className="text-right">Created</Th>
+                  <Th>{t('Email')}</Th>
+                  <Th>{t('Role')}</Th>
+                  <Th>{t('Status')}</Th>
+                  <Th>{t('Expires')}</Th>
+                  <Th className="text-right">{t('Created')}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -314,7 +321,7 @@ export default function TeamPage() {
                   <TableRow key={invitation.id}>
                     <Td className="text-xs font-medium">{invitation.email}</Td>
                     <Td>
-                      <Badge tone="brand">{ROLE_LABELS[invitation.role]}</Badge>
+                      <Badge tone="brand">{t(ROLE_LABELS[invitation.role])}</Badge>
                     </Td>
                     <Td>
                       <Badge
@@ -326,7 +333,7 @@ export default function TeamPage() {
                               : 'neutral'
                         }
                       >
-                        {titleCase(invitation.status)}
+                        {t(titleCase(invitation.status))}
                       </Badge>
                     </Td>
                     <Td className="whitespace-nowrap text-xs text-ink-500 dark:text-ink-400">
@@ -351,7 +358,10 @@ export default function TeamPage() {
               onRetry={() => void activityQuery.refetch()}
             />
           ) : activityQuery.data && activityQuery.data.data.length === 0 ? (
-            <EmptyState title="No activity yet" description="Team actions will be logged here." />
+            <EmptyState
+              title={t('No activity yet')}
+              description={t('Team actions will be logged here.')}
+            />
           ) : (
             <>
               <div className="divide-y divide-ink-100 dark:divide-ink-800">
@@ -368,7 +378,7 @@ export default function TeamPage() {
                         </span>
                       </p>
                       <p className="text-[10px] text-ink-500 dark:text-ink-400">
-                        {entry.userName ?? entry.userEmail ?? 'System'} ·{' '}
+                        {entry.userName ?? entry.userEmail ?? t('System')} ·{' '}
                         {formatDateTime(entry.createdAt, timezone)}
                       </p>
                       {entry.details ? (
@@ -391,8 +401,9 @@ export default function TeamPage() {
 
       <Card>
         <CardContent className="text-[11px] leading-relaxed text-ink-500 dark:text-ink-400">
-          Roles are enforced server-side on every request. Store membership role is authoritative —
-          even a business owner invited as a viewer only gets viewer permissions in that store.
+          {t(
+            'Roles are enforced server-side on every request. Store membership role is authoritative — even a business owner invited as a viewer only gets viewer permissions in that store.',
+          )}
         </CardContent>
       </Card>
 
@@ -401,9 +412,13 @@ export default function TeamPage() {
         open={Boolean(removeTarget)}
         onClose={() => setRemoveTarget(null)}
         onConfirm={() => removeTarget && removeMutation.mutate(removeTarget)}
-        title={`Remove ${removeTarget?.firstName ?? 'member'}?`}
-        description="They will lose access to this store immediately. Historical activity stays intact."
-        confirmLabel="Remove member"
+        title={t('Remove {{name}}?', {
+          name: removeTarget?.firstName ?? t('member'),
+        })}
+        description={t(
+          'They will lose access to this store immediately. Historical activity stays intact.',
+        )}
+        confirmLabel={t('Remove member')}
         destructive
         loading={removeMutation.isPending}
       />

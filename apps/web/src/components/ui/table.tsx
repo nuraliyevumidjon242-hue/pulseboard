@@ -3,6 +3,7 @@ import type { HTMLAttributes, ReactNode, TdHTMLAttributes, ThHTMLAttributes } fr
 import type { PaginationMeta } from '../../types';
 import { cn } from '../../lib/utils';
 import { Button } from './button';
+import { t } from '../../lib/i18n';
 
 export function TableWrap({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
@@ -52,21 +53,23 @@ export function Pagination({
       )}
     >
       <p className="text-xs text-ink-500 dark:text-ink-400">
-        Showing <span className="font-semibold text-ink-700 dark:text-ink-200">{start}</span>–
-        <span className="font-semibold text-ink-700 dark:text-ink-200">{end}</span> of{' '}
-        <span className="font-semibold text-ink-700 dark:text-ink-200">{meta.total}</span>
+        {t('Showing {{from}}–{{to}} of {{total}}', {
+          from: start,
+          to: end,
+          total: meta.total,
+        })}
       </p>
       <div className="flex items-center gap-2">
         {onLimitChange ? (
           <select
-            aria-label="Rows per page"
+            aria-label={t('Rows per page')}
             value={meta.limit}
             onChange={(event) => onLimitChange(Number(event.target.value))}
             className="h-8 rounded-lg border border-ink-200 bg-white px-2 text-xs font-medium text-ink-600 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-300"
           >
             {[10, 20, 50, 100].map((value) => (
               <option key={value} value={value}>
-                {value} / page
+                {t('{{count}} per page', { count: value })}
               </option>
             ))}
           </select>
@@ -76,10 +79,10 @@ export function Pagination({
           size="sm"
           disabled={!meta.hasPrevious}
           onClick={() => onPageChange(meta.page - 1)}
-          aria-label="Previous page"
+          aria-label={t('Previous page')}
         >
           <ChevronLeft className="h-3.5 w-3.5" />
-          Prev
+          {t('Prev')}
         </Button>
         <span className="px-1 text-xs font-semibold text-ink-600 dark:text-ink-300">
           {meta.page} / {Math.max(1, meta.totalPages)}
@@ -89,9 +92,9 @@ export function Pagination({
           size="sm"
           disabled={!meta.hasNext}
           onClick={() => onPageChange(meta.page + 1)}
-          aria-label="Next page"
+          aria-label={t('Next page')}
         >
-          Next
+          {t('Next')}
           <ChevronRight className="h-3.5 w-3.5" />
         </Button>
       </div>

@@ -13,7 +13,7 @@ import {
   TriangleAlert,
   Upload,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { PageHeader } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -47,9 +47,10 @@ import {
 } from '../lib/utils';
 import { toast } from '../stores/toast-store';
 import type { InventoryAdjustment, Product } from '../types';
+import { t } from '../lib/i18n';
 
 export default function InventoryPage() {
-  usePageTitle('Inventory');
+  usePageTitle(t('Inventory'));
   const queryClient = useQueryClient();
   const { storeId, currency, timezone, role } = useStoreContext();
   const [tab, setTab] = useState('products');
@@ -102,13 +103,13 @@ export default function InventoryPage() {
   const archiveMutation = useMutation({
     mutationFn: (product: Product) => api.delete(`/stores/${storeId}/products/${product.id}`),
     onSuccess: () => {
-      toast.success('Product archived', 'You can restore it by editing archived products.');
+      toast.success(t('Product archived'), t('You can restore it by editing archived products.'));
       void queryClient.invalidateQueries({ queryKey: ['products'] });
       void queryClient.invalidateQueries({ queryKey: ['inventory'] });
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       setArchiveTarget(null);
     },
-    onError: (error) => toast.error('Could not archive product', getErrorMessage(error)),
+    onError: (error) => toast.error(t('Could not archive product'), getErrorMessage(error)),
   });
 
   const onExport = async () => {
@@ -116,9 +117,9 @@ export default function InventoryPage() {
     setExporting(true);
     try {
       await downloadInventoryCsv(storeId);
-      toast.success('Inventory exported', 'The CSV file has been downloaded.');
+      toast.success(t('Inventory exported'), t('The CSV file has been downloaded.'));
     } catch (error) {
-      toast.error('Export failed', getErrorMessage(error));
+      toast.error(t('Export failed'), getErrorMessage(error));
     } finally {
       setExporting(false);
     }
@@ -127,46 +128,49 @@ export default function InventoryPage() {
   const openCreate = () => setProductModal({ open: true, product: null });
   const openEdit = (product: Product) => setProductModal({ open: true, product });
 
-  const stats = useMemo(
-    () => [
-      {
-        label: 'Active products',
-        value: formatNumber(summary?.activeProducts ?? 0),
-        hint: `${formatNumber(summary?.totalProducts ?? 0)} in catalogue`,
-        icon: PackageCheck,
-        tone: 'bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-300',
-      },
-      {
-        label: 'Low stock',
-        value: formatNumber(summary?.lowStockCount ?? 0),
-        hint: 'At or below min level',
-        icon: TriangleAlert,
-        tone: 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-300',
-      },
-      {
-        label: 'Out of stock',
-        value: formatNumber(summary?.outOfStockCount ?? 0),
-        hint: 'Needs restocking now',
-        icon: PackageX,
-        tone: 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-300',
-      },
-      {
-        label: 'Inventory value',
-        value: formatCurrency(summary?.inventoryValue, currency, { compact: true }),
-        hint: `Potential ${formatCurrency(summary?.potentialRevenue, currency, { compact: true })}`,
-        icon: Layers,
-        tone: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300',
-      },
-    ],
-    [summary, currency],
-  );
+  // Computed on every render so localized copy and locale-aware formatting stay
+  // in sync with the active language.
+  const stats = [
+    {
+      label: 'Active products',
+      value: formatNumber(summary?.activeProducts ?? 0),
+      hint: t('{{count}} in catalogue', {
+        count: formatNumber(summary?.totalProducts ?? 0),
+      }),
+      icon: PackageCheck,
+      tone: 'bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-300',
+    },
+    {
+      label: 'Low stock',
+      value: formatNumber(summary?.lowStockCount ?? 0),
+      hint: t('At or below min level'),
+      icon: TriangleAlert,
+      tone: 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-300',
+    },
+    {
+      label: 'Out of stock',
+      value: formatNumber(summary?.outOfStockCount ?? 0),
+      hint: t('Needs restocking now'),
+      icon: PackageX,
+      tone: 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-300',
+    },
+    {
+      label: 'Inventory value',
+      value: formatCurrency(summary?.inventoryValue, currency, { compact: true }),
+      hint: t('Potential {{amount}}', {
+        amount: formatCurrency(summary?.potentialRevenue, currency, { compact: true }),
+      }),
+      icon: Layers,
+      tone: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300',
+    },
+  ];
 
   return (
     <div className="space-y-5">
       <PageHeader
-        eyebrow="Stock control"
-        title="Inventory"
-        description="Catalogue, stock levels and the full audit trail of every adjustment."
+        eyebrow={t('Stock control')}
+        title={t('Inventory')}
+        description={t('Catalogue, stock levels and the full audit trail of every adjustment.')}
         actions={
           <>
             {canExport ? (
@@ -176,7 +180,7 @@ export default function InventoryPage() {
                 onClick={() => void onExport()}
                 leftIcon={<Download className="h-4 w-4" />}
               >
-                Export
+                {t('Export')}
               </Button>
             ) : null}
             {canAdjust ? (
@@ -185,12 +189,12 @@ export default function InventoryPage() {
                 onClick={() => setImportOpen(true)}
                 leftIcon={<Upload className="h-4 w-4" />}
               >
-                Import
+                {t('Import')}
               </Button>
             ) : null}
             {canWriteProducts ? (
               <Button onClick={openCreate} leftIcon={<PackagePlus className="h-4 w-4" />}>
-                Add product
+                {t('Add product')}
               </Button>
             ) : null}
           </>
@@ -205,7 +209,7 @@ export default function InventoryPage() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-                    {stat.label}
+                    {t(stat.label)}
                   </p>
                   <p className="mt-1.5 text-xl font-bold tracking-tight text-ink-900 dark:text-white">
                     {stat.value}
@@ -253,14 +257,14 @@ export default function InventoryPage() {
             <div className="flex flex-wrap items-end gap-2 border-b border-ink-100 p-4 dark:border-ink-800">
               <div className="min-w-[12rem] flex-1">
                 <Input
-                  placeholder="Search name, SKU or barcode…"
+                  placeholder={t('Search name, SKU or barcode…')}
                   value={search}
                   onChange={(event) => {
                     setSearch(event.target.value);
                     setPage(1);
                   }}
                   leftIcon={<Search className="h-4 w-4" />}
-                  aria-label="Search products"
+                  aria-label={t('Search products')}
                 />
               </div>
               <Select
@@ -270,9 +274,9 @@ export default function InventoryPage() {
                   setPage(1);
                 }}
                 className="w-auto min-w-[9rem]"
-                aria-label="Filter by category"
+                aria-label={t('Filter by category')}
               >
-                <option value="">All categories</option>
+                <option value="">{t('All categories')}</option>
                 {(categoriesQuery.data ?? []).map((item) => (
                   <option key={item} value={item}>
                     {item}
@@ -286,12 +290,12 @@ export default function InventoryPage() {
                   setPage(1);
                 }}
                 className="w-auto min-w-[9rem]"
-                aria-label="Sort products"
+                aria-label={t('Sort products')}
               >
-                <option value="name">Name</option>
-                <option value="price">Price</option>
-                <option value="stock">Stock</option>
-                <option value="createdAt">Newest</option>
+                <option value="name">{t('Name')}</option>
+                <option value="price">{t('Price')}</option>
+                <option value="stock">{t('Stock')}</option>
+                <option value="createdAt">{t('Newest')}</option>
               </Select>
               <label className="flex h-10 cursor-pointer items-center gap-1.5 rounded-xl border border-ink-200 px-3 text-xs font-medium text-ink-600 dark:border-ink-700 dark:text-ink-300">
                 <input
@@ -303,11 +307,11 @@ export default function InventoryPage() {
                   }}
                   className="h-3.5 w-3.5 rounded border-ink-300 text-brand-600 focus:ring-brand-500/40"
                 />
-                Low stock
+                {t('Low stock')}
               </label>
               <div className="flex h-10 items-center px-1">
                 <Checkbox
-                  label="Archived"
+                  label={t('Archived')}
                   checked={includeInactive}
                   onChange={(event) => {
                     setIncludeInactive(event.target.checked);
@@ -326,11 +330,11 @@ export default function InventoryPage() {
               />
             ) : productsQuery.data && productsQuery.data.data.length === 0 ? (
               <EmptyState
-                title="No products found"
+                title={t('No products found')}
                 description={
                   search || category || lowStockOnly
-                    ? 'Adjust your filters or add a new product.'
-                    : 'Add your first product to start tracking stock.'
+                    ? t('Adjust your filters or add a new product.')
+                    : t('Add your first product to start tracking stock.')
                 }
                 action={
                   canWriteProducts ? (
@@ -339,7 +343,7 @@ export default function InventoryPage() {
                       onClick={openCreate}
                       leftIcon={<PackagePlus className="h-3.5 w-3.5" />}
                     >
-                      Add product
+                      {t('Add product')}
                     </Button>
                   ) : undefined
                 }
@@ -349,13 +353,13 @@ export default function InventoryPage() {
                 <Table>
                   <thead>
                     <tr>
-                      <Th>Product</Th>
-                      <Th>Category</Th>
-                      <Th className="text-right">Price</Th>
-                      <Th className="text-right">Margin</Th>
-                      <Th className="text-center">Stock</Th>
-                      <Th>Status</Th>
-                      <Th className="text-right">Actions</Th>
+                      <Th>{t('Product')}</Th>
+                      <Th>{t('Category')}</Th>
+                      <Th className="text-right">{t('Price')}</Th>
+                      <Th className="text-right">{t('Margin')}</Th>
+                      <Th className="text-center">{t('Stock')}</Th>
+                      <Th>{t('Status')}</Th>
+                      <Th className="text-right">{t('Actions')}</Th>
                     </tr>
                   </thead>
                   <tbody>
@@ -411,20 +415,20 @@ export default function InventoryPage() {
                             <span className="text-xs font-bold text-ink-900 dark:text-white">
                               {product.currentStock}
                             </span>
-                            <span className="ml-1 text-[10px] text-ink-400">{product.unit}</span>
+                            <span className="ml-1 text-[10px] text-ink-400">{t(product.unit)}</span>
                             <span className="mt-0.5 block text-[10px] text-ink-400">
-                              min {product.minStock}
+                              {t('min')} {product.minStock}
                             </span>
                           </Td>
                           <Td>
                             {!product.isActive ? (
-                              <Badge tone="neutral">Archived</Badge>
+                              <Badge tone="neutral">{t('Archived')}</Badge>
                             ) : tone === 'out' ? (
-                              <Badge tone="danger">Out of stock</Badge>
+                              <Badge tone="danger">{t('Out of stock')}</Badge>
                             ) : tone === 'low' ? (
-                              <Badge tone="warning">Low stock</Badge>
+                              <Badge tone="warning">{t('Low stock')}</Badge>
                             ) : (
-                              <Badge tone="success">Healthy</Badge>
+                              <Badge tone="success">{t('Healthy')}</Badge>
                             )}
                           </Td>
                           <Td>
@@ -434,8 +438,10 @@ export default function InventoryPage() {
                                   variant="ghost"
                                   size="icon"
                                   className="h-8 w-8"
-                                  title="Adjust stock"
-                                  aria-label={`Adjust stock for ${product.name}`}
+                                  title={t('Adjust stock')}
+                                  aria-label={t('Adjust stock for {{name}}', {
+                                    name: product.name,
+                                  })}
                                   onClick={() => setAdjustTarget(product)}
                                 >
                                   <ArrowLeftRight className="h-3.5 w-3.5" />
@@ -447,8 +453,8 @@ export default function InventoryPage() {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8"
-                                    title="Edit product"
-                                    aria-label={`Edit ${product.name}`}
+                                    title={t('Edit product')}
+                                    aria-label={t('Edit {{name}}', { name: product.name })}
                                     onClick={() => openEdit(product)}
                                   >
                                     <Pencil className="h-3.5 w-3.5" />
@@ -457,8 +463,8 @@ export default function InventoryPage() {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8"
-                                    title="Archive product"
-                                    aria-label={`Archive ${product.name}`}
+                                    title={t('Archive product')}
+                                    aria-label={t('Archive {{name}}', { name: product.name })}
                                     onClick={() => setArchiveTarget(product)}
                                   >
                                     <Archive className="h-3.5 w-3.5" />
@@ -492,18 +498,18 @@ export default function InventoryPage() {
                   setAdjustPage(1);
                 }}
                 className="w-auto min-w-[10rem]"
-                aria-label="Filter adjustments by reason"
+                aria-label={t('Filter adjustments by reason')}
               >
-                <option value="">All reasons</option>
-                <option value="purchase">Purchase</option>
-                <option value="sale">Sale</option>
-                <option value="loss">Loss</option>
-                <option value="damage">Damage</option>
-                <option value="correction">Correction</option>
-                <option value="return">Return</option>
+                <option value="">{t('All reasons')}</option>
+                <option value="purchase">{t('Purchase')}</option>
+                <option value="sale">{t('Sale')}</option>
+                <option value="loss">{t('Loss')}</option>
+                <option value="damage">{t('Damage')}</option>
+                <option value="correction">{t('Correction')}</option>
+                <option value="return">{t('Return')}</option>
               </Select>
               <p className="text-[11px] text-ink-400">
-                Every stock change is recorded with before/after quantities.
+                {t('Every stock change is recorded with before/after quantities.')}
               </p>
               <Button
                 variant="secondary"
@@ -513,7 +519,7 @@ export default function InventoryPage() {
                 disabled={lowStock.length === 0}
                 leftIcon={<ArrowLeftRight className="h-3.5 w-3.5" />}
               >
-                Adjust stock
+                {t('Adjust stock')}
               </Button>
             </div>
 
@@ -526,20 +532,22 @@ export default function InventoryPage() {
               />
             ) : adjustmentsQuery.data && adjustmentsQuery.data.data.length === 0 ? (
               <EmptyState
-                title="No adjustments yet"
-                description="Stock changes from sales, deliveries and corrections will appear here."
+                title={t('No adjustments yet')}
+                description={t(
+                  'Stock changes from sales, deliveries and corrections will appear here.',
+                )}
               />
             ) : (
               <>
                 <Table>
                   <thead>
                     <tr>
-                      <Th>Date</Th>
-                      <Th>Product</Th>
-                      <Th className="text-center">Change</Th>
-                      <Th className="text-center">Before → After</Th>
-                      <Th>Reason</Th>
-                      <Th>Notes</Th>
+                      <Th>{t('Date')}</Th>
+                      <Th>{t('Product')}</Th>
+                      <Th className="text-center">{t('Change')}</Th>
+                      <Th className="text-center">{t('Before → After')}</Th>
+                      <Th>{t('Reason')}</Th>
+                      <Th>{t('Notes')}</Th>
                     </tr>
                   </thead>
                   <tbody>
@@ -549,7 +557,7 @@ export default function InventoryPage() {
                           {formatDateTime(adjustment.createdAt, timezone)}
                         </Td>
                         <Td className="text-xs font-medium">
-                          {adjustment.productName ?? 'Deleted product'}
+                          {adjustment.productName ?? t('Deleted product')}
                         </Td>
                         <Td className="text-center">
                           <span
@@ -580,7 +588,7 @@ export default function InventoryPage() {
                                   : 'warning'
                             }
                           >
-                            {titleCase(adjustment.reason)}
+                            {t(titleCase(adjustment.reason))}
                           </Badge>
                         </Td>
                         <Td className="max-w-[14rem] truncate text-xs text-ink-500 dark:text-ink-400">
@@ -606,8 +614,8 @@ export default function InventoryPage() {
               </div>
             ) : lowStock.length === 0 ? (
               <EmptyState
-                title="All stock is healthy"
-                description="No product is at or below its minimum stock level."
+                title={t('All stock is healthy')}
+                description={t('No product is at or below its minimum stock level.')}
                 icon={<PackageCheck className="h-6 w-6" />}
               />
             ) : (
@@ -629,7 +637,7 @@ export default function InventoryPage() {
                           <p className="font-mono text-[10px] text-ink-400">{product.sku}</p>
                         </div>
                         <Badge tone={tone === 'out' ? 'danger' : 'warning'}>
-                          {tone === 'out' ? 'Out' : 'Low'}
+                          {tone === 'out' ? t('Out') : t('Low')}
                         </Badge>
                       </div>
                       <div className="mt-3 flex items-baseline gap-1">
@@ -637,7 +645,7 @@ export default function InventoryPage() {
                           {product.currentStock}
                         </span>
                         <span className="text-xs text-ink-400">
-                          {product.unit} · min {product.minStock}
+                          {t(product.unit)} {t('· min')} {product.minStock}
                         </span>
                       </div>
                       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-ink-100 dark:bg-ink-800">
@@ -651,7 +659,7 @@ export default function InventoryPage() {
                       </div>
                       <div className="mt-3 flex items-center justify-between">
                         <span className="text-[11px] text-ink-400">
-                          {formatCurrency(product.price, currency)} / {product.unit}
+                          {formatCurrency(product.price, currency)} / {t(product.unit)}
                         </span>
                         {canAdjust ? (
                           <Button
@@ -660,7 +668,7 @@ export default function InventoryPage() {
                             onClick={() => setAdjustTarget(product)}
                             leftIcon={<PackagePlus className="h-3.5 w-3.5" />}
                           >
-                            Restock
+                            {t('Restock')}
                           </Button>
                         ) : null}
                       </div>
@@ -675,9 +683,9 @@ export default function InventoryPage() {
 
       <Card>
         <CardContent className="text-[11px] leading-relaxed text-ink-500 dark:text-ink-400">
-          Stock is deducted automatically at checkout. Use adjustments for deliveries, returns,
-          shrinkage and stock counts — PulseBoard keeps an immutable audit trail and alerts your
-          team when items fall below their minimum.
+          {t(
+            'Stock is deducted automatically at checkout. Use adjustments for deliveries, returns, shrinkage and stock counts — PulseBoard keeps an immutable audit trail and alerts your team when items fall below their minimum.',
+          )}
         </CardContent>
       </Card>
 
@@ -696,9 +704,11 @@ export default function InventoryPage() {
         open={Boolean(archiveTarget)}
         onClose={() => setArchiveTarget(null)}
         onConfirm={() => archiveTarget && archiveMutation.mutate(archiveTarget)}
-        title={`Archive ${archiveTarget?.name ?? 'product'}?`}
-        description="Archived products stay in historical reports but disappear from the register."
-        confirmLabel="Archive product"
+        title={t('Archive {{name}}?', { name: archiveTarget?.name ?? t('product') })}
+        description={t(
+          'Archived products stay in historical reports but disappear from the register.',
+        )}
+        confirmLabel={t('Archive product')}
         destructive
         loading={archiveMutation.isPending}
       />

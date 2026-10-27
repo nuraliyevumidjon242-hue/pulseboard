@@ -18,7 +18,7 @@ import { useDebouncedValue } from '../../hooks/use-utils';
 import { useProducts } from '../../hooks/api';
 import { useStoreContext } from '../../hooks/use-store-context';
 import { api, getErrorMessage } from '../../lib/api';
-import { cn, formatCurrency, paymentLabel, toNumber } from '../../lib/utils';
+import { cn, formatCurrency, formatNumber, paymentLabel, toNumber } from '../../lib/utils';
 import { toast } from '../../stores/toast-store';
 import type { CreateSaleResponse, PaymentMethod, Product } from '../../types';
 import { Badge } from '../../components/ui/badge';
@@ -27,6 +27,7 @@ import { Field, Input, Textarea } from '../../components/ui/form';
 import { Spinner } from '../../components/ui/feedback';
 import { Modal } from '../../components/ui/modal';
 import { printReceipt } from './receipt-print';
+import { t } from '../../lib/i18n';
 
 interface CartLine {
   product: Product;
@@ -40,7 +41,7 @@ const PAYMENT_METHODS: Array<{
 }> = [
   { value: 'card', label: 'Card', icon: CreditCard },
   { value: 'cash', label: 'Cash', icon: Banknote },
-  { value: 'mobile', label: 'Mobile', icon: Smartphone },
+  { value: 'mobile', label: 'Mobile pay', icon: Smartphone },
   { value: 'cheque', label: 'Cheque', icon: Wallet },
 ];
 
@@ -92,8 +93,11 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
       if (existing) {
         if (existing.quantity + quantity > product.currentStock) {
           toast.warning(
-            'Not enough stock',
-            `Only ${product.currentStock} ${product.unit} available.`,
+            t('Not enough stock'),
+            t('Only {{count}} {{unit}} available.', {
+              count: product.currentStock,
+              unit: t(product.unit),
+            }),
           );
           return current;
         }
@@ -102,7 +106,10 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
         );
       }
       if (product.currentStock < quantity) {
-        toast.warning('Out of stock', `${product.name} is not available right now.`);
+        toast.warning(
+          t('Out of stock'),
+          t('{{name}} is not available right now.', { name: product.name }),
+        );
         return current;
       }
       return [...current, { product, quantity }];
@@ -116,7 +123,10 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
           if (line.product.id !== productId) return line;
           const next = line.quantity + delta;
           if (next > line.product.currentStock) {
-            toast.warning('Stock limit reached', `Only ${line.product.currentStock} available.`);
+            toast.warning(
+              t('Stock limit reached'),
+              t('Only {{count}} available.', { count: line.product.currentStock }),
+            );
             return line;
           }
           return { ...line, quantity: next };
@@ -142,8 +152,10 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
     onSuccess: (result) => {
       setReceipt(result);
       toast.success(
-        'Sale completed',
-        `${formatCurrency(result.sale.finalAmount, currency)} recorded.`,
+        t('Sale completed'),
+        t('{{amount}} recorded.', {
+          amount: formatCurrency(result.sale.finalAmount, currency),
+        }),
       );
       void queryClient.invalidateQueries({ queryKey: ['sales'] });
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] });
@@ -151,7 +163,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
       void queryClient.invalidateQueries({ queryKey: ['products'] });
       void queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
-    onError: (error) => toast.error('Could not record sale', getErrorMessage(error)),
+    onError: (error) => toast.error(t('Could not record sale'), getErrorMessage(error)),
   });
 
   const lookupBarcode = async () => {
@@ -165,7 +177,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
       setBarcode('');
       barcodeRef.current?.focus();
     } catch (error) {
-      toast.error('Product not found', getErrorMessage(error));
+      toast.error(t('Product not found'), getErrorMessage(error));
     } finally {
       setLookingUp(false);
     }
@@ -184,14 +196,14 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
     <Modal
       open={open}
       onClose={close}
-      title={receipt ? 'Sale completed' : 'Record a sale'}
+      title={receipt ? t('Sale completed') : t('Record a sale')}
       description={
         receipt
-          ? `${receipt.receipt.transactionId} · ${receipt.sale.items.length} line item${
-              receipt.sale.items.length === 1 ? '' : 's'
-            }`
+          ? `${receipt.receipt.transactionId} · ${t('{{count}} line items', {
+              count: receipt.sale.items.length,
+            })}`
           : store
-            ? `New transaction for ${store.name}`
+            ? t('New transaction for {{store}}', { store: store.name })
             : undefined
       }
       size="xl"
@@ -203,7 +215,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
               onClick={() => printReceipt(receipt)}
               leftIcon={<Printer className="h-4 w-4" />}
             >
-              Print receipt
+              {t('Print receipt')}
             </Button>
             <Button
               onClick={() => {
@@ -212,20 +224,21 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                 window.setTimeout(() => barcodeRef.current?.focus(), 100);
               }}
             >
-              Record another sale
+              {t('Record another sale')}
             </Button>
           </>
         ) : (
           <>
             <div className="mr-auto text-xs text-ink-500 dark:text-ink-400">
-              <span className="font-semibold text-ink-800 dark:text-ink-100">{itemCount}</span> item
-              {itemCount === 1 ? '' : 's'} · subtotal{' '}
+              {t('{{count}} items · subtotal', {
+                count: formatNumber(itemCount),
+              })}{' '}
               <span className="font-semibold text-ink-800 dark:text-ink-100">
                 {formatCurrency(subtotal, currency)}
               </span>
             </div>
             <Button variant="secondary" onClick={close} disabled={saleMutation.isPending}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               onClick={() => saleMutation.mutate()}
@@ -233,7 +246,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
               disabled={cart.length === 0}
               leftIcon={<CheckCircle2 className="h-4 w-4" />}
             >
-              Complete sale · {formatCurrency(total, currency)}
+              {t('Complete sale ·')} {formatCurrency(total, currency)}
             </Button>
           </>
         )
@@ -244,10 +257,10 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
       ) : (
         <div className="grid gap-5 lg:grid-cols-[1.15fr_1fr]">
           <div className="space-y-3">
-            <Field label="Find products" htmlFor="sale-search">
+            <Field label={t('Find products')} htmlFor="sale-search">
               <Input
                 id="sale-search"
-                placeholder="Search by name, SKU or barcode…"
+                placeholder={t('Search by name, SKU or barcode…')}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 leftIcon={<Search className="h-4 w-4" />}
@@ -258,7 +271,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
             <div className="flex gap-2">
               <Input
                 ref={barcodeRef}
-                placeholder="Scan barcode and press Enter"
+                placeholder={t('Scan barcode and press Enter')}
                 value={barcode}
                 onChange={(event) => setBarcode(event.target.value)}
                 onKeyDown={(event) => {
@@ -276,7 +289,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                 loading={lookingUp}
                 disabled={!barcode.trim()}
               >
-                Add
+                {t('Add')}
               </Button>
             </div>
 
@@ -306,7 +319,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                           {product.name}
                         </span>
                         <span className="block truncate text-[10px] text-ink-500 dark:text-ink-400">
-                          {product.sku} · {product.category ?? 'Uncategorised'}
+                          {product.sku} · {product.category ?? t('Uncategorised')}
                         </span>
                       </span>
                       <span className="shrink-0 text-right">
@@ -323,7 +336,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                                 : 'text-ink-400',
                           )}
                         >
-                          {out ? 'Out of stock' : `${product.currentStock} ${product.unit}`}
+                          {out ? t('Out of stock') : `${product.currentStock} ${t(product.unit)}`}
                         </span>
                       </span>
                     </button>
@@ -331,7 +344,8 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                 })
               ) : (
                 <div className="rounded-xl border border-dashed border-ink-200 py-10 text-center text-xs text-ink-500 dark:border-ink-700 dark:text-ink-400">
-                  No products match “{search}”.
+                  {t('No products match “')}
+                  {search}”.
                 </div>
               )}
             </div>
@@ -340,7 +354,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
           <div className="flex flex-col rounded-2xl border border-ink-200 bg-ink-50/60 p-3.5 dark:border-ink-700 dark:bg-ink-950/40">
             <div className="mb-2 flex items-center justify-between">
               <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-ink-600 dark:text-ink-300">
-                <ShoppingCart className="h-3.5 w-3.5" /> Cart
+                <ShoppingCart className="h-3.5 w-3.5" /> {t('Cart')}
               </h3>
               {cart.length > 0 ? (
                 <button
@@ -348,7 +362,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                   onClick={() => setCart([])}
                   className="text-[10px] font-semibold text-ink-400 hover:text-rose-500"
                 >
-                  Clear
+                  {t('Clear')}
                 </button>
               ) : null}
             </div>
@@ -358,10 +372,10 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                 <div className="flex h-full min-h-[9rem] flex-col items-center justify-center gap-1 text-center">
                   <ShoppingCart className="h-7 w-7 text-ink-300 dark:text-ink-600" />
                   <p className="text-xs font-medium text-ink-500 dark:text-ink-400">
-                    Cart is empty
+                    {t('Cart is empty')}
                   </p>
                   <p className="max-w-[12rem] text-[10px] text-ink-400">
-                    Pick a product on the left or scan a barcode to begin.
+                    {t('Pick a product on the left or scan a barcode to begin.')}
                   </p>
                 </div>
               ) : (
@@ -375,7 +389,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                         {line.product.name}
                       </p>
                       <p className="text-[10px] text-ink-400">
-                        {formatCurrency(line.product.price, currency)} each
+                        {formatCurrency(line.product.price, currency)} {t('each')}
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-1">
@@ -383,7 +397,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                         type="button"
                         onClick={() => updateQuantity(line.product.id, -1)}
                         className="flex h-6 w-6 items-center justify-center rounded-md border border-ink-200 text-ink-500 transition hover:bg-ink-100 dark:border-ink-700 dark:hover:bg-ink-800"
-                        aria-label={`Reduce ${line.product.name}`}
+                        aria-label={t('Reduce {{name}}', { name: line.product.name })}
                       >
                         <Minus className="h-3 w-3" />
                       </button>
@@ -394,7 +408,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                         type="button"
                         onClick={() => updateQuantity(line.product.id, 1)}
                         className="flex h-6 w-6 items-center justify-center rounded-md border border-ink-200 text-ink-500 transition hover:bg-ink-100 dark:border-ink-700 dark:hover:bg-ink-800"
-                        aria-label={`Add ${line.product.name}`}
+                        aria-label={t('Increase {{name}}', { name: line.product.name })}
                       >
                         <Plus className="h-3 w-3" />
                       </button>
@@ -410,7 +424,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                         )
                       }
                       className="shrink-0 text-ink-300 transition hover:text-rose-500"
-                      aria-label={`Remove ${line.product.name}`}
+                      aria-label={t('Remove {{name}}', { name: line.product.name })}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -421,7 +435,7 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
 
             <div className="mt-3 space-y-2 border-t border-ink-200 pt-3 dark:border-ink-700">
               <p className="text-[10px] font-bold uppercase tracking-wide text-ink-500 dark:text-ink-400">
-                Payment method
+                {t('Payment method')}
               </p>
               <div className="grid grid-cols-4 gap-1.5">
                 {PAYMENT_METHODS.map((method) => {
@@ -440,14 +454,14 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                       )}
                     >
                       <Icon className="h-3.5 w-3.5" />
-                      {method.label}
+                      {t(method.label)}
                     </button>
                   );
                 })}
               </div>
 
               <div className="grid grid-cols-2 gap-2">
-                <Field label="Discount" htmlFor="sale-discount">
+                <Field label={t('Discount')} htmlFor="sale-discount">
                   <Input
                     id="sale-discount"
                     type="number"
@@ -458,10 +472,10 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                     className="py-1.5 text-xs"
                   />
                 </Field>
-                <Field label="Customer" htmlFor="sale-customer">
+                <Field label={t('Customer')} htmlFor="sale-customer">
                   <Input
                     id="sale-customer"
-                    placeholder="Optional name"
+                    placeholder={t('Optional name')}
                     value={customerName}
                     onChange={(event) => setCustomerName(event.target.value)}
                     className="py-1.5 text-xs"
@@ -474,12 +488,12 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
                 onClick={() => setShowDetails((value) => !value)}
                 className="text-[10px] font-semibold text-brand-600 hover:underline dark:text-brand-400"
               >
-                {showDetails ? 'Hide note' : 'Add a note'}
+                {showDetails ? t('Hide note') : t('Add a note')}
               </button>
               {showDetails ? (
                 <Textarea
                   rows={2}
-                  placeholder="Internal note for this sale"
+                  placeholder={t('Internal note for this sale')}
                   value={notes}
                   onChange={(event) => setNotes(event.target.value)}
                   className="text-xs"
@@ -488,20 +502,20 @@ export function NewSaleModal({ open, onClose }: { open: boolean; onClose: () => 
 
               <div className="space-y-1 border-t border-ink-200 pt-2.5 text-xs dark:border-ink-700">
                 <div className="flex justify-between text-ink-500 dark:text-ink-400">
-                  <span>Subtotal</span>
+                  <span>{t('Subtotal')}</span>
                   <span className="font-medium text-ink-700 dark:text-ink-200">
                     {formatCurrency(subtotal, currency)}
                   </span>
                 </div>
                 {discountValue > 0 ? (
                   <div className="flex justify-between text-rose-600 dark:text-rose-400">
-                    <span>Discount</span>
+                    <span>{t('Discount')}</span>
                     <span className="font-medium">−{formatCurrency(discountValue, currency)}</span>
                   </div>
                 ) : null}
                 <div className="flex items-end justify-between pt-1">
                   <span className="text-[11px] font-semibold uppercase tracking-wide text-ink-500 dark:text-ink-400">
-                    Total
+                    {t('Total')}
                   </span>
                   <span className="text-xl font-bold tracking-tight text-ink-900 dark:text-white">
                     {formatCurrency(total, currency)}
@@ -529,7 +543,7 @@ function ReceiptView({ result }: { result: CreateSaleResponse }) {
         </p>
         <p className="mt-1 text-xs text-ink-500 dark:text-ink-400">
           {receipt.transactionId} · {paymentLabel(sale.paymentMethod)} ·{' '}
-          {receipt.cashierName ?? 'Store team'}
+          {receipt.cashierName ?? t('Store team')}
         </p>
       </div>
 
@@ -548,25 +562,25 @@ function ReceiptView({ result }: { result: CreateSaleResponse }) {
         </div>
         <div className="mt-3 space-y-1 border-t border-ink-200 pt-3 text-xs dark:border-ink-700">
           <div className="flex justify-between text-ink-500 dark:text-ink-400">
-            <span>Subtotal</span>
+            <span>{t('Subtotal')}</span>
             <span>{formatCurrency(sale.totalAmount, receipt.currency)}</span>
           </div>
           {Number(sale.discount) > 0 ? (
             <div className="flex justify-between text-ink-500 dark:text-ink-400">
-              <span>Discount</span>
+              <span>{t('Discount')}</span>
               <span>−{formatCurrency(sale.discount, receipt.currency)}</span>
             </div>
           ) : null}
           <div className="flex justify-between text-sm font-bold text-ink-900 dark:text-white">
-            <span>Total paid</span>
+            <span>{t('Total paid')}</span>
             <span>{formatCurrency(sale.finalAmount, receipt.currency)}</span>
           </div>
         </div>
       </div>
 
       <div className="mt-4 flex items-center justify-center gap-2">
-        <Badge tone="success">Stock updated</Badge>
-        <Badge tone="brand">Dashboard synced</Badge>
+        <Badge tone="success">{t('Stock updated')}</Badge>
+        <Badge tone="brand">{t('Dashboard synced')}</Badge>
       </div>
     </div>
   );

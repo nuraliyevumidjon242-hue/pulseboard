@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/button';
 import { ErrorState, LoadingBlock } from '../../components/ui/feedback';
 import { Drawer } from '../../components/ui/drawer';
 import { printReceipt } from './receipt-print';
+import { t } from '../../lib/i18n';
 
 export function SaleDetailDrawer({
   saleId,
@@ -45,24 +46,26 @@ export function SaleDetailDrawer({
     <Drawer
       open={Boolean(saleId)}
       onClose={onClose}
-      title={sale ? sale.transactionId : 'Sale details'}
-      description={sale ? formatDateTime(sale.createdAt, timezone) : 'Loading transaction…'}
+      title={sale ? sale.transactionId : t('Sale details')}
+      description={sale ? formatDateTime(sale.createdAt, timezone) : t('Loading transaction…')}
       footer={
         <div className="flex items-center justify-between gap-3">
-          <span className="text-xs text-ink-500 dark:text-ink-400">Recorded at the register</span>
+          <span className="text-xs text-ink-500 dark:text-ink-400">
+            {t('Recorded at the register')}
+          </span>
           <Button
             variant="secondary"
             onClick={onPrint}
             disabled={!sale}
             leftIcon={<Printer className="h-4 w-4" />}
           >
-            Print receipt
+            {t('Print receipt')}
           </Button>
         </div>
       }
     >
       {isLoading ? (
-        <LoadingBlock label="Loading sale" />
+        <LoadingBlock label={t('Loading sale')} />
       ) : isError ? (
         <ErrorState
           message={error instanceof Error ? error.message : undefined}
@@ -72,7 +75,7 @@ export function SaleDetailDrawer({
         <div className="space-y-5">
           <div className="rounded-2xl gradient-brand p-5 text-white shadow-glow">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
-              Total paid
+              {t('Total paid')}
             </p>
             <p className="mt-1 text-3xl font-bold tracking-tight">
               {formatCurrency(sale.finalAmount, currency)}
@@ -82,11 +85,11 @@ export function SaleDetailDrawer({
                 {paymentLabel(sale.paymentMethod)}
               </Badge>
               <Badge className="bg-white/15 text-white ring-white/20">
-                {sale.items.reduce((sum, item) => sum + item.quantity, 0)} items
+                {sale.items.reduce((sum, item) => sum + item.quantity, 0)} {t('items')}
               </Badge>
               {sale.discount !== '0.00' ? (
                 <Badge className="bg-white/15 text-white ring-white/20">
-                  −{formatCurrency(sale.discount, currency)} discount
+                  −{formatCurrency(sale.discount, currency)} {t('discount')}
                 </Badge>
               ) : null}
             </div>
@@ -94,13 +97,17 @@ export function SaleDetailDrawer({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl border border-ink-200 p-3 dark:border-ink-700">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">Cashier</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">
+                {t('Cashier')}
+              </p>
               <p className="mt-0.5 truncate text-xs font-semibold text-ink-800 dark:text-ink-100">
                 {sale.cashierName ?? 'Store team'}
               </p>
             </div>
             <div className="rounded-xl border border-ink-200 p-3 dark:border-ink-700">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">Customer</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">
+                {t('Customer')}
+              </p>
               <p className="mt-0.5 truncate text-xs font-semibold text-ink-800 dark:text-ink-100">
                 {sale.customerName || 'Walk-in'}
               </p>
@@ -109,20 +116,20 @@ export function SaleDetailDrawer({
 
           <div>
             <h3 className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-ink-500 dark:text-ink-400">
-              <ReceiptText className="h-3.5 w-3.5" /> Line items
+              <ReceiptText className="h-3.5 w-3.5" /> {t('Line items')}
             </h3>
             <div className="overflow-hidden rounded-xl border border-ink-200 dark:border-ink-700">
               <table className="w-full">
                 <thead className="bg-ink-50 dark:bg-ink-950/50">
                   <tr>
                     <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-ink-500">
-                      Item
+                      {t('Item')}
                     </th>
                     <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wide text-ink-500">
-                      Qty
+                      {t('Qty')}
                     </th>
                     <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wide text-ink-500">
-                      Total
+                      {t('Total')}
                     </th>
                   </tr>
                 </thead>
@@ -134,7 +141,7 @@ export function SaleDetailDrawer({
                           {item.productName}
                         </p>
                         <p className="text-[10px] text-ink-400">
-                          {formatCurrency(item.unitPrice, currency)} each
+                          {formatCurrency(item.unitPrice, currency)} {t('each')}
                         </p>
                       </td>
                       <td className="px-3 py-2.5 text-right text-xs text-ink-600 dark:text-ink-300">
@@ -152,24 +159,24 @@ export function SaleDetailDrawer({
 
           <div className="space-y-1.5 rounded-xl bg-ink-50 p-4 text-xs dark:bg-ink-950/40">
             <div className="flex justify-between text-ink-500 dark:text-ink-400">
-              <span>Subtotal</span>
+              <span>{t('Subtotal')}</span>
               <span>{formatCurrency(sale.totalAmount, currency)}</span>
             </div>
             {Number(sale.discount) > 0 ? (
               <div className="flex justify-between text-ink-500 dark:text-ink-400">
-                <span>Discount</span>
+                <span>{t('Discount')}</span>
                 <span>−{formatCurrency(sale.discount, currency)}</span>
               </div>
             ) : null}
             <div className="flex justify-between border-t border-ink-200 pt-2 text-sm font-bold text-ink-900 dark:border-ink-700 dark:text-white">
-              <span>Total</span>
+              <span>{t('Total')}</span>
               <span>{formatCurrency(sale.finalAmount, currency)}</span>
             </div>
           </div>
 
           {sale.notes ? (
             <div className="rounded-xl border border-dashed border-ink-200 p-3 text-xs text-ink-600 dark:border-ink-700 dark:text-ink-300">
-              <span className="font-semibold">Note: </span>
+              <span className="font-semibold">{t('Note:')} </span>
               {sale.notes}
             </div>
           ) : null}

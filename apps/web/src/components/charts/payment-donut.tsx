@@ -2,6 +2,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { formatCurrency, paymentLabel } from '../../lib/utils';
 import type { PaymentBreakdownRow } from '../../types';
 import { ChartTooltip } from './chart-tooltip';
+import { t } from '../../lib/i18n';
 
 const COLORS = ['#6366f1', '#22d3ee', '#10b981', '#f59e0b', '#f43f5e'];
 
@@ -19,7 +20,7 @@ export function PaymentDonut({
   if (data.length === 0) {
     return (
       <div className="flex h-[220px] items-center justify-center text-xs text-ink-400">
-        No payments in this period.
+        {t('No payments in this period.')}
       </div>
     );
   }
@@ -47,7 +48,7 @@ export function PaymentDonut({
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-400">
-            Total
+            {t('Total')}
           </span>
           <span className="text-base font-bold text-ink-900 dark:text-white">
             {formatCurrency(total, currency, { compact: true })}

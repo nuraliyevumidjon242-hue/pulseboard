@@ -10,6 +10,7 @@ import { Button } from '../../components/ui/button';
 import { Field, Input, Select, Textarea } from '../../components/ui/form';
 import { FormAlert } from '../../components/auth/auth-layout';
 import { Modal } from '../../components/ui/modal';
+import { t } from '../../lib/i18n';
 
 const REASONS = [
   { value: 'purchase', label: 'New delivery / purchase' },
@@ -62,8 +63,11 @@ export function AdjustStockModal({
     },
     onSuccess: (result) => {
       toast.success(
-        'Stock updated',
-        `${result.product.name} now has ${result.newStock} units on hand.`,
+        t('Stock updated'),
+        t('{{name}} now has {{count}} units on hand.', {
+          name: result.product.name,
+          count: result.newStock,
+        }),
       );
       void queryClient.invalidateQueries({ queryKey: ['products'] });
       void queryClient.invalidateQueries({ queryKey: ['inventory'] });
@@ -77,11 +81,11 @@ export function AdjustStockModal({
     setError(null);
     if (!product) return;
     if (!Number.isInteger(Number(quantity)) || Number(quantity) <= 0) {
-      setError('Enter a whole number greater than zero.');
+      setError(t('Enter a whole number greater than zero.'));
       return;
     }
     if (projected < 0) {
-      setError(`Only ${product.currentStock} units are available to remove.`);
+      setError(t('Only {{count}} units are available to remove.', { count: product.currentStock }));
       return;
     }
     mutation.mutate();
@@ -91,16 +95,16 @@ export function AdjustStockModal({
     <Modal
       open={open}
       onClose={onClose}
-      title="Adjust stock"
-      description={product ? `${product.name} · ${product.sku}` : 'Select a product'}
+      title={t('Adjust stock')}
+      description={product ? `${product.name} · ${product.sku}` : t('Select a product')}
       size="md"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={mutation.isPending}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button onClick={submit} loading={mutation.isPending} disabled={!product}>
-            Apply adjustment
+            {t('Apply adjustment')}
           </Button>
         </>
       }
@@ -111,17 +115,19 @@ export function AdjustStockModal({
         <div className="flex items-center justify-between gap-3 rounded-2xl border border-ink-200 bg-ink-50/60 p-4 dark:border-ink-700 dark:bg-ink-950/40">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">
-              Current stock
+              {t('Current stock')}
             </p>
             <p className="text-2xl font-bold tracking-tight text-ink-900 dark:text-white">
               {product?.currentStock ?? 0}
-              <span className="ml-1 text-xs font-medium text-ink-400">{product?.unit}</span>
+              <span className="ml-1 text-xs font-medium text-ink-400">
+                {t(product?.unit ?? '')}
+              </span>
             </p>
           </div>
           <Boxes className="h-8 w-8 text-ink-300 dark:text-ink-600" />
           <div className="text-right">
             <p className="text-[10px] font-bold uppercase tracking-wide text-ink-400">
-              After adjustment
+              {t('After adjustment')}
             </p>
             <p
               className={cn(
@@ -134,7 +140,9 @@ export function AdjustStockModal({
               )}
             >
               {projected}
-              <span className="ml-1 text-xs font-medium text-ink-400">{product?.unit}</span>
+              <span className="ml-1 text-xs font-medium text-ink-400">
+                {t(product?.unit ?? '')}
+              </span>
             </p>
           </div>
         </div>
@@ -153,7 +161,7 @@ export function AdjustStockModal({
                 : 'border-ink-200 text-ink-500 hover:border-ink-300 dark:border-ink-700 dark:text-ink-400',
             )}
           >
-            <ArrowUpRight className="h-4 w-4" /> Add stock
+            <ArrowUpRight className="h-4 w-4" /> {t('Add stock')}
           </button>
           <button
             type="button"
@@ -168,12 +176,12 @@ export function AdjustStockModal({
                 : 'border-ink-200 text-ink-500 hover:border-ink-300 dark:border-ink-700 dark:text-ink-400',
             )}
           >
-            <ArrowDownRight className="h-4 w-4" /> Remove stock
+            <ArrowDownRight className="h-4 w-4" /> {t('Remove stock')}
           </button>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Quantity" htmlFor="adjust-quantity">
+          <Field label={t('Quantity')} htmlFor="adjust-quantity">
             <Input
               id="adjust-quantity"
               type="number"
@@ -183,7 +191,7 @@ export function AdjustStockModal({
               onChange={(event) => setQuantity(event.target.value)}
             />
           </Field>
-          <Field label="Reason" htmlFor="adjust-reason">
+          <Field label={t('Reason')} htmlFor="adjust-reason">
             <Select
               id="adjust-reason"
               value={reason}
@@ -191,18 +199,22 @@ export function AdjustStockModal({
             >
               {REASONS.map((item) => (
                 <option key={item.value} value={item.value}>
-                  {item.label}
+                  {t(item.label)}
                 </option>
               ))}
             </Select>
           </Field>
         </div>
 
-        <Field label="Notes" htmlFor="adjust-notes" hint="Visible in the adjustment audit trail">
+        <Field
+          label={t('Notes')}
+          htmlFor="adjust-notes"
+          hint={t('Visible in the adjustment audit trail')}
+        >
           <Textarea
             id="adjust-notes"
             rows={2}
-            placeholder="e.g. Delivery from supplier, invoice #2044"
+            placeholder={t('e.g. Delivery from supplier, invoice #2044')}
             value={notes}
             onChange={(event) => setNotes(event.target.value)}
           />

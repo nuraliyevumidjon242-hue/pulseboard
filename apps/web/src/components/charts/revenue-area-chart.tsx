@@ -7,7 +7,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { formatCompact } from '../../lib/utils';
+import { formatCompact, formatDate } from '../../lib/utils';
 import type { TrendPoint } from '../../types';
 import { ChartTooltip } from './chart-tooltip';
 
@@ -16,15 +16,26 @@ export function RevenueAreaChart({
   currency,
   height = 280,
   showTransactions = false,
+  timeZone = 'UTC',
 }: {
   data: TrendPoint[];
   currency: string;
   height?: number;
   showTransactions?: boolean;
+  timeZone?: string;
 }) {
+  // The API formats dates for English. Re-derive axis labels from the ISO date
+  // so the chart follows the active language.
+  const points = data.map((point) => ({
+    ...point,
+    label: point.date
+      ? formatDate(`${point.date}T12:00:00Z`, timeZone, { month: 'short', day: 'numeric' })
+      : point.label,
+  }));
+
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <AreaChart data={data} margin={{ top: 8, right: 8, left: -14, bottom: 0 }}>
+      <AreaChart data={points} margin={{ top: 8, right: 8, left: -14, bottom: 0 }}>
         <defs>
           <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#6366f1" stopOpacity={0.32} />

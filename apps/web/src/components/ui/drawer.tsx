@@ -3,6 +3,7 @@ import { useEffect, useId, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/utils';
 import { Button } from './button';
+import { t } from '../../lib/i18n';
 
 export function Drawer({
   open,
@@ -68,7 +69,7 @@ export function Drawer({
               <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">{description}</p>
             ) : null}
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close panel">
+          <Button variant="ghost" size="icon" onClick={onClose} aria-label={t('Close panel')}>
             <X className="h-4 w-4" />
           </Button>
         </div>

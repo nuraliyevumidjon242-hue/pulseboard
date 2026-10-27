@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/utils';
+import { t } from '../../lib/i18n';
 
 export function Dropdown({
   trigger,
@@ -7,7 +8,7 @@ export function Dropdown({
   align = 'right',
   className,
   panelClassName,
-  label = 'Open menu',
+  label = t('Open menu'),
 }: {
   trigger: ReactNode;
   children: ReactNode | ((close: () => void) => ReactNode);

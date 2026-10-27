@@ -17,6 +17,7 @@ import { toast } from '../../stores/toast-store';
 import type { NotificationItem } from '../../types';
 import { Button } from '../ui/button';
 import { Dropdown } from '../ui/dropdown';
+import { t } from '../../lib/i18n';
 
 const icons = {
   low_stock: AlertTriangle,
@@ -51,7 +52,7 @@ export function NotificationsMenu() {
     mutationFn: () => api.patch('/notifications/read-all'),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      toast.success('All notifications marked as read');
+      toast.success(t('All notifications marked as read'));
     },
   });
 
@@ -62,7 +63,7 @@ export function NotificationsMenu() {
 
   return (
     <Dropdown
-      label="Notifications"
+      label={t('Notifications')}
       align="right"
       panelClassName="w-[22rem] max-w-[calc(100vw-1.5rem)] p-0"
       trigger={
@@ -80,9 +81,13 @@ export function NotificationsMenu() {
         <>
           <div className="flex items-center justify-between border-b border-ink-100 px-4 py-3 dark:border-ink-800">
             <div>
-              <p className="text-sm font-semibold text-ink-900 dark:text-white">Notifications</p>
+              <p className="text-sm font-semibold text-ink-900 dark:text-white">
+                {t('Notifications')}
+              </p>
               <p className="text-[11px] text-ink-500 dark:text-ink-400">
-                {unreadCount > 0 ? `${unreadCount} unread` : 'You are all caught up'}
+                {unreadCount > 0
+                  ? t('{{count}} unread', { count: unreadCount })
+                  : t('You are all caught up')}
               </p>
             </div>
             {unreadCount > 0 ? (
@@ -93,7 +98,7 @@ export function NotificationsMenu() {
                 onClick={() => markAllRead.mutate()}
                 leftIcon={<CheckCheck className="h-3.5 w-3.5" />}
               >
-                Mark all
+                {t('Mark all')}
               </Button>
             ) : null}
           </div>
@@ -103,7 +108,7 @@ export function NotificationsMenu() {
               <div className="flex flex-col items-center gap-2 px-6 py-10 text-center">
                 <BellOff className="h-7 w-7 text-ink-300 dark:text-ink-600" />
                 <p className="text-xs font-medium text-ink-500 dark:text-ink-400">
-                  No notifications yet.
+                  {t('No notifications yet.')}
                 </p>
               </div>
             ) : (
@@ -159,11 +164,11 @@ export function NotificationsMenu() {
             onClick={() => {
               close();
               void queryClient.invalidateQueries({ queryKey: queryKeys.notifications() });
-              toast.info('Live notifications', 'New alerts appear here in realtime.');
+              toast.info(t('Live notifications'), t('New alerts appear here in realtime.'));
             }}
             className="w-full px-4 py-2.5 text-center text-[11px] font-semibold text-brand-600 hover:bg-ink-50 dark:text-brand-400 dark:hover:bg-ink-800/50"
           >
-            Realtime alerts enabled
+            {t('Realtime alerts enabled')}
           </button>
         </>
       )}

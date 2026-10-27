@@ -1,10 +1,9 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { api, getErrorMessage } from '../../lib/api';
-import { firstFieldErrors } from '../../lib/forms';
+import { firstFieldErrors, localizedZodResolver } from '../../lib/forms';
 import { useCategories } from '../../hooks/api';
 import { useStoreContext } from '../../hooks/use-store-context';
 import { toast } from '../../stores/toast-store';
@@ -13,6 +12,7 @@ import { Button } from '../../components/ui/button';
 import { Field, Input, Select, Textarea } from '../../components/ui/form';
 import { FormAlert } from '../../components/auth/auth-layout';
 import { Modal } from '../../components/ui/modal';
+import { t } from '../../lib/i18n';
 
 const schema = z.object({
   name: z.string().trim().min(1, 'Product name is required').max(255),
@@ -55,7 +55,7 @@ export function ProductModal({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ProductForm>({
-    resolver: zodResolver(schema),
+    resolver: localizedZodResolver(schema),
     defaultValues: {
       name: '',
       sku: '',
@@ -139,7 +139,7 @@ export function ProductModal({
       return response.data.data.product;
     },
     onSuccess: (saved) => {
-      toast.success(isEdit ? 'Product updated' : 'Product added', saved.name);
+      toast.success(t(isEdit ? 'Product updated' : 'Product added'), saved.name);
       void queryClient.invalidateQueries({ queryKey: ['products'] });
       void queryClient.invalidateQueries({ queryKey: ['inventory'] });
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] });
@@ -161,18 +161,20 @@ export function ProductModal({
     <Modal
       open={open}
       onClose={onClose}
-      title={isEdit ? 'Edit product' : 'Add product'}
+      title={t(isEdit ? 'Edit product' : 'Add product')}
       description={
-        isEdit ? `Update ${product?.name}` : 'Add a new item to your catalogue and stock.'
+        isEdit
+          ? t('Update {{name}}', { name: product?.name ?? '' })
+          : t('Add a new item to your catalogue and stock.')
       }
       size="lg"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button onClick={onSubmit} loading={isSubmitting}>
-            {isEdit ? 'Save changes' : 'Add product'}
+            {t(isEdit ? 'Save changes' : 'Add product')}
           </Button>
         </>
       }
@@ -182,18 +184,22 @@ export function ProductModal({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
-            label="Product name"
+            label={t('Product name')}
             htmlFor="product-name"
             error={errors.name?.message ?? fieldErrors.name}
           >
             <Input
               id="product-name"
-              placeholder="Oat milk 1L"
+              placeholder={t('Oat milk 1L')}
               invalid={Boolean(errors.name)}
               {...register('name')}
             />
           </Field>
-          <Field label="SKU" htmlFor="product-sku" error={errors.sku?.message ?? fieldErrors.sku}>
+          <Field
+            label={t('SKU')}
+            htmlFor="product-sku"
+            error={errors.sku?.message ?? fieldErrors.sku}
+          >
             <Input
               id="product-sku"
               placeholder="MLK-120"
@@ -205,14 +211,14 @@ export function ProductModal({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
-            label="Category"
+            label={t('Category')}
             htmlFor="product-category"
-            hint="Reuse an existing category or create a new one"
+            hint={t('Reuse an existing category or create a new one')}
           >
             <Input
               id="product-category"
               list="product-category-options"
-              placeholder="Dairy"
+              placeholder={t('Dairy')}
               {...register('category')}
             />
             <datalist id="product-category-options">
@@ -221,11 +227,11 @@ export function ProductModal({
               ))}
             </datalist>
           </Field>
-          <Field label="Unit" htmlFor="product-unit" error={errors.unit?.message}>
+          <Field label={t('Unit')} htmlFor="product-unit" error={errors.unit?.message}>
             <Select id="product-unit" {...register('unit')}>
               {UNITS.map((unit) => (
                 <option key={unit} value={unit}>
-                  {unit}
+                  {t(unit)}
                 </option>
               ))}
             </Select>
@@ -234,7 +240,7 @@ export function ProductModal({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
-            label={`Selling price (${currency})`}
+            label={t('Selling price ({{currency}})', { currency })}
             htmlFor="product-price"
             error={errors.price?.message ?? fieldErrors.price}
           >
@@ -248,9 +254,9 @@ export function ProductModal({
             />
           </Field>
           <Field
-            label={`Cost price (${currency})`}
+            label={t('Cost price ({{currency}})', { currency })}
             htmlFor="product-cost"
-            hint="Optional — enables profit reporting"
+            hint={t('Optional — enables profit reporting')}
           >
             <Input
               id="product-cost"
@@ -265,10 +271,10 @@ export function ProductModal({
 
         <div className="grid gap-4 sm:grid-cols-3">
           <Field
-            label="Stock on hand"
+            label={t('Stock on hand')}
             htmlFor="product-stock"
             error={errors.currentStock?.message}
-            hint={isEdit ? 'Use Adjust stock for audited changes' : undefined}
+            hint={isEdit ? t('Use Adjust stock for audited changes') : undefined}
           >
             <Input
               id="product-stock"
@@ -279,32 +285,40 @@ export function ProductModal({
               {...register('currentStock')}
             />
           </Field>
-          <Field label="Min stock" htmlFor="product-min" error={errors.minStock?.message}>
+          <Field label={t('Min stock')} htmlFor="product-min" error={errors.minStock?.message}>
             <Input id="product-min" type="number" min="0" step="1" {...register('minStock')} />
           </Field>
-          <Field label="Max stock" htmlFor="product-max" error={errors.maxStock?.message}>
+          <Field label={t('Max stock')} htmlFor="product-max" error={errors.maxStock?.message}>
             <Input id="product-max" type="number" min="0" step="1" {...register('maxStock')} />
           </Field>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Barcode" htmlFor="product-barcode" hint="Scan or paste the EAN/UPC">
+          <Field
+            label={t('Barcode')}
+            htmlFor="product-barcode"
+            hint={t('Scan or paste the EAN/UPC')}
+          >
             <Input id="product-barcode" placeholder="4001234567890" {...register('barcode')} />
           </Field>
-          <Field label="Expiry date" htmlFor="product-expiry" hint="Optional, for perishable goods">
+          <Field
+            label={t('Expiry date')}
+            htmlFor="product-expiry"
+            hint={t('Optional, for perishable goods')}
+          >
             <Input id="product-expiry" type="date" {...register('expiryDate')} />
           </Field>
         </div>
 
         <Field
-          label="Description"
+          label={t('Description')}
           htmlFor="product-description"
           error={errors.description?.message}
         >
           <Textarea
             id="product-description"
             rows={2}
-            placeholder="Optional notes shown to your team"
+            placeholder={t('Optional notes shown to your team')}
             {...register('description')}
           />
         </Field>

@@ -21,6 +21,7 @@ import { useLowStock } from '../../hooks/api';
 import { useUiStore } from '../../stores/ui-store';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { t } from '../../lib/i18n';
 
 interface NavEntry {
   to: string;
@@ -63,7 +64,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       <div className="space-y-1">
         {!collapsed ? (
           <p className="px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
-            {label}
+            {t(label)}
           </p>
         ) : (
           <div className="mx-3 my-2 h-px bg-white/10" />
@@ -75,7 +76,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               key={entry.to}
               to={entry.to}
               onClick={onNavigate}
-              title={collapsed ? entry.label : undefined}
+              title={collapsed ? t(entry.label) : undefined}
               className={({ isActive }) =>
                 cn(
                   'nav-item relative',
@@ -87,7 +88,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               <Icon className="h-[18px] w-[18px] shrink-0" />
               {!collapsed ? (
                 <>
-                  <span className="flex-1">{entry.label}</span>
+                  <span className="flex-1">{t(entry.label)}</span>
                   {entry.badge ? (
                     <span className="rounded-full bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-bold text-amber-300">
                       {entry.badge}
@@ -119,7 +120,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <div className="min-w-0">
             <p className="text-sm font-bold leading-tight tracking-tight text-white">PulseBoard</p>
             <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-ink-400">
-              Business intelligence
+              {t('Business intelligence')}
             </p>
           </div>
         ) : null}
@@ -136,10 +137,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              <p className="text-xs font-semibold text-white">Live sync active</p>
+              <p className="text-xs font-semibold text-white">{t('Live sync active')}</p>
             </div>
             <p className="mt-1 text-[11px] leading-relaxed text-ink-400">
-              Sales and stock updates stream in across every device.
+              {t('Sales and stock updates stream in across every device.')}
             </p>
             {!store ? (
               <Button
@@ -148,7 +149,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 className="mt-3 w-full"
                 onClick={() => navigate('/stores')}
               >
-                Connect a store
+                {t('Connect a store')}
               </Button>
             ) : null}
           </div>
@@ -163,10 +164,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             'flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-ink-400 transition hover:bg-white/[0.06] hover:text-white',
             collapsed && 'justify-center px-2',
           )}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={t(collapsed ? 'Expand sidebar' : 'Collapse sidebar')}
         >
           <ChevronLeft className={cn('h-4 w-4 transition-transform', collapsed && 'rotate-180')} />
-          {!collapsed ? <span>Collapse</span> : null}
+          {!collapsed ? <span>{t('Collapse')}</span> : null}
         </button>
         {!collapsed ? (
           <div className="flex items-center justify-between px-3 py-1.5">
@@ -213,7 +214,7 @@ export function Sidebar() {
             <button
               type="button"
               onClick={() => setMobileNavOpen(false)}
-              aria-label="Close navigation"
+              aria-label={t('Close navigation')}
               className="absolute right-3 top-4 z-10 rounded-lg p-1.5 text-ink-400 hover:bg-white/10 hover:text-white"
             >
               <X className="h-4 w-4" />

@@ -6,6 +6,7 @@ import { can } from '../../lib/permissions';
 import type { Permission } from '../../types';
 import { Button } from '../ui/button';
 import { ShieldX } from 'lucide-react';
+import { t } from '../../lib/i18n';
 
 export function BootSplash() {
   return (
@@ -24,7 +25,9 @@ export function BootSplash() {
       </div>
       <div className="text-center">
         <p className="text-sm font-semibold text-ink-900 dark:text-white">PulseBoard</p>
-        <p className="mt-0.5 text-xs text-ink-500 dark:text-ink-400">Restoring your session…</p>
+        <p className="mt-0.5 text-xs text-ink-500 dark:text-ink-400">
+          {t('Restoring your session…')}
+        </p>
       </div>
     </div>
   );
@@ -63,14 +66,14 @@ export function RequirePermission({
           <ShieldX className="h-6 w-6" />
         </div>
         <h1 className="mt-4 text-lg font-semibold text-ink-900 dark:text-white">
-          You need additional access
+          {t('You need additional access')}
         </h1>
         <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">
-          Your role in <span className="font-semibold">{store.name}</span> does not include this
-          area. Ask a store administrator to upgrade your role.
+          {t('Your role in')} <span className="font-semibold">{store.name}</span>{' '}
+          {t('does not include this area. Ask a store administrator to upgrade your role.')}
         </p>
         <Button className="mt-5" variant="secondary" onClick={() => window.history.back()}>
-          Go back
+          {t('Go back')}
         </Button>
       </div>
     );

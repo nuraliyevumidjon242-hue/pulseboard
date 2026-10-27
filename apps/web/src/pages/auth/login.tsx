@@ -1,11 +1,10 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { api, getErrorMessage } from '../../lib/api';
-import { firstFieldErrors } from '../../lib/forms';
+import { firstFieldErrors, localizedZodResolver } from '../../lib/forms';
 import { useAuthStore } from '../../stores/auth-store';
 import { toast } from '../../stores/toast-store';
 import type { AuthResponse } from '../../types';
@@ -13,6 +12,7 @@ import { AuthLayout, FormAlert } from '../../components/auth/auth-layout';
 import { PasswordInput } from '../../components/auth/password-input';
 import { Button } from '../../components/ui/button';
 import { Checkbox, Field, Input } from '../../components/ui/form';
+import { t } from '../../lib/i18n';
 
 const schema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
@@ -41,7 +41,7 @@ export default function LoginPage() {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>({
-    resolver: zodResolver(schema),
+    resolver: localizedZodResolver(schema),
     defaultValues: { email: '', password: '', rememberMe: true },
   });
 
@@ -51,7 +51,10 @@ export default function LoginPage() {
     try {
       const response = await api.post<{ data: AuthResponse }>('/auth/login', values);
       const user = await authenticate(response.data.data.accessToken);
-      toast.success(`Welcome back, ${user.firstName}`, 'Your live dashboard is ready.');
+      toast.success(
+        t('Welcome back, {{name}}', { name: user.firstName }),
+        t('Your live dashboard is ready.'),
+      );
       const from = (location.state as { from?: string } | null)?.from;
       navigate(from && from.startsWith('/') ? from : '/dashboard', { replace: true });
     } catch (error) {
@@ -67,16 +70,16 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      title="Welcome back"
-      subtitle="Sign in to see what is happening across your stores right now."
+      title={t('Welcome back')}
+      subtitle={t('Sign in to see what is happening across your stores right now.')}
       footer={
         <>
-          New to PulseBoard?{' '}
+          {t('New to PulseBoard?')}{' '}
           <Link
             to="/register"
             className="font-semibold text-brand-600 hover:underline dark:text-brand-400"
           >
-            Create an account
+            {t('Create an account')}
           </Link>
         </>
       }
@@ -85,7 +88,7 @@ export default function LoginPage() {
         {serverError ? <FormAlert>{serverError}</FormAlert> : null}
 
         <Field
-          label="Email address"
+          label={t('Email address')}
           htmlFor="email"
           error={errors.email?.message ?? fieldErrors.email}
         >
@@ -100,7 +103,7 @@ export default function LoginPage() {
         </Field>
 
         <Field
-          label="Password"
+          label={t('Password')}
           htmlFor="password"
           error={errors.password?.message ?? fieldErrors.password}
         >
@@ -114,12 +117,12 @@ export default function LoginPage() {
         </Field>
 
         <div className="flex items-center justify-between gap-3">
-          <Checkbox label="Keep me signed in" {...register('rememberMe')} />
+          <Checkbox label={t('Keep me signed in')} {...register('rememberMe')} />
           <Link
             to="/forgot-password"
             className="text-xs font-semibold text-brand-600 hover:underline dark:text-brand-400"
           >
-            Forgot password?
+            {t('Forgot password?')}
           </Link>
         </div>
 
@@ -130,14 +133,14 @@ export default function LoginPage() {
           loading={isSubmitting}
           rightIcon={<ArrowRight className="h-4 w-4" />}
         >
-          Sign in
+          {t('Sign in')}
         </Button>
       </form>
 
       <div className="mt-6 rounded-2xl border border-dashed border-ink-200 bg-ink-50/70 p-3.5 dark:border-ink-700 dark:bg-ink-900/50">
         <div className="flex items-center justify-between">
           <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-            Demo workspace
+            {t('Demo workspace')}
           </p>
           {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin text-ink-400" /> : null}
         </div>
@@ -149,12 +152,13 @@ export default function LoginPage() {
               onClick={() => fillDemo(account.email)}
               className="rounded-lg border border-ink-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-ink-600 transition hover:border-brand-300 hover:text-brand-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-300 dark:hover:border-brand-500/40 dark:hover:text-brand-300"
             >
-              {account.label}
+              {t(account.label)}
             </button>
           ))}
         </div>
         <p className="mt-2 text-[10px] leading-relaxed text-ink-400">
-          Fills the seeded credentials. Password: <span className="font-mono">PulseDemo2026!</span>
+          {t('Fills the seeded credentials. Password:')}{' '}
+          <span className="font-mono">"PulseDemo2026!"</span>
         </p>
       </div>
     </AuthLayout>

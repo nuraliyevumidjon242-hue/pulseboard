@@ -1,11 +1,10 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Copy, MailPlus, Send, UserPlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { api, getErrorMessage } from '../../lib/api';
-import { firstFieldErrors } from '../../lib/forms';
+import { firstFieldErrors, localizedZodResolver } from '../../lib/forms';
 import { ROLE_DESCRIPTIONS, ROLE_LABELS } from '../../lib/permissions';
 import { useStoreContext } from '../../hooks/use-store-context';
 import { toast } from '../../stores/toast-store';
@@ -14,6 +13,7 @@ import { Button } from '../../components/ui/button';
 import { Field, Input, Select } from '../../components/ui/form';
 import { FormAlert } from '../../components/auth/auth-layout';
 import { Modal } from '../../components/ui/modal';
+import { t } from '../../lib/i18n';
 
 const schema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
@@ -36,6 +36,7 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
   const [serverError, setServerError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [result, setResult] = useState<InviteResponse | null>(null);
+  const [invitedEmail, setInvitedEmail] = useState('');
   const [copied, setCopied] = useState(false);
 
   const {
@@ -44,7 +45,7 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
     reset,
     formState: { errors, isSubmitting },
   } = useForm<InviteForm>({
-    resolver: zodResolver(schema),
+    resolver: localizedZodResolver(schema),
     defaultValues: { email: '', role: 'cashier' },
   });
 
@@ -66,8 +67,9 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
         values,
       );
       setResult(response.data.data);
+      setInvitedEmail(values.email);
       toast.success(
-        response.data.data.status === 'added' ? 'Member added' : 'Invitation sent',
+        t(response.data.data.status === 'added' ? 'Member added' : 'Invitation sent'),
         response.data.data.message,
       );
       void queryClient.invalidateQueries({ queryKey: ['team'] });
@@ -88,9 +90,9 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
     try {
       await navigator.clipboard.writeText(inviteLink);
       setCopied(true);
-      toast.success('Invite link copied');
+      toast.success(t('Invite link copied'));
     } catch {
-      toast.error('Could not copy', 'Select the link manually and copy it.');
+      toast.error(t('Could not copy'), t('Select the link manually and copy it.'));
     }
   };
 
@@ -98,23 +100,23 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
     <Modal
       open={open}
       onClose={onClose}
-      title="Invite a team member"
-      description={store ? `Give someone access to ${store.name}` : undefined}
+      title={t('Invite a team member')}
+      description={store ? t('Give someone access to {{store}}', { store: store.name }) : undefined}
       size="md"
       footer={
         result ? (
-          <Button onClick={onClose}>Done</Button>
+          <Button onClick={onClose}>{t('Done')}</Button>
         ) : (
           <>
             <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               onClick={onSubmit}
               loading={isSubmitting}
               leftIcon={<Send className="h-4 w-4" />}
             >
-              Send invitation
+              {t('Send invitation')}
             </Button>
           </>
         )
@@ -127,17 +129,24 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
               <Check className="h-6 w-6" />
             </span>
             <p className="mt-2 text-sm font-semibold text-emerald-800 dark:text-emerald-200">
-              {result.status === 'added' ? 'Access granted' : 'Invitation on its way'}
+              {t(result.status === 'added' ? 'Access granted' : 'Invitation on its way')}
             </p>
             <p className="mt-1 max-w-sm text-xs leading-relaxed text-emerald-700 dark:text-emerald-300">
-              {result.message}
+              {result.status === 'added'
+                ? t('{{email}} now has access to {{store}}.', {
+                    email: invitedEmail,
+                    store: store?.name ?? '',
+                  })
+                : t('We sent an invitation to {{email}}. It expires in seven days.', {
+                    email: invitedEmail,
+                  })}
             </p>
           </div>
 
           {inviteLink ? (
             <div className="rounded-xl border border-dashed border-amber-300 bg-amber-50/70 p-3.5 dark:border-amber-500/30 dark:bg-amber-500/10">
               <p className="text-[10px] font-bold uppercase tracking-wide text-amber-700 dark:text-amber-300">
-                Development invite link
+                {t('Development invite link')}
               </p>
               <p className="mt-1 break-all font-mono text-[10px] text-amber-800 dark:text-amber-200">
                 {inviteLink}
@@ -151,7 +160,7 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
                   copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />
                 }
               >
-                {copied ? 'Copied' : 'Copy link'}
+                {t(copied ? 'Copied' : 'Copy link')}
               </Button>
             </div>
           ) : null}
@@ -165,7 +174,7 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
             }}
             leftIcon={<UserPlus className="h-4 w-4" />}
           >
-            Invite another person
+            {t('Invite another person')}
           </Button>
         </div>
       ) : (
@@ -173,10 +182,10 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
           {serverError ? <FormAlert>{serverError}</FormAlert> : null}
 
           <Field
-            label="Email address"
+            label={t('Email address')}
             htmlFor="invite-email"
             error={errors.email?.message ?? fieldErrors.email}
-            hint="If they already have a PulseBoard account, access is granted instantly."
+            hint={t('If they already have a PulseBoard account, access is granted instantly.')}
           >
             <Input
               id="invite-email"
@@ -187,25 +196,25 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
             />
           </Field>
 
-          <Field label="Role" htmlFor="invite-role" error={errors.role?.message}>
+          <Field label={t('Role')} htmlFor="invite-role" error={errors.role?.message}>
             <Select id="invite-role" {...register('role')}>
               {(['admin', 'manager', 'cashier', 'viewer'] as StoreRole[]).map((role) => (
                 <option key={role} value={role}>
-                  {ROLE_LABELS[role]}
+                  {t(ROLE_LABELS[role])}
                 </option>
               ))}
             </Select>
           </Field>
 
           <div className="rounded-xl bg-ink-50 p-3 text-[11px] leading-relaxed text-ink-500 dark:bg-ink-950/40 dark:text-ink-400">
-            <p className="font-semibold text-ink-700 dark:text-ink-200">Role permissions</p>
+            <p className="font-semibold text-ink-700 dark:text-ink-200">{t('Role permissions')}</p>
             <ul className="mt-1.5 space-y-1">
               {(['admin', 'manager', 'cashier', 'viewer'] as StoreRole[]).map((role) => (
                 <li key={role}>
                   <span className="font-semibold text-ink-700 dark:text-ink-200">
-                    {ROLE_LABELS[role]}:
+                    {t(ROLE_LABELS[role])}:
                   </span>{' '}
-                  {ROLE_DESCRIPTIONS[role]}
+                  {t(ROLE_DESCRIPTIONS[role])}
                 </li>
               ))}
             </ul>
@@ -213,8 +222,9 @@ export function InviteMemberModal({ open, onClose }: { open: boolean; onClose: (
 
           <div className="flex items-start gap-2 rounded-xl border border-ink-200 p-3 text-[11px] text-ink-500 dark:border-ink-700 dark:text-ink-400">
             <MailPlus className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" />
-            Invitations expire after seven days. You can resend or revoke them from the invitations
-            tab.
+            {t(
+              'Invitations expire after seven days. You can resend or revoke them from the invitations tab.',
+            )}
           </div>
         </form>
       )}

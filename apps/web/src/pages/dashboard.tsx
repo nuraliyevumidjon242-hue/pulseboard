@@ -43,6 +43,7 @@ import {
 import { toast } from '../stores/toast-store';
 import { useAuthStore } from '../stores/auth-store';
 import { cn } from '../lib/utils';
+import { t } from '../lib/i18n';
 
 const PERIODS = [
   { value: '7', label: '7 days' },
@@ -51,7 +52,7 @@ const PERIODS = [
 ] as const;
 
 export default function DashboardPage() {
-  usePageTitle('Dashboard');
+  usePageTitle(t('Dashboard'));
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const { storeId, store, currency, timezone, role, preferences } = useStoreContext();
@@ -80,9 +81,9 @@ export default function DashboardPage() {
     setExporting(true);
     try {
       await exportReport(storeId, 'pdf', 'monthly');
-      toast.success('Report exported', 'Your PDF report has been downloaded.');
+      toast.success(t('Report exported'), t('Your PDF report has been downloaded.'));
     } catch (exportError) {
-      toast.error('Export failed', getErrorMessage(exportError));
+      toast.error(t('Export failed'), getErrorMessage(exportError));
     } finally {
       setExporting(false);
     }
@@ -92,7 +93,7 @@ export default function DashboardPage() {
     return (
       <Card>
         <ErrorState
-          title="Dashboard unavailable"
+          title={t('Dashboard unavailable')}
           message={getErrorMessage(error)}
           onRetry={() => void refetch()}
         />
@@ -103,16 +104,25 @@ export default function DashboardPage() {
   return (
     <div className="space-y-5">
       <PageHeader
-        eyebrow={store ? `${store.name} · ${store.city ?? store.country ?? 'Store'}` : 'Overview'}
-        title={`${greeting(new Date(), timezone)}, ${user?.firstName ?? 'there'}`}
+        eyebrow={
+          store
+            ? `${store.name} · ${store.city ?? (store.country ? t(store.country) : t('Store'))}`
+            : t('Overview')
+        }
+        title={t('{{greeting}}, {{name}}', {
+          greeting: greeting(new Date(), timezone),
+          name: user?.firstName ?? t('there'),
+        })}
         description={
           data
-            ? `${formatDate(new Date(), timezone, {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-              })} · live overview of sales, stock and customers.`
-            : 'Loading your live business snapshot…'
+            ? t('{{date}} · live overview of sales, stock and customers.', {
+                date: formatDate(new Date(), timezone, {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                }),
+              })
+            : t('Loading your live business snapshot…')
         }
         actions={
           <>
@@ -120,7 +130,7 @@ export default function DashboardPage() {
               options={[...PERIODS]}
               value={days}
               onChange={setDays}
-              ariaLabel="Dashboard period"
+              ariaLabel={t('Dashboard period')}
             />
             <Button
               variant="secondary"
@@ -128,7 +138,7 @@ export default function DashboardPage() {
               onClick={() => void refetch()}
               leftIcon={<RefreshCw className={cn('h-3.5 w-3.5', isFetching && 'animate-spin')} />}
             >
-              Refresh
+              {t('Refresh')}
             </Button>
             {can(role, 'analytics:export') ? (
               <Button
@@ -138,7 +148,7 @@ export default function DashboardPage() {
                 onClick={() => void onExport()}
                 leftIcon={<Download className="h-3.5 w-3.5" />}
               >
-                Export
+                {t('Export')}
               </Button>
             ) : null}
           </>
@@ -147,12 +157,14 @@ export default function DashboardPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard
-          label="Revenue today"
+          label={t('Revenue today')}
           value={formatCurrency(data?.today.revenue, currency)}
           change={data?.today.revenueChange}
           hint={
             data
-              ? `vs ${formatCurrency(data.yesterday.revenue, currency, { compact: true })} yesterday`
+              ? t('vs {{amount}} yesterday', {
+                  amount: formatCurrency(data.yesterday.revenue, currency, { compact: true }),
+                })
               : '—'
           }
           icon={<Wallet className="h-4 w-4" />}
@@ -161,30 +173,40 @@ export default function DashboardPage() {
           loading={isLoading}
         />
         <KpiCard
-          label="Transactions"
+          label={t('Transactions')}
           value={formatNumber(data?.today.transactions ?? 0)}
           change={data?.today.transactionsChange}
-          hint={data ? `${formatNumber(data.today.itemsSold)} items sold today` : '—'}
+          hint={
+            data
+              ? t('{{count}} items sold today', { count: formatNumber(data.today.itemsSold) })
+              : '—'
+          }
           icon={<ReceiptText className="h-4 w-4" />}
           accent="cyan"
           spark={transactionSpark}
           loading={isLoading}
         />
         <KpiCard
-          label="Average basket"
+          label={t('Average basket')}
           value={formatCurrency(data?.today.avgTransaction, currency)}
           change={data?.today.avgTransactionChange}
-          hint="Average value per transaction"
+          hint={t('Average value per transaction')}
           icon={<ShoppingBag className="h-4 w-4" />}
           accent="emerald"
           spark={basketSpark}
           loading={isLoading}
         />
         <KpiCard
-          label="Last 30 days"
+          label={t('Last 30 days')}
           value={formatCurrency(data?.last30Days.revenue, currency, { compact: true })}
           change={data?.last30Days.revenueChange}
-          hint={data ? `${formatNumber(data.last30Days.transactions)} transactions in total` : '—'}
+          hint={
+            data
+              ? t('{{count}} transactions in total', {
+                  count: formatNumber(data.last30Days.transactions),
+                })
+              : '—'
+          }
           icon={<TrendingUp className="h-4 w-4" />}
           accent="amber"
           spark={spark}
@@ -195,12 +217,12 @@ export default function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader
-            title="Revenue trend"
-            description={`Daily revenue for the last ${days} days`}
+            title={t('Revenue trend')}
+            description={t('Daily revenue for the last {{days}} days', { days })}
             action={
               <Badge tone="brand" className="gap-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-                Live
+                {t('Live')}
               </Badge>
             }
           />
@@ -208,14 +230,16 @@ export default function DashboardPage() {
             {isLoading ? (
               <Skeleton className="h-[280px] w-full" />
             ) : data && data.trend.length > 0 ? (
-              <RevenueAreaChart data={data.trend} currency={currency} />
+              <RevenueAreaChart data={data.trend} currency={currency} timeZone={timezone} />
             ) : (
               <EmptyState
-                title="No sales yet"
-                description="Record your first sale and your revenue curve will appear here in realtime."
+                title={t('No sales yet')}
+                description={t(
+                  'Record your first sale and your revenue curve will appear here in realtime.',
+                )}
                 action={
                   <Button size="sm" onClick={() => navigate('/sales?new=1')}>
-                    Record a sale
+                    {t('Record a sale')}
                   </Button>
                 }
               />
@@ -225,11 +249,12 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader
-            title="Payment mix"
-            description="Last 30 days by method"
+            title={t('Payment mix')}
+            description={t('Last 30 days by method')}
             action={
               <Badge tone="neutral">
-                <CreditCard className="h-3 w-3" /> {data?.paymentBreakdown.length ?? 0} methods
+                <CreditCard className="h-3 w-3" /> {data?.paymentBreakdown.length ?? 0}{' '}
+                {t('methods')}
               </Badge>
             }
           />
@@ -246,11 +271,11 @@ export default function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader
-            title="Today by hour"
-            description="When your store is busiest"
+            title={t('Today by hour')}
+            description={t('When your store is busiest')}
             action={
               <Button variant="ghost" size="sm" onClick={() => navigate('/analytics')}>
-                Peak hours <ArrowUpRight className="h-3.5 w-3.5" />
+                {t('Peak hours')} <ArrowUpRight className="h-3.5 w-3.5" />
               </Button>
             }
           />
@@ -265,14 +290,14 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader
-            title="Top products"
-            description="By revenue · last 30 days"
+            title={t('Top products')}
+            description={t('By revenue · last 30 days')}
             action={
               <Link
                 to="/analytics"
                 className="text-[11px] font-semibold text-brand-600 hover:underline dark:text-brand-400"
               >
-                Details
+                {t('Details')}
               </Link>
             }
           />
@@ -311,8 +336,8 @@ export default function DashboardPage() {
               })
             ) : (
               <EmptyState
-                title="No product sales yet"
-                description="Top sellers will appear here."
+                title={t('No product sales yet')}
+                description={t('Top sellers will appear here.')}
               />
             )}
           </CardContent>
@@ -322,11 +347,11 @@ export default function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader
-            title="Recent sales"
-            description="Streaming in from the register"
+            title={t('Recent sales')}
+            description={t('Streaming in from the register')}
             action={
               <Button variant="ghost" size="sm" onClick={() => navigate('/sales')}>
-                View all <ArrowRight className="h-3.5 w-3.5" />
+                {t('View all')} <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             }
           />
@@ -351,11 +376,11 @@ export default function DashboardPage() {
                     <p className="truncate text-xs font-semibold text-ink-800 dark:text-ink-100">
                       {sale.transactionId}
                       <span className="ml-2 font-normal text-ink-400">
-                        {sale.items.length} item{sale.items.length === 1 ? '' : 's'}
+                        {sale.items.length} {t(sale.items.length === 1 ? 'item' : 'items')}
                       </span>
                     </p>
                     <p className="truncate text-[11px] text-ink-500 dark:text-ink-400">
-                      {sale.cashierName ?? 'Store team'} · {paymentLabel(sale.paymentMethod)} ·{' '}
+                      {sale.cashierName ?? t('Store team')} · {paymentLabel(sale.paymentMethod)} ·{' '}
                       {formatTime(sale.createdAt, timezone)}
                     </p>
                   </div>
@@ -366,11 +391,11 @@ export default function DashboardPage() {
               ))
             ) : (
               <EmptyState
-                title="No sales recorded"
-                description="Sales made at the register will show up here instantly."
+                title={t('No sales recorded')}
+                description={t('Sales made at the register will show up here instantly.')}
                 action={
                   <Button size="sm" onClick={() => navigate('/sales?new=1')}>
-                    Record a sale
+                    {t('Record a sale')}
                   </Button>
                 }
               />
@@ -380,11 +405,13 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader
-            title="Low stock"
+            title={t('Low stock')}
             description={
               data
-                ? `${data.lowStock.count} product${data.lowStock.count === 1 ? '' : 's'} need attention`
-                : 'Checking inventory'
+                ? data.lowStock.count === 1
+                  ? t('1 product needs attention')
+                  : t('{{count}} products need attention', { count: data.lowStock.count })
+                : t('Checking inventory')
             }
             action={
               data && data.lowStock.count > 0 ? (
@@ -392,7 +419,7 @@ export default function DashboardPage() {
                   <TriangleAlert className="h-3 w-3" /> {data.lowStock.count}
                 </Badge>
               ) : (
-                <Badge tone="success">Healthy</Badge>
+                <Badge tone="success">{t('Healthy')}</Badge>
               )
             }
           />
@@ -421,30 +448,34 @@ export default function DashboardPage() {
                         {item.name}
                       </p>
                       <p className="text-[11px] text-ink-500 dark:text-ink-400">
-                        {item.currentStock} {item.unit} left · min {item.minStock}
+                        {item.currentStock} {t(item.unit)} {t('left · min')} {item.minStock}
                       </p>
                     </div>
                     <Badge tone={tone === 'out' ? 'danger' : 'warning'}>
-                      {tone === 'out' ? 'Out' : 'Low'}
+                      {tone === 'out' ? t('Out') : t('Low')}
                     </Badge>
                   </div>
                 );
               })
             ) : (
               <div className="rounded-xl bg-emerald-50 px-3 py-6 text-center text-xs font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
-                Every product is above its minimum stock level.
+                {t('Every product is above its minimum stock level.')}
               </div>
             )}
 
             <div className="rounded-xl bg-ink-50 p-3 dark:bg-ink-950/50">
               <div className="flex items-center justify-between text-[11px]">
-                <span className="font-medium text-ink-500 dark:text-ink-400">Inventory value</span>
+                <span className="font-medium text-ink-500 dark:text-ink-400">
+                  {t('Inventory value')}
+                </span>
                 <span className="font-bold text-ink-900 dark:text-white">
                   {formatCurrency(data?.inventory.inventoryValue, currency, { compact: true })}
                 </span>
               </div>
               <div className="mt-1 flex items-center justify-between text-[11px]">
-                <span className="font-medium text-ink-500 dark:text-ink-400">Active products</span>
+                <span className="font-medium text-ink-500 dark:text-ink-400">
+                  {t('Active products')}
+                </span>
                 <span className="font-bold text-ink-900 dark:text-white">
                   {formatNumber(data?.inventory.totalProducts ?? 0)}
                 </span>
@@ -452,7 +483,7 @@ export default function DashboardPage() {
             </div>
 
             <Button variant="secondary" size="sm" fullWidth onClick={() => navigate('/inventory')}>
-              Review inventory
+              {t('Review inventory')}
             </Button>
           </CardContent>
         </Card>
@@ -461,39 +492,40 @@ export default function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card className="p-4">
           <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-            Today items sold
+            {t('Today items sold')}
           </p>
           <p className="mt-1 text-xl font-bold text-ink-900 dark:text-white">
             {formatNumber(data?.today.itemsSold ?? 0)}
           </p>
           <p className="mt-0.5 text-[11px] text-ink-400">
-            across {formatNumber(data?.today.transactions ?? 0)} transactions
+            {t('across')} {formatNumber(data?.today.transactions ?? 0)} {t('transactions')}
           </p>
         </Card>
         <Card className="p-4">
           <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-            Best seller
+            {t('Best seller')}
           </p>
           <p className="mt-1 truncate text-xl font-bold text-ink-900 dark:text-white">
             {data?.topProducts[0]?.name ?? '—'}
           </p>
           <p className="mt-0.5 text-[11px] text-ink-400">
             {data?.topProducts[0]
-              ? `${formatNumber(data.topProducts[0].quantity)} sold · ${data.topProducts[0].margin.toFixed(
-                  1,
-                )}% margin`
-              : 'No sales yet'}
+              ? t('{{quantity}} sold · {{margin}} margin', {
+                  quantity: formatNumber(data.topProducts[0].quantity),
+                  margin: formatPercent(data.topProducts[0].margin, 1, false),
+                })
+              : t('No sales yet')}
           </p>
         </Card>
         <Card className="p-4">
           <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-            Last 7 days
+            {t('Last 7 days')}
           </p>
           <p className="mt-1 text-xl font-bold text-ink-900 dark:text-white">
             {formatCurrency(data?.last7Days.revenue, currency, { compact: true })}
           </p>
           <p className="mt-0.5 text-[11px] text-ink-400">
-            {formatPercent(data?.last7Days.revenueChange)} vs previous week
+            {formatPercent(data?.last7Days.revenueChange)} {t('vs previous week')}
           </p>
         </Card>
       </div>

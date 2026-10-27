@@ -45,11 +45,12 @@ import {
   titleCase,
 } from '../lib/utils';
 import { toast } from '../stores/toast-store';
+import { t } from '../lib/i18n';
 
 const PERIODS = ['7', '30', '90', '365'] as const;
 
 export default function AnalyticsPage() {
-  usePageTitle('Analytics');
+  usePageTitle(t('Analytics'));
   const { storeId, currency, timezone, role } = useStoreContext();
   const [tab, setTab] = useState('revenue');
   const [days, setDays] = useState<'7' | '30' | '90' | '365'>('30');
@@ -81,9 +82,12 @@ export default function AnalyticsPage() {
     setExporting(format);
     try {
       await exportReport(storeId, format, period);
-      toast.success(`${format.toUpperCase()} report exported`, 'The download should start now.');
+      toast.success(
+        t('{{format}} report exported', { format: format.toUpperCase() }),
+        t('The download should start now.'),
+      );
     } catch (error) {
-      toast.error('Export failed', getErrorMessage(error));
+      toast.error(t('Export failed'), getErrorMessage(error));
     } finally {
       setExporting(null);
     }
@@ -100,19 +104,21 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-5">
       <PageHeader
-        eyebrow="Business intelligence"
-        title="Analytics"
-        description="Revenue, product and customer intelligence — built from every transaction, not samples."
+        eyebrow={t('Business intelligence')}
+        title={t('Analytics')}
+        description={t(
+          'Revenue, product and customer intelligence — built from every transaction, not samples.',
+        )}
         actions={
           <>
             <SegmentedControl
               options={[...PERIODS].map((value) => ({
                 value,
-                label: value === '365' ? '1 year' : `${value}d`,
+                label: value === '365' ? t('1 year') : t('{{days}}d', { days: value }),
               }))}
               value={days}
               onChange={setDays}
-              ariaLabel="Analytics period"
+              ariaLabel={t('Analytics period')}
             />
             {can(role, 'analytics:export') ? (
               <>
@@ -123,7 +129,7 @@ export default function AnalyticsPage() {
                   onClick={() => void onExport('csv')}
                   leftIcon={<Download className="h-3.5 w-3.5" />}
                 >
-                  CSV
+                  {t('CSV')}
                 </Button>
                 <Button
                   variant="secondary"
@@ -132,7 +138,7 @@ export default function AnalyticsPage() {
                   onClick={() => void onExport('pdf')}
                   leftIcon={<Download className="h-3.5 w-3.5" />}
                 >
-                  PDF
+                  {t('PDF')}
                 </Button>
               </>
             ) : null}
@@ -150,31 +156,43 @@ export default function AnalyticsPage() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <SummaryCard
-            label={`Revenue · ${days}d`}
+            label={t('Revenue · {{days}}d', { days })}
             value={formatCurrency(revenue?.totals.revenue, currency)}
             change={revenue?.totals.revenueChange}
             icon={<Wallet className="h-4 w-4" />}
             loading={loading}
           />
           <SummaryCard
-            label="Transactions"
+            label={t('Transactions')}
             value={formatNumber(revenue?.totals.transactions ?? 0)}
             change={revenue?.totals.transactionsChange}
             icon={<ShoppingBag className="h-4 w-4" />}
             loading={loading}
           />
           <SummaryCard
-            label="Average basket"
+            label={t('Average basket')}
             value={formatCurrency(revenue?.totals.avgTransaction, currency)}
             change={revenue?.totals.avgTransactionChange}
             icon={<BadgePercent className="h-4 w-4" />}
             loading={loading}
           />
           <SummaryCard
-            label="Items sold"
+            label={t('Items sold')}
             value={formatNumber(revenue?.totals.itemsSold ?? 0)}
             icon={<BarChart3 className="h-4 w-4" />}
-            hint={revenue ? `${revenue.range.from} → ${revenue.range.to}` : undefined}
+            hint={
+              revenue
+                ? `${formatDate(`${revenue.range.from}T12:00:00Z`, timezone, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })} → ${formatDate(`${revenue.range.to}T12:00:00Z`, timezone, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}`
+                : undefined
+            }
             loading={loading}
           />
         </div>
@@ -195,8 +213,11 @@ export default function AnalyticsPage() {
         <div className="space-y-4">
           <Card>
             <CardHeader
-              title="Revenue over time"
-              description={`${titleCase(period)} aggregation · last ${days} days`}
+              title={t('Revenue over time')}
+              description={t('{{period}} aggregation · last {{days}} days', {
+                period: t(titleCase(period)),
+                days,
+              })}
               action={
                 <SegmentedControl
                   size="sm"
@@ -207,7 +228,7 @@ export default function AnalyticsPage() {
                   ]}
                   value={period}
                   onChange={setPeriod}
-                  ariaLabel="Revenue aggregation"
+                  ariaLabel={t('Revenue aggregation')}
                 />
               }
             />
@@ -220,11 +241,12 @@ export default function AnalyticsPage() {
                   currency={currency}
                   height={300}
                   showTransactions
+                  timeZone={timezone}
                 />
               ) : (
                 <EmptyState
-                  title="No revenue in this period"
-                  description="Sales recorded in this date range will appear here."
+                  title={t('No revenue in this period')}
+                  description={t('Sales recorded in this date range will appear here.')}
                 />
               )}
             </CardContent>
@@ -233,8 +255,8 @@ export default function AnalyticsPage() {
           <div className="grid gap-4 lg:grid-cols-3">
             <Card className="lg:col-span-2">
               <CardHeader
-                title="Payment methods"
-                description="How customers prefer to pay (last 30 days)"
+                title={t('Payment methods')}
+                description={t('How customers prefer to pay (last 30 days)')}
               />
               <CardContent>
                 <PaymentDonut data={payments} currency={currency} />
@@ -242,30 +264,30 @@ export default function AnalyticsPage() {
             </Card>
             <Card>
               <CardHeader
-                title="Period comparison"
-                description={`${days} days vs previous ${days} days`}
+                title={t('Period comparison')}
+                description={t('{{days}} days vs previous {{days}} days', { days })}
               />
               <CardContent className="space-y-3">
                 <CompareRow
-                  label="Revenue"
+                  label={t('Revenue')}
                   current={formatCurrency(revenue?.totals.revenue, currency, { compact: true })}
                   previous={formatCurrency(revenue?.previous.revenue, currency, { compact: true })}
                   change={revenue?.totals.revenueChange ?? null}
                 />
                 <CompareRow
-                  label="Transactions"
+                  label={t('Transactions')}
                   current={formatNumber(revenue?.totals.transactions ?? 0)}
                   previous={formatNumber(revenue?.previous.transactions ?? 0)}
                   change={revenue?.totals.transactionsChange ?? null}
                 />
                 <CompareRow
-                  label="Avg. basket"
+                  label={t('Avg. basket')}
                   current={formatCurrency(revenue?.totals.avgTransaction, currency)}
                   previous={formatCurrency(revenue?.previous.avgTransaction, currency)}
                   change={revenue?.totals.avgTransactionChange ?? null}
                 />
                 <CompareRow
-                  label="Items sold"
+                  label={t('Items sold')}
                   current={formatNumber(revenue?.totals.itemsSold ?? 0)}
                   previous={formatNumber(revenue?.previous.itemsSold ?? 0)}
                   change={null}
@@ -280,28 +302,31 @@ export default function AnalyticsPage() {
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs text-ink-500 dark:text-ink-400">
-              Ranked across the last {days} days.
+              {t('Ranked across the last {{days}} days.', { days })}
             </p>
             <Select
               value={productSort}
               onChange={(event) => setProductSort(event.target.value as typeof productSort)}
               className="w-auto min-w-[10rem] py-2 text-xs"
-              aria-label="Rank products by"
+              aria-label={t('Rank products by')}
             >
-              <option value="revenue">By revenue</option>
-              <option value="quantity">By quantity</option>
-              <option value="profit">By profit</option>
+              <option value="revenue">{t('By revenue')}</option>
+              <option value="quantity">{t('By quantity')}</option>
+              <option value="profit">{t('By profit')}</option>
             </Select>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3">
             <Card className="lg:col-span-2">
               <CardHeader
-                title="Top performers"
-                description={`Best ${products?.top.length ?? 0} products by ${productSort}`}
+                title={t('Top performers')}
+                description={t('Best {{count}} products by {{sort}}', {
+                  count: products?.top.length ?? 0,
+                  sort: t(titleCase(productSort)),
+                })}
                 action={
                   <Badge tone="success">
-                    <TrendingUp className="h-3 w-3" /> Winners
+                    <TrendingUp className="h-3 w-3" /> {t('Winners')}
                   </Badge>
                 }
               />
@@ -337,8 +362,10 @@ export default function AnalyticsPage() {
                                 {product.name}
                               </p>
                               <p className="text-[10px] text-ink-400">
-                                {formatNumber(product.quantity)} sold · {product.margin.toFixed(1)}%
-                                margin
+                                {t('{{quantity}} sold · {{margin}} margin', {
+                                  quantity: formatNumber(product.quantity),
+                                  margin: formatPercent(product.margin, 1, false),
+                                })}
                               </p>
                             </div>
                           </div>
@@ -347,7 +374,7 @@ export default function AnalyticsPage() {
                               {formatCurrency(product.revenue, currency)}
                             </p>
                             <p className="text-[10px] text-emerald-600 dark:text-emerald-400">
-                              {formatCurrency(product.profit, currency)} profit
+                              {formatCurrency(product.profit, currency)} {t('profit')}
                             </p>
                           </div>
                         </div>
@@ -362,15 +389,15 @@ export default function AnalyticsPage() {
                   })
                 ) : (
                   <EmptyState
-                    title="No product sales yet"
-                    description="Start selling to unlock product intelligence."
+                    title={t('No product sales yet')}
+                    description={t('Start selling to unlock product intelligence.')}
                   />
                 )}
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader title="Category mix" description="Revenue share by category" />
+              <CardHeader title={t('Category mix')} description={t('Revenue share by category')} />
               <CardContent className="space-y-3.5">
                 {productQuery.isLoading ? (
                   Array.from({ length: 5 }).map((_, index) => (
@@ -412,7 +439,9 @@ export default function AnalyticsPage() {
                     </div>
                   ))
                 ) : (
-                  <p className="py-8 text-center text-xs text-ink-400">No category data yet.</p>
+                  <p className="py-8 text-center text-xs text-ink-400">
+                    {t('No category data yet.')}
+                  </p>
                 )}
               </CardContent>
             </Card>
@@ -420,11 +449,11 @@ export default function AnalyticsPage() {
 
           <Card>
             <CardHeader
-              title="Needs attention"
-              description="Slowest sellers in this period"
+              title={t('Needs attention')}
+              description={t('Slowest sellers in this period')}
               action={
                 <Badge tone="warning">
-                  <TrendingDown className="h-3 w-3" /> Slow movers
+                  <TrendingDown className="h-3 w-3" /> {t('Slow movers')}
                 </Badge>
               }
             />
@@ -444,18 +473,22 @@ export default function AnalyticsPage() {
                           {product.name}
                         </p>
                         <p className="text-[10px] text-ink-400">
-                          {formatNumber(product.quantity)} sold ·{' '}
-                          {formatCurrency(product.revenue, currency)}
+                          {t('{{quantity}} sold · {{amount}}', {
+                            quantity: formatNumber(product.quantity),
+                            amount: formatCurrency(product.revenue, currency),
+                          })}
                         </p>
                       </div>
                     </div>
                     <Badge tone={product.quantity === 0 ? 'danger' : 'warning'}>
-                      {product.quantity === 0 ? 'No sales' : 'Low velocity'}
+                      {product.quantity === 0 ? t('No sales') : t('Low velocity')}
                     </Badge>
                   </div>
                 ))
               ) : (
-                <p className="px-5 py-6 text-center text-xs text-ink-400">No products to review.</p>
+                <p className="px-5 py-6 text-center text-xs text-ink-400">
+                  {t('No products to review.')}
+                </p>
               )}
             </div>
           </Card>
@@ -466,38 +499,44 @@ export default function AnalyticsPage() {
         <div className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <SummaryCard
-              label="Named customers"
+              label={t('Named customers')}
               value={formatNumber(customers?.totalCustomers ?? 0)}
               icon={<Users className="h-4 w-4" />}
-              hint={`${formatPercent(customers?.repeatRate ?? 0, 1, false)} repeat rate`}
+              hint={t('{{rate}} repeat rate', {
+                rate: formatPercent(customers?.repeatRate ?? 0, 1, false),
+              })}
               loading={customerQuery.isLoading}
             />
             <SummaryCard
-              label="Returning"
+              label={t('Returning')}
               value={formatNumber(customers?.returningCustomers ?? 0)}
               icon={<Repeat2 className="h-4 w-4" />}
-              hint={`${formatNumber(customers?.loyalCustomers ?? 0)} loyal (3+ orders)`}
+              hint={t('{{count}} loyal (3+ orders)', {
+                count: formatNumber(customers?.loyalCustomers ?? 0),
+              })}
               loading={customerQuery.isLoading}
             />
             <SummaryCard
-              label="Named revenue"
+              label={t('Named revenue')}
               value={formatCurrency(customers?.namedRevenue, currency, { compact: true })}
               icon={<Wallet className="h-4 w-4" />}
-              hint="Attributed to known customers"
+              hint={t('Attributed to known customers')}
               loading={customerQuery.isLoading}
             />
             <SummaryCard
-              label="Walk-in share"
+              label={t('Walk-in share')}
               value={`${customers?.walkIn.share.toFixed(0) ?? 0}%`}
               icon={<UserRound className="h-4 w-4" />}
-              hint={`${formatNumber(customers?.walkIn.transactions ?? 0)} anonymous transactions`}
+              hint={t('{{count}} anonymous transactions', {
+                count: formatNumber(customers?.walkIn.transactions ?? 0),
+              })}
               loading={customerQuery.isLoading}
             />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3">
             <Card>
-              <CardHeader title="Customer segments" description="By number of orders" />
+              <CardHeader title={t('Customer segments')} description={t('By number of orders')} />
               <CardContent className="space-y-3.5">
                 {customerQuery.isLoading ? (
                   Array.from({ length: 4 }).map((_, index) => (
@@ -508,10 +547,11 @@ export default function AnalyticsPage() {
                     <div key={segment.label}>
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="font-medium text-ink-700 dark:text-ink-200">
-                          {segment.label}
+                          {t(segment.label)}
                         </span>
                         <span className="text-ink-500 dark:text-ink-400">
-                          {formatNumber(segment.customers)} · {segment.percentage.toFixed(0)}%
+                          {formatNumber(segment.customers)} ·{' '}
+                          {formatPercent(segment.percentage, 0, false)}
                         </span>
                       </div>
                       <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-ink-100 dark:bg-ink-800">
@@ -532,18 +572,20 @@ export default function AnalyticsPage() {
                     </div>
                   ))
                 ) : (
-                  <p className="py-8 text-center text-xs text-ink-400">No named customers yet.</p>
+                  <p className="py-8 text-center text-xs text-ink-400">
+                    {t('No named customers yet.')}
+                  </p>
                 )}
               </CardContent>
             </Card>
 
             <Card className="lg:col-span-2">
               <CardHeader
-                title="Top customers"
-                description={`Last ${days} days`}
+                title={t('Top customers')}
+                description={t('Last {{days}} days', { days })}
                 action={
                   <Badge tone="brand">
-                    <Award className="h-3 w-3" /> VIPs
+                    <Award className="h-3 w-3" /> {t('VIPs')}
                   </Badge>
                 }
               />
@@ -559,8 +601,10 @@ export default function AnalyticsPage() {
                           {customer.name}
                         </p>
                         <p className="text-[10px] text-ink-400">
-                          {customer.orders} orders · avg{' '}
-                          {formatCurrency(customer.avgOrder, currency)}
+                          {t('{{count}} orders · avg {{amount}}', {
+                            count: customer.orders,
+                            amount: formatCurrency(customer.avgOrder, currency),
+                          })}
                         </p>
                       </div>
                       <div className="text-right">
@@ -568,10 +612,11 @@ export default function AnalyticsPage() {
                           {formatCurrency(customer.spend, currency)}
                         </p>
                         <p className="text-[10px] text-ink-400">
-                          last{' '}
-                          {formatDate(customer.lastVisit, timezone, {
-                            month: 'short',
-                            day: 'numeric',
+                          {t('last {{date}}', {
+                            date: formatDate(customer.lastVisit, timezone, {
+                              month: 'short',
+                              day: 'numeric',
+                            }),
                           })}
                         </p>
                       </div>
@@ -579,8 +624,10 @@ export default function AnalyticsPage() {
                   ))
                 ) : (
                   <EmptyState
-                    title="No customer names captured"
-                    description="Add a customer name at checkout to unlock retention analytics."
+                    title={t('No customer names captured')}
+                    description={t(
+                      'Add a customer name at checkout to unlock retention analytics.',
+                    )}
                   />
                 )}
               </div>
@@ -594,41 +641,45 @@ export default function AnalyticsPage() {
           <div className="grid gap-3 sm:grid-cols-3">
             <Card className="p-4">
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-                Busiest hour
+                {t('Busiest hour')}
               </p>
               <p className="mt-1 text-2xl font-bold text-ink-900 dark:text-white">
                 {peak?.busiestHour !== null && peak?.busiestHour !== undefined
                   ? `${String(peak.busiestHour).padStart(2, '0')}:00`
                   : '—'}
               </p>
-              <p className="mt-0.5 text-[11px] text-ink-400">Peak revenue window</p>
+              <p className="mt-0.5 text-[11px] text-ink-400">{t('Peak revenue window')}</p>
             </Card>
             <Card className="p-4">
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-                Busiest day
+                {t('Busiest day')}
               </p>
               <p className="mt-1 text-2xl font-bold text-ink-900 dark:text-white">
-                {peak?.busiestWeekday ?? '—'}
+                {peak?.busiestWeekday ? t(peak.busiestWeekday) : '—'}
               </p>
-              <p className="mt-0.5 text-[11px] text-ink-400">Best performing weekday</p>
+              <p className="mt-0.5 text-[11px] text-ink-400">{t('Best performing weekday')}</p>
             </Card>
             <Card className="p-4">
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-                Staffing hint
+                {t('Staffing hint')}
               </p>
               <p className="mt-1 text-sm font-semibold leading-snug text-ink-900 dark:text-white">
                 {peak?.busiestHour !== null && peak?.busiestHour !== undefined
-                  ? `Add a second cashier around ${String(peak.busiestHour).padStart(2, '0')}:00.`
-                  : 'Collect more sales to see a recommendation.'}
+                  ? t('Add a second cashier around {{time}}.', {
+                      time: `${String(peak.busiestHour).padStart(2, '0')}:00`,
+                    })
+                  : t('Collect more sales to see a recommendation.')}
               </p>
-              <p className="mt-0.5 text-[11px] text-ink-400">Based on the last {days} days</p>
+              <p className="mt-0.5 text-[11px] text-ink-400">
+                {t('Based on the last {{days}} days', { days })}
+              </p>
             </Card>
           </div>
 
           <Card>
             <CardHeader
-              title="Revenue by hour of day"
-              description="Aggregated across the selected period"
+              title={t('Revenue by hour of day')}
+              description={t('Aggregated across the selected period')}
             />
             <CardContent>
               {peakQuery.isLoading ? (
@@ -651,7 +702,10 @@ export default function AnalyticsPage() {
 
           <div className="grid gap-4 lg:grid-cols-2">
             <Card>
-              <CardHeader title="Revenue by weekday" description="Where the week makes its money" />
+              <CardHeader
+                title={t('Revenue by weekday')}
+                description={t('Where the week makes its money')}
+              />
               <CardContent className="space-y-3">
                 {peakQuery.isLoading
                   ? Array.from({ length: 7 }).map((_, index) => (
@@ -660,7 +714,7 @@ export default function AnalyticsPage() {
                   : peak?.weekdays.map((day) => (
                       <div key={day.weekday} className="flex items-center gap-3">
                         <span className="w-8 shrink-0 text-[11px] font-semibold text-ink-500 dark:text-ink-400">
-                          {day.label}
+                          {t(day.label)}
                         </span>
                         <div className="h-2 flex-1 overflow-hidden rounded-full bg-ink-100 dark:bg-ink-800">
                           <div
@@ -685,11 +739,11 @@ export default function AnalyticsPage() {
 
             <Card>
               <CardHeader
-                title="Peak-hour insights"
-                description="Three signals worth acting on"
+                title={t('Peak-hour insights')}
+                description={t('Three signals worth acting on')}
                 action={
                   <Badge tone="brand">
-                    <CalendarDays className="h-3 w-3" /> {days}d
+                    <CalendarDays className="h-3 w-3" /> {t('{{days}}d', { days })}
                   </Badge>
                 }
               />
@@ -712,16 +766,17 @@ export default function AnalyticsPage() {
                           {String((hour.hour + 1) % 24).padStart(2, '0')}:00
                         </p>
                         <p className="text-[11px] text-ink-500 dark:text-ink-400">
-                          {formatCurrency(hour.revenue, currency)} ·{' '}
-                          {formatNumber(hour.transactions)} transactions · {hour.share.toFixed(1)}%
-                          of revenue
+                          {t('{{count}} transactions · {{share}} of revenue', {
+                            count: formatNumber(hour.transactions),
+                            share: formatPercent(hour.share, 1, false),
+                          })}
                         </p>
                       </div>
                     </div>
                   ))}
                 {peak && peak.hours.every((hour) => hour.transactions === 0) ? (
                   <p className="py-6 text-center text-xs text-ink-400">
-                    No transactions in this period yet.
+                    {t('No transactions in this period yet.')}
                   </p>
                 ) : null}
               </CardContent>
@@ -733,9 +788,9 @@ export default function AnalyticsPage() {
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-ink-200 bg-white px-4 py-3 text-[11px] text-ink-500 dark:border-ink-800 dark:bg-ink-900 dark:text-ink-400">
         <span className="flex items-center gap-1.5">
           <ArrowUpRight className="h-3.5 w-3.5" />
-          All metrics are recomputed from raw transactions in {timezone}.
+          {t('All metrics are recomputed from raw transactions in {{timezone}}.', { timezone })}
         </span>
-        <span>Need a custom range? Export CSV and pivot in your spreadsheet.</span>
+        <span>{t('Need a custom range? Export CSV and pivot in your spreadsheet.')}</span>
       </div>
     </div>
   );
@@ -761,7 +816,7 @@ function SummaryCard({
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
-            {label}
+            {t(label)}
           </p>
           {loading ? (
             <div className="skeleton mt-2 h-6 w-24" />
@@ -774,7 +829,7 @@ function SummaryCard({
             {hint ??
               (change !== undefined && change !== null
                 ? formatPercent(change)
-                : 'vs previous period')}
+                : t('vs previous period'))}
           </p>
         </div>
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-300">
@@ -798,10 +853,10 @@ function CompareRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-2 text-xs">
-      <span className="text-ink-500 dark:text-ink-400">{label}</span>
+      <span className="text-ink-500 dark:text-ink-400">{t(label)}</span>
       <div className="flex items-center gap-2">
         <span className="font-bold text-ink-900 dark:text-white">{current}</span>
-        <span className="text-[10px] text-ink-400">vs {previous}</span>
+        <span className="text-[10px] text-ink-400">{t('vs {{amount}}', { amount: previous })}</span>
         {change !== null ? (
           <span
             className={cn(

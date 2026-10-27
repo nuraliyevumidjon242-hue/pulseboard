@@ -55,6 +55,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const activeStoreId = resolveActiveStoreId(stores, get().activeStoreId);
     persistActiveStore(activeStoreId);
     useUiStore.getState().setTheme(preferences.theme);
+    useUiStore.getState().setLanguage(preferences.language);
     set({
       user,
       stores,
@@ -126,6 +127,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const activeStoreId = resolveActiveStoreId(stores, get().activeStoreId);
     persistActiveStore(activeStoreId);
     useUiStore.getState().setTheme(preferences.theme);
+    useUiStore.getState().setLanguage(preferences.language);
     set({ user, stores, preferences, activeStoreId, status: 'authenticated' });
   },
 }));

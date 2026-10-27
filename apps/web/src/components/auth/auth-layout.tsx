@@ -1,6 +1,8 @@
 import { Activity, ArrowLeft, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { t } from '../../lib/i18n';
+import { LanguageMenu } from '../layout/language-menu';
 
 const highlights = [
   'Real-time sales, streamed the moment a transaction lands',
@@ -33,43 +35,45 @@ export function AuthLayout({
           <div>
             <p className="text-sm font-bold tracking-tight">PulseBoard</p>
             <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink-400">
-              Business intelligence
+              {t('Business intelligence')}
             </p>
           </div>
         </div>
 
         <div className="relative my-auto max-w-md py-12">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-cyan-300">
-            <Zap className="h-3 w-3" /> Built for independent retailers
+            <Zap className="h-3 w-3" /> {t('Built for independent retailers')}
           </span>
           <h1 className="mt-5 text-[2.6rem] font-bold leading-[1.08] tracking-tight">
-            Every sale.
+            {t('Every sale.')}
             <br />
-            Every shelf.
+            {t('Every shelf.')}
             <br />
             <span className="bg-gradient-to-r from-brand-300 via-cyan-300 to-emerald-300 bg-clip-text text-transparent">
-              One live pulse.
+              {t('One live pulse.')}
             </span>
           </h1>
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink-300">
-            PulseBoard turns your point-of-sale into a live control room — revenue, stock and
-            customer behaviour, without spreadsheets.
+            {t(
+              'PulseBoard turns your point-of-sale into a live control room — revenue, stock and customer behaviour, without spreadsheets.',
+            )}
           </p>
 
           <ul className="mt-7 space-y-3">
             {highlights.map((item) => (
               <li key={item} className="flex items-start gap-2.5 text-sm text-ink-200">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
-                {item}
+                {t(item)}
               </li>
             ))}
           </ul>
 
           <div className="mt-9 rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur">
             <div className="flex items-center justify-between text-[11px] font-medium text-ink-400">
-              <span>Revenue today</span>
+              <span>{t('Revenue today')}</span>
               <span className="inline-flex items-center gap-1.5 text-emerald-400">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> live
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />{' '}
+                {t('live')}
               </span>
             </div>
             <div className="mt-1 flex items-end justify-between">
@@ -92,7 +96,7 @@ export function AuthLayout({
 
         <div className="relative flex items-center justify-between text-[11px] text-ink-500">
           <span className="inline-flex items-center gap-1.5">
-            <ShieldCheck className="h-3.5 w-3.5" /> Secure by design · JWT + rotating refresh
+            <ShieldCheck className="h-3.5 w-3.5" /> {t('Secure by design · JWT + rotating refresh')}
           </span>
           <span>© {new Date().getFullYear()} PulseBoard</span>
         </div>
@@ -106,12 +110,15 @@ export function AuthLayout({
             </span>
             <span className="text-sm font-bold text-ink-900 dark:text-white">PulseBoard</span>
           </Link>
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-500 transition hover:text-ink-800 dark:text-ink-400 dark:hover:text-ink-200"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Back to sign in
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageMenu />
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-500 transition hover:text-ink-800 dark:text-ink-400 dark:hover:text-ink-200"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" /> {t('Back to sign in')}
+            </Link>
+          </div>
         </div>
 
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10">
@@ -132,7 +139,7 @@ export function AuthLayout({
         </div>
 
         <div className="text-center text-[10px] text-ink-400 lg:hidden">
-          © {new Date().getFullYear()} PulseBoard · Real-time business analytics
+          © {new Date().getFullYear()} {t('PulseBoard · Real-time business analytics')}
         </div>
       </main>
     </div>

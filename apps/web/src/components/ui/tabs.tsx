@@ -1,3 +1,4 @@
+import { t } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 
 export function SegmentedControl<T extends string>({
@@ -41,7 +42,7 @@ export function SegmentedControl<T extends string>({
                 : 'text-ink-500 hover:text-ink-800 dark:text-ink-400 dark:hover:text-ink-200',
             )}
           >
-            {option.label}
+            {t(option.label)}
           </button>
         );
       })}
@@ -85,7 +86,7 @@ export function Tabs({
             )}
           >
             {tab.icon}
-            {tab.label}
+            {t(tab.label)}
             {tab.badge ? (
               <span className="rounded-full bg-brand-50 px-1.5 py-0.5 text-[10px] font-bold text-brand-700 dark:bg-brand-500/15 dark:text-brand-300">
                 {tab.badge}
