@@ -207,6 +207,8 @@ See [docs/deployment.md](docs/deployment.md) for TLS, backups, SMTP and scaling 
 Portfolio-ready slide decks live in the repository as static HTML — no build step and no
 external assets:
 
+**Live:** <https://nuraliyevumidjon242-hue.github.io/pulseboard/>
+
 | Language | Deck |
 | --- | --- |
 | English | [`presentations/en/index.html`](presentations/en/index.html) |
